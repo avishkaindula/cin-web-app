@@ -68,11 +68,11 @@ export const mockOrganizationsExtended: (Organization & { adminUsers: AdminUser[
       isPrizeGiver: true,
     },
     website: "https://greentech.com",
-    location: "San Francisco, CA",
+    location: "Colombo, Sri Lanka",
     contactEmail: "contact@greentech.com",
     adminName: "Green Tech Admin",
     adminEmail: "org@greentech.com",
-    adminPhone: "+1-555-0123",
+    adminPhone: "+94-71-555-0123",
     adminUsers: [
       {
         id: "admin1",
@@ -206,7 +206,7 @@ export const mockTasks: Task[] = [
     maxSubmissionsPerUser: 5,
     cooldownPeriodDays: 1,
     locationRequired: true,
-    targetLocation: "San Francisco Bay Area",
+    targetLocation: "Colombo Metropolitan Area",
     locationRadiusKm: 50,
     fileUploadRequired: true,
     allowedFileTypes: ["jpg", "jpeg", "png"],
@@ -344,7 +344,7 @@ export const mockPlatformUsers: PlatformUser[] = [
     isBanned: false,
     joinedAt: "2024-01-20T10:00:00Z",
     lastActive: "2024-12-24T08:30:00Z",
-    location: "San Francisco, CA",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: "user2",
@@ -393,7 +393,7 @@ export const mockPlatformUsers: PlatformUser[] = [
     isBanned: false,
     joinedAt: "2024-01-15T10:00:00Z",
     lastActive: "2024-12-24T09:00:00Z",
-    location: "San Francisco, CA",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: "user5",

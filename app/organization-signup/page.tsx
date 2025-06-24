@@ -206,7 +206,7 @@ export default function OrganizationSignupPage() {
                   <Input
                     id="adminPhone"
                     type="tel"
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+94 (71) 123-4567"
                     value={formData.adminPhone}
                     onChange={(e) => handleInputChange("adminPhone", e.target.value)}
                   />

@@ -45,11 +45,11 @@ export const mockOrganizations: Organization[] = [
       isPrizeGiver: true,
     },
     website: "https://greentech.com",
-    location: "San Francisco, CA",
+    location: "Colombo, Sri Lanka",
     contactEmail: "contact@greentech.com",
     adminName: "Green Tech Admin",
     adminEmail: "org@greentech.com",
-    adminPhone: "+1-555-0123",
+    adminPhone: "+94-71-555-0123",
   },
   {
     id: "org2",

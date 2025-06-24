@@ -241,8 +241,8 @@ export default function HomePage() {
               <h3 className="font-semibold mb-4">Contact</h3>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>support@climate.network</li>
-                <li>+1 (555) 123-4567</li>
-                <li>San Francisco, CA</li>
+                <li>+94 (71) 123-4567</li>
+                <li>Colombo, Sri Lanka</li>
               </ul>
             </div>
             <div>

@@ -158,7 +158,7 @@ export const mockMembers: Member[] = [
     badgesEarned: 8,
     status: "active",
     lastActivity: "2024-12-24T08:30:00Z",
-    location: "San Francisco, CA",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: "member2",
@@ -393,9 +393,9 @@ export const mockSubmissionReviews: SubmissionReview[] = [
       },
     ],
     location: {
-      lat: 37.7749,
-      lng: -122.4194,
-      address: "San Francisco, CA",
+      lat: 6.9271,
+      lng: 79.8612,
+      address: "Colombo, Sri Lanka",
     },
     submittedAt: "2024-12-23T14:30:00Z",
     status: "pending",

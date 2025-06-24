@@ -64,7 +64,7 @@ export default function PendingApprovalPage() {
               </div>
               <div className="flex items-center space-x-2 text-sm">
                 <Phone className="h-4 w-4 text-gray-500" />
-                <span>+1 (555) 123-4567</span>
+                <span>+94 (71) 123-4567</span>
               </div>
             </div>
           </div>
