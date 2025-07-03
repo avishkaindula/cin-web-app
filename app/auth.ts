@@ -33,17 +33,17 @@ export const signUpAction = async (formData: FormData) => {
 
   // This web app only handles organization signups - users sign up via mobile app
   const initialRole = "org_admin_pending";
-
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
       data: {
-        name,
+        full_name: name,
         phone,
         address,
-        userType: initialRole,
+        organization_name: formData.get("organizationName")?.toString(),
+        user_role: initialRole,
         email,
       },
     },
