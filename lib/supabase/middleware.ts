@@ -4,8 +4,7 @@ import { jwtDecode } from "jwt-decode";
 
 const PUBLIC_PATHS = [
   "/sign-in",
-  "/sign-up/user",
-  "/sign-up/pharmacy",
+  "/organization-signup",
   "/forgot-password",
   "/reset-password",
   "/about",
@@ -16,14 +15,10 @@ const PUBLIC_PATHS = [
   "/terms",
   "/",
   "/auth/callback",
-  "/auth/callback?redirect_to=/reset-password",
 ];
 
 export const updateSession = async (request: NextRequest) => {
-  // This `try/catch` block is only here for the interactive tutorial.
-  // Feel free to remove once you have Supabase connected.
   try {
-    // Create an unmodified response
     let response = NextResponse.next({
       request: {
         headers: request.headers,
@@ -53,11 +48,7 @@ export const updateSession = async (request: NextRequest) => {
       }
     );
 
-    // This will refresh session if expired - required for Server Components
-    // https://supabase.com/docs/guides/auth/server-side/nextjs
     const user = await supabase.auth.getUser();
-
-    // Get the session and decode the user role
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -65,8 +56,12 @@ export const updateSession = async (request: NextRequest) => {
     let userRole;
 
     if (session?.access_token) {
-      const jwt = jwtDecode(session.access_token) as any;
-      userRole = jwt.user_role;
+      try {
+        const jwt = jwtDecode(session.access_token) as any;
+        userRole = jwt.user_role;
+      } catch (e) {
+        // If JWT decoding fails, continue without role
+      }
     }
 
     const path = request.nextUrl.pathname;
@@ -76,33 +71,127 @@ export const updateSession = async (request: NextRequest) => {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
 
-    // If authenticated and on root, redirect to dashboard
-    if (!user.error && path === "/") {
-      if (userRole === "pharmacy") {
-        return NextResponse.redirect(
-          new URL("/pharmacy/dashboard", request.url)
-        );
-      } else if (userRole === "user") {
-        return NextResponse.redirect(new URL("/user/dashboard", request.url));
+    // If authenticated, handle role-based routing
+    if (!user.error && userRole) {
+      // Handle root path redirection
+      if (path === "/") {
+        switch (userRole) {
+          case "user":
+            return NextResponse.redirect(new URL("/dashboard", request.url));
+          case "user_inactive":
+            return NextResponse.redirect(
+              new URL("/account-suspended", request.url)
+            );
+          case "org_admin_active":
+            return NextResponse.redirect(
+              new URL("/org-admin/organization-dashboard", request.url)
+            );
+          case "org_admin_pending":
+            return NextResponse.redirect(
+              new URL("/pending-approval", request.url)
+            );
+          case "org_admin_inactive":
+            return NextResponse.redirect(
+              new URL("/application-rejected", request.url)
+            );
+          case "cin_admin":
+            return NextResponse.redirect(
+              new URL("/cin-admin/dashboard", request.url)
+            );
+          case "super_admin":
+            return NextResponse.redirect(
+              new URL("/super-admin/super-admin-dashboard", request.url)
+            );
+          default:
+            return NextResponse.redirect(new URL("/sign-in", request.url));
+        }
       }
-    }
 
-    // If authenticated and accessing a route not matching their role, redirect to their dashboard
-    if (!user.error) {
-      if (userRole === "pharmacy" && path.startsWith("/user")) {
+      // Role-based access control
+      if (path.startsWith("/org-admin") && userRole !== "org_admin_active") {
+        if (userRole === "org_admin_pending") {
+          return NextResponse.redirect(
+            new URL("/pending-approval", request.url)
+          );
+        } else if (userRole === "org_admin_inactive") {
+          return NextResponse.redirect(
+            new URL("/application-rejected", request.url)
+          );
+        } else {
+          return NextResponse.redirect(new URL("/sign-in", request.url));
+        }
+      }
+
+      if (path.startsWith("/cin-admin") && userRole !== "cin_admin") {
+        return NextResponse.redirect(new URL("/sign-in", request.url));
+      }
+
+      if (path.startsWith("/super-admin") && userRole !== "super_admin") {
+        return NextResponse.redirect(new URL("/sign-in", request.url));
+      }
+
+      // Special redirections for inactive users
+      if (
+        userRole === "org_admin_inactive" &&
+        path !== "/application-rejected" &&
+        !PUBLIC_PATHS.includes(path)
+      ) {
         return NextResponse.redirect(
-          new URL("/pharmacy/dashboard", request.url)
+          new URL("/application-rejected", request.url)
         );
-      } else if (userRole === "user" && path.startsWith("/pharmacy")) {
-        return NextResponse.redirect(new URL("/user/dashboard", request.url));
+      }
+
+      if (
+        userRole === "org_admin_pending" &&
+        path !== "/pending-approval" &&
+        !PUBLIC_PATHS.includes(path)
+      ) {
+        return NextResponse.redirect(new URL("/pending-approval", request.url));
+      }
+
+      if (
+        userRole === "user_inactive" &&
+        path !== "/account-suspended" &&
+        !PUBLIC_PATHS.includes(path)
+      ) {
+        return NextResponse.redirect(
+          new URL("/account-suspended", request.url)
+        );
+      }
+
+      // Prevent authenticated users from accessing auth pages
+      if (
+        ["/sign-in", "/organization-signup", "/forgot-password"].includes(path)
+      ) {
+        switch (userRole) {
+          case "org_admin_active":
+            return NextResponse.redirect(
+              new URL("/org-admin/organization-dashboard", request.url)
+            );
+          case "org_admin_pending":
+            return NextResponse.redirect(
+              new URL("/pending-approval", request.url)
+            );
+          case "org_admin_inactive":
+            return NextResponse.redirect(
+              new URL("/application-rejected", request.url)
+            );
+          case "cin_admin":
+            return NextResponse.redirect(
+              new URL("/cin-admin/dashboard", request.url)
+            );
+          case "super_admin":
+            return NextResponse.redirect(
+              new URL("/super-admin/super-admin-dashboard", request.url)
+            );
+          default:
+            return NextResponse.redirect(new URL("/dashboard", request.url));
+        }
       }
     }
 
     return response;
   } catch (e) {
-    // If you are here, a Supabase client could not be created!
-    // This is likely because you have not set up environment variables.
-    // Check out http://localhost:3000 for Next Steps.
     return NextResponse.next({
       request: {
         headers: request.headers,

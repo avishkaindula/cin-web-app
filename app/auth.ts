@@ -11,11 +11,7 @@ export const signUpAction = async (formData: FormData) => {
   const password = formData.get("password")?.toString();
   const name = formData.get("name")?.toString();
   const phone = formData.get("phone")?.toString();
-  const dob = formData.get("dob")?.toString();
   const address = formData.get("address")?.toString();
-  const license = formData.get("license")?.toString();
-  const registration = formData.get("registration")?.toString();
-  const userType = formData.get("userType")?.toString() || "user";
   const confirmPassword = formData.get("confirmPassword")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
@@ -23,19 +19,20 @@ export const signUpAction = async (formData: FormData) => {
   if (!email || !password) {
     return encodedRedirect(
       "error",
-      userType === "pharmacy" ? "/sign-up/pharmacy" : "/sign-up/user",
+      "/organization-signup",
       "Email and password are required"
     );
   }
   if (password !== confirmPassword) {
     return encodedRedirect(
       "error",
-      userType === "pharmacy" ? "/sign-up/pharmacy" : "/sign-up/user",
+      "/organization-signup",
       "Passwords do not match"
     );
   }
 
-  // You can add more validation for required fields based on userType here if needed
+  // This web app only handles organization signups - users sign up via mobile app
+  const initialRole = "org_admin_pending";
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -45,27 +42,21 @@ export const signUpAction = async (formData: FormData) => {
       data: {
         name,
         phone,
-        dob,
         address,
-        license,
-        registration,
-        userType,
+        userType: "organization",
         email,
+        user_role: initialRole,
       },
     },
   });
 
   if (error) {
     console.error(error.code + " " + error.message);
-    return encodedRedirect(
-      "error",
-      userType === "pharmacy" ? "/sign-up/pharmacy" : "/sign-up/user",
-      error.message
-    );
+    return encodedRedirect("error", "/organization-signup", error.message);
   } else {
     return encodedRedirect(
       "success",
-      userType === "pharmacy" ? "/sign-up/pharmacy" : "/sign-up/user",
+      "/organization-signup",
       "Thanks for signing up! Please check your email for a verification link."
     );
   }
@@ -96,17 +87,25 @@ export const signInAction = async (formData: FormData) => {
       userRole = jwt.user_role;
     } catch (e) {
       // If decoding fails, fallback to generic protected route
-      return redirect("/protected");
+      return redirect("/dashboard");
     }
   }
 
-  if (userRole === "pharmacy") {
-    return redirect("/pharmacy/dashboard");
-  } else if (userRole === "user") {
-    return redirect("/user/dashboard");
+  // Redirect based on role
+  switch (userRole) {
+    case "org_admin_active":
+      return redirect("/organization-dashboard");
+    case "org_admin_pending":
+      return redirect("/pending-approval");
+    case "org_admin_inactive":
+      return redirect("/application-rejected");
+    case "cin_admin":
+      return redirect("/cin-admin-dashboard");
+    case "super_admin":
+      return redirect("/super-admin-dashboard");
+    default:
+      return redirect("/");
   }
-
-  return redirect("/protected");
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {

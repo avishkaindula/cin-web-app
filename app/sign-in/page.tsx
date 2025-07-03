@@ -1,140 +1,96 @@
-"use client"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Leaf, ArrowLeft } from "lucide-react";
+import { signInAction } from "@/app/auth";
+import { FormMessage, Message } from "@/components/form-message";
+import { SubmitButton } from "@/components/submit-button";
 
-import type React from "react"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Leaf, Loader2 } from "lucide-react"
-import { mockSignIn } from "@/lib/mock-auth"
-
-export default function SignInPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const router = useRouter()
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
-
-    try {
-      const user = await mockSignIn(email, password)
-
-      if (!user) {
-        setError("Invalid email or password")
-        return
-      }
-
-      // Role-based routing
-      if (user.role === "SUPER_ADMIN") {
-        router.push("/super-admin-dashboard")
-      } else if (user.role === "ORG_ADMIN") {
-        switch (user.organizationStatus) {
-          case "pending":
-            router.push("/pending-approval")
-            break
-          case "rejected":
-            router.push("/application-rejected")
-            break
-          case "approved":
-            router.push("/organization-dashboard")
-            break
-          default:
-            router.push("/pending-approval")
-        }
-      }
-    } catch (err) {
-      setError("An error occurred. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+export default async function SignInPage({
+  searchParams,
+}: {
+  searchParams: Promise<Message>;
+}) {
+  const message = await searchParams;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-950 dark:to-blue-950 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="relative flex items-center justify-center mb-8 min-h-[40px]">
+          <Link href="/" className="absolute left-0 flex items-center">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+          </Link>
+          <div className="flex items-center space-x-2">
             <Leaf className="h-8 w-8 text-green-600" />
-            <span className="text-xl font-bold">Climate Intelligence Network</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+              Climate Intelligence Network
+            </span>
           </div>
-          <CardTitle>Sign In</CardTitle>
-          <CardDescription>Enter your credentials to access your dashboard</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+        </div>
 
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+        <Card>
+          <CardHeader>
+            <CardTitle>Welcome Back</CardTitle>
+            <CardDescription>
+              Sign in to your Climate Intelligence Network account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form action={signInAction} className="space-y-4">
+              {message && <FormMessage message={message} />}
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="user@example.com"
+                  required
+                />
+              </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
-            </Button>
-          </form>
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" name="password" type="password" required />
+              </div>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">{"Don't have an organization account?"}</p>
-            <Button variant="link" asChild>
-              <Link href="/organization-signup">Sign up as an organization</Link>
-            </Button>
-          </div>
+              <div className="flex items-center justify-between">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-green-600 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
 
-          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Demo Accounts:</p>
-            <div className="space-y-1 text-xs">
-              <p>
-                <strong>Super Admin:</strong> admin@climate.network
-              </p>
-              <p>
-                <strong>Approved Org:</strong> org@greentech.com
-              </p>
-              <p>
-                <strong>Pending Org:</strong> pending@ecoorg.com
-              </p>
-              <p>
-                <strong>Rejected Org:</strong> rejected@badorg.com
-              </p>
-              <p>
-                <strong>Password:</strong> password
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+              <SubmitButton pendingText="Signing in..." className="w-full">
+                Sign In
+              </SubmitButton>
+              <div className="mt-4 text-center">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Don't have an organization account?{" "}
+                  <Link
+                    href="/organization-signup"
+                    className="text-green-600 hover:underline"
+                  >
+                    Sign up
+                  </Link>
+                </p>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
-  )
+  );
 }
