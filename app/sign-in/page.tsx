@@ -47,7 +47,6 @@ export default async function SignInPage({
           </CardHeader>
           <CardContent>
             <form action={signInAction} className="space-y-4">
-              {message && <FormMessage message={message} />}
               <div>
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -72,6 +71,8 @@ export default async function SignInPage({
                   Forgot password?
                 </Link>
               </div>
+
+              {message && <FormMessage message={message} />}
 
               <SubmitButton pendingText="Signing in..." className="w-full">
                 Sign In

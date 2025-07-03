@@ -50,8 +50,6 @@ export default async function OrganizationSignUpPage({
           </CardHeader>
           <CardContent>
             <form action={signUpAction} className="space-y-4">
-              {message && <FormMessage message={message} />}
-              
               <div>
                 <Label htmlFor="adminName">Admin Full Name</Label>
                 <Input id="adminName" name="adminName" required />
@@ -97,6 +95,8 @@ export default async function OrganizationSignUpPage({
                   required
                 />
               </div>
+              
+              {message && <FormMessage message={message} />}
               
               <SubmitButton pendingText="Creating Account..." className="w-full">
                 Create Account
