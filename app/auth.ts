@@ -9,7 +9,8 @@ import { jwtDecode } from "jwt-decode";
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
-  const name = formData.get("name")?.toString();
+  const adminName = formData.get("adminName")?.toString();
+  const organizationName = formData.get("organizationName")?.toString();
   const phone = formData.get("phone")?.toString();
   const address = formData.get("address")?.toString();
   const confirmPassword = formData.get("confirmPassword")?.toString();
@@ -21,6 +22,13 @@ export const signUpAction = async (formData: FormData) => {
       "error",
       "/organization-signup",
       "Email and password are required"
+    );
+  }
+  if (!adminName || !organizationName) {
+    return encodedRedirect(
+      "error",
+      "/organization-signup",
+      "Admin name and organization name are required"
     );
   }
   if (password !== confirmPassword) {
@@ -39,10 +47,11 @@ export const signUpAction = async (formData: FormData) => {
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
       data: {
-        full_name: name,
+        name: adminName,
+        full_name: adminName,
         phone,
         address,
-        organization_name: formData.get("organizationName")?.toString(),
+        organization_name: organizationName,
         user_role: initialRole,
         email,
       },

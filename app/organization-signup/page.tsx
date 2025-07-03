@@ -53,8 +53,13 @@ export default async function OrganizationSignUpPage({
               {message && <FormMessage message={message} />}
               
               <div>
-                <Label htmlFor="name">Organization Name</Label>
-                <Input id="name" name="name" required />
+                <Label htmlFor="adminName">Admin Full Name</Label>
+                <Input id="adminName" name="adminName" required />
+              </div>
+              
+              <div>
+                <Label htmlFor="organizationName">Organization Name</Label>
+                <Input id="organizationName" name="organizationName" required />
               </div>
               
               <div>
