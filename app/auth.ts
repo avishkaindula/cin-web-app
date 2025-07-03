@@ -43,9 +43,8 @@ export const signUpAction = async (formData: FormData) => {
         name,
         phone,
         address,
-        userType: "organization",
+        userType: initialRole,
         email,
-        user_role: initialRole,
       },
     },
   });
