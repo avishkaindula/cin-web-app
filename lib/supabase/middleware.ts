@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 import { jwtDecode } from "jwt-decode";
+import type { JWTPayload, UserCapability, UserRole, RoutePermission } from "../types/auth";
 
 const PUBLIC_PATHS = [
   "/sign-in",
@@ -16,6 +17,52 @@ const PUBLIC_PATHS = [
   "/",
   "/auth/callback",
 ];
+
+// Define route permissions - what roles and capabilities are required for each route
+const ROUTE_PERMISSIONS: Record<string, RoutePermission> = {
+  // CIN Admin only routes (global admin functions)
+  "/view-all-organizations": { roles: ["cin_admin"], capabilities: [] },
+  "/view-all-users": { roles: ["cin_admin"], capabilities: [] },
+  "/organization-approval": { roles: ["cin_admin"], capabilities: [] },
+  "/review-submissions": { roles: ["cin_admin"], capabilities: [] },
+  
+  // Org Admin routes (organization management)
+  "/add-admins": { roles: ["org_admin"], capabilities: [] },
+  "/view-members": { roles: ["org_admin"], capabilities: [] },
+  "/join-requests": { roles: ["org_admin"], capabilities: [] },
+  
+  // Mission management (requires mission_creator capability)
+  "/create-missions": { roles: ["org_admin"], capabilities: ["mission_creator"] },
+  "/manage-missions": { roles: ["org_admin"], capabilities: ["mission_creator"] },
+  
+  // Reward management (requires reward_creator capability)
+  "/create-rewards": { roles: ["org_admin"], capabilities: ["reward_creator"] },
+  "/manage-rewards": { roles: ["org_admin"], capabilities: ["reward_creator"] },
+  
+  // Event management (requires player_org capability)
+  "/create-events": { roles: ["org_admin"], capabilities: ["player_org"] },
+  
+  // Dashboard (accessible to both roles)
+  "/dashboard": { roles: ["cin_admin", "org_admin"], capabilities: [] },
+};
+
+// Helper function to check if user has required capabilities
+const hasRequiredCapabilities = (userCapabilities: UserCapability[], requiredCapabilities: string[]): boolean => {
+  if (requiredCapabilities.length === 0) return true;
+  
+  return requiredCapabilities.every(required => 
+    userCapabilities.some(cap => 
+      cap.capability === required && cap.status === 'approved'
+    )
+  );
+};
+
+// Helper function to check if user has required role
+const hasRequiredRole = (userRoles: UserRole[], requiredRoles: string[]): boolean => {
+  return requiredRoles.some(required => 
+    userRoles.some(role => role.role === required)
+  );
+};
 
 export const updateSession = async (request: NextRequest) => {
   try {
@@ -53,24 +100,26 @@ export const updateSession = async (request: NextRequest) => {
       data: { session },
     } = await supabase.auth.getSession();
 
-    let userRoles = [];
+    let userRoles: UserRole[] = [];
     let userOrganizations = [];
+    let userCapabilities: UserCapability[] = [];
     let isCinAdmin = false;
     let isOrgAdmin = false;
 
     if (session?.access_token) {
       try {
-        const jwt = jwtDecode(session.access_token) as any;
+        const jwt = jwtDecode<JWTPayload>(session.access_token);
         userRoles = jwt.user_roles || [];
         userOrganizations = jwt.user_organizations || [];
+        userCapabilities = jwt.user_capabilities || [];
         
         // Check if user has cin_admin role (global)
-        isCinAdmin = userRoles.some((role: any) => 
+        isCinAdmin = userRoles.some((role: UserRole) => 
           role.role === 'cin_admin' && role.scope === 'global'
         );
         
         // Check if user has org_admin role (for any organization)
-        isOrgAdmin = userRoles.some((role: any) => 
+        isOrgAdmin = userRoles.some((role: UserRole) => 
           role.role === 'org_admin' && role.scope === 'organization'
         );
       } catch (e) {
@@ -92,6 +141,33 @@ export const updateSession = async (request: NextRequest) => {
         return NextResponse.redirect(new URL("/dashboard", request.url));
       }
 
+      // Check if the current path requires specific permissions
+      const routePermission = ROUTE_PERMISSIONS[path];
+      
+      if (routePermission) {
+        // Check if user has required role
+        const hasRole = hasRequiredRole(userRoles, routePermission.roles);
+        
+        // Check if user has required capabilities (if any)
+        const hasCapabilities = hasRequiredCapabilities(userCapabilities, routePermission.capabilities);
+        
+        if (!hasRole) {
+          // User doesn't have required role - redirect to dashboard with error
+          const redirectUrl = new URL("/dashboard", request.url);
+          redirectUrl.searchParams.set("error", "insufficient_role");
+          redirectUrl.searchParams.set("required_role", routePermission.roles.join(","));
+          return NextResponse.redirect(redirectUrl);
+        }
+        
+        if (!hasCapabilities) {
+          // User doesn't have required capabilities - redirect to dashboard with error
+          const redirectUrl = new URL("/dashboard", request.url);
+          redirectUrl.searchParams.set("error", "insufficient_capabilities");
+          redirectUrl.searchParams.set("required_capabilities", routePermission.capabilities.join(","));
+          return NextResponse.redirect(redirectUrl);
+        }
+      }
+
       // Protect dashboard routes - only authenticated org_admin or cin_admin can access
       if (path.startsWith("/dashboard") && !isCinAdmin && !isOrgAdmin) {
         return NextResponse.redirect(new URL("/sign-in", request.url));
@@ -100,6 +176,14 @@ export const updateSession = async (request: NextRequest) => {
       // Prevent authenticated users from accessing auth pages
       if (["/sign-in", "/organization-signup", "/forgot-password"].includes(path)) {
         return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+    } else if (!user.error) {
+      // User is authenticated but doesn't have required roles (cin_admin or org_admin)
+      // This could happen if user has other roles or is pending approval
+      if (!PUBLIC_PATHS.includes(path)) {
+        const redirectUrl = new URL("/dashboard", request.url);
+        redirectUrl.searchParams.set("error", "no_admin_role");
+        return NextResponse.redirect(redirectUrl);
       }
     }
 
