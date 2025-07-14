@@ -18,9 +18,57 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { mockJoinRequests } from "@/lib/mock-data-extended"
-import type { JoinRequest } from "@/lib/mock-data-extended"
 import { useToast } from "@/hooks/use-toast"
+
+interface JoinRequest {
+  id: string
+  userId: string
+  userName: string
+  userEmail: string
+  requestDate: string
+  message?: string
+  status: "pending" | "approved" | "rejected"
+  userProfile: {
+    totalPoints: number
+    badgeCount: number
+    joinDate: string
+    location?: string
+  }
+}
+
+// Mock data for join requests
+const mockJoinRequests: JoinRequest[] = [
+  {
+    id: "1",
+    userId: "user_001",
+    userName: "Sarah Johnson",
+    userEmail: "sarah.johnson@email.com",
+    requestDate: "2025-01-12T10:30:00Z",
+    status: "pending",
+    message: "I am passionate about combating climate change and would love to contribute to your organization's mission. I have 5 years of experience in climate research and environmental science.",
+    userProfile: {
+      totalPoints: 1250,
+      badgeCount: 8,
+      joinDate: "2024-06-15T00:00:00Z",
+      location: "San Francisco, CA"
+    }
+  },
+  {
+    id: "2", 
+    userId: "user_002",
+    userName: "Michael Chen",
+    userEmail: "michael.chen@email.com",
+    requestDate: "2025-01-11T15:45:00Z",
+    status: "pending",
+    message: "As a software engineer, I want to use my technical skills to help solve the climate crisis. I specialize in full-stack development and have experience with IoT and data visualization.",
+    userProfile: {
+      totalPoints: 890,
+      badgeCount: 5,
+      joinDate: "2024-09-20T00:00:00Z",
+      location: "Austin, TX"
+    }
+  }
+];
 
 export default function JoinRequestsPage() {
   const [requests, setRequests] = useState<JoinRequest[]>(mockJoinRequests)
