@@ -99,20 +99,20 @@ export const signInAction = async (formData: FormData) => {
     }
   }
 
-  // Redirect based on role
+  // Redirect based on role - All authenticated users go to common dashboard
   switch (userRole) {
-    case "org_admin_active":
-      return redirect("/organization-dashboard");
+    case "org_admin":
+      return redirect("/dashboard/dashboard");
+    case "cin_admin":
+      return redirect("/dashboard/dashboard");
     case "org_admin_pending":
       return redirect("/pending-approval");
     case "org_admin_inactive":
       return redirect("/application-rejected");
-    case "cin_admin":
-      return redirect("/cin-admin-dashboard");
-    case "super_admin":
-      return redirect("/super-admin-dashboard");
+    case "user_inactive":
+      return redirect("/account-suspended");
     default:
-      return redirect("/");
+      return redirect("/dashboard/dashboard");
   }
 };
 

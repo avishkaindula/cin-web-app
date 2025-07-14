@@ -33,22 +33,18 @@ export async function GET(request: Request) {
 
   // Redirect based on userRole for Climate Intelligence Network
   switch (userRole) {
-    case "org_admin_active":
-      return NextResponse.redirect(
-        `${origin}/org-admin/organization-dashboard`
-      );
+    case "org_admin":
+      return NextResponse.redirect(`${origin}/dashboard/dashboard`);
+    case "cin_admin":
+      return NextResponse.redirect(`${origin}/dashboard/dashboard`);
     case "org_admin_pending":
       return NextResponse.redirect(`${origin}/pending-approval`);
     case "org_admin_inactive":
       return NextResponse.redirect(`${origin}/application-rejected`);
-    case "cin_admin":
-      return NextResponse.redirect(`${origin}/cin-admin/dashboard`);
-    case "super_admin":
-      return NextResponse.redirect(
-        `${origin}/super-admin/super-admin-dashboard`
-      );
+    case "user_inactive":
+      return NextResponse.redirect(`${origin}/account-suspended`);
     default:
       // Default redirect for unknown roles or no role
-      return NextResponse.redirect(`${origin}/sign-in`);
+      return NextResponse.redirect(`${origin}/dashboard/dashboard`);
   }
 }
