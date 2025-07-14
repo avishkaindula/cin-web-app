@@ -8,7 +8,6 @@ import {
   Gift, 
   UserPlus, 
   Building, 
-  BarChart3, 
   CheckCircle, 
   Clock, 
   XCircle 
@@ -128,12 +127,6 @@ export default function DashboardPage() {
               <Button variant="outline" className="w-full justify-start">
                 <Users className="h-4 w-4 mr-2" />
                 View Members
-              </Button>
-            </Link>
-            <Link href="/dashboard/analytics">
-              <Button variant="outline" className="w-full justify-start">
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Analytics
               </Button>
             </Link>
           </CardContent>

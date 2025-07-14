@@ -79,12 +79,6 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
       icon: Users,
       show: true,
     },
-    {
-      name: "Analytics",
-      href: "/dashboard/analytics",
-      icon: BarChart3,
-      show: true,
-    },
 
     // Player Organization Specific Routes
     {
