@@ -40,20 +40,19 @@ export const signUpAction = async (formData: FormData) => {
   }
 
   // This web app only handles organization signups - users sign up via mobile app
-  const initialRole = "org_admin_pending";
+  // New organizations get org_admin role with pending capabilities by default
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
       data: {
-        name: adminName,
+        user_type: 'admin',
         full_name: adminName,
         phone,
         address,
         organization_name: organizationName,
-        user_role: initialRole,
-        email,
+        permission_types: 'player_org,mission_creator,reward_creator', // Request all capabilities
       },
     },
   });
@@ -100,20 +99,8 @@ export const signInAction = async (formData: FormData) => {
   }
 
   // Redirect based on role - All authenticated users go to common dashboard
-  switch (userRole) {
-    case "org_admin":
-      return redirect("/dashboard/dashboard");
-    case "cin_admin":
-      return redirect("/dashboard/dashboard");
-    case "org_admin_pending":
-      return redirect("/pending-approval");
-    case "org_admin_inactive":
-      return redirect("/application-rejected");
-    case "user_inactive":
-      return redirect("/account-suspended");
-    default:
-      return redirect("/dashboard/dashboard");
-  }
+  // In the new system, both cin_admin and org_admin use the unified dashboard
+  return redirect("/dashboard");
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {

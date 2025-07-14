@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 
 const PUBLIC_PATHS = [
   "/sign-in",
-  "/organization-signup",
+  "/organization-signup", 
   "/forgot-password",
   "/reset-password",
   "/about",
@@ -53,12 +53,26 @@ export const updateSession = async (request: NextRequest) => {
       data: { session },
     } = await supabase.auth.getSession();
 
-    let userRole;
+    let userRoles = [];
+    let userOrganizations = [];
+    let isCinAdmin = false;
+    let isOrgAdmin = false;
 
     if (session?.access_token) {
       try {
         const jwt = jwtDecode(session.access_token) as any;
-        userRole = jwt.user_role;
+        userRoles = jwt.user_roles || [];
+        userOrganizations = jwt.user_organizations || [];
+        
+        // Check if user has cin_admin role (global)
+        isCinAdmin = userRoles.some((role: any) => 
+          role.role === 'cin_admin' && role.scope === 'global'
+        );
+        
+        // Check if user has org_admin role (for any organization)
+        isOrgAdmin = userRoles.some((role: any) => 
+          role.role === 'org_admin' && role.scope === 'organization'
+        );
       } catch (e) {
         // If JWT decoding fails, continue without role
       }
@@ -72,121 +86,20 @@ export const updateSession = async (request: NextRequest) => {
     }
 
     // If authenticated, handle role-based routing
-    if (!user.error && userRole) {
-      // Handle root path redirection
+    if (!user.error && (isCinAdmin || isOrgAdmin)) {
+      // Handle root path redirection - all authenticated users go to unified dashboard
       if (path === "/") {
-        switch (userRole) {
-          case "user":
-            return NextResponse.redirect(new URL("/dashboard", request.url));
-          case "user_inactive":
-            return NextResponse.redirect(
-              new URL("/account-suspended", request.url)
-            );
-          case "org_admin_active":
-            return NextResponse.redirect(
-              new URL("/org-admin/organization-dashboard", request.url)
-            );
-          case "org_admin_pending":
-            return NextResponse.redirect(
-              new URL("/pending-approval", request.url)
-            );
-          case "org_admin_inactive":
-            return NextResponse.redirect(
-              new URL("/application-rejected", request.url)
-            );
-          case "cin_admin":
-            return NextResponse.redirect(
-              new URL("/cin-admin/dashboard", request.url)
-            );
-          case "super_admin":
-            return NextResponse.redirect(
-              new URL("/super-admin/super-admin-dashboard", request.url)
-            );
-          default:
-            return NextResponse.redirect(new URL("/sign-in", request.url));
-        }
+        return NextResponse.redirect(new URL("/dashboard", request.url));
       }
 
-      // Role-based access control
-      if (path.startsWith("/org-admin") && userRole !== "org_admin_active") {
-        if (userRole === "org_admin_pending") {
-          return NextResponse.redirect(
-            new URL("/pending-approval", request.url)
-          );
-        } else if (userRole === "org_admin_inactive") {
-          return NextResponse.redirect(
-            new URL("/application-rejected", request.url)
-          );
-        } else {
-          return NextResponse.redirect(new URL("/sign-in", request.url));
-        }
-      }
-
-      if (path.startsWith("/cin-admin") && userRole !== "cin_admin") {
+      // Protect dashboard routes - only authenticated org_admin or cin_admin can access
+      if (path.startsWith("/dashboard") && !isCinAdmin && !isOrgAdmin) {
         return NextResponse.redirect(new URL("/sign-in", request.url));
-      }
-
-      if (path.startsWith("/super-admin") && userRole !== "super_admin") {
-        return NextResponse.redirect(new URL("/sign-in", request.url));
-      }
-
-      // Special redirections for inactive users
-      if (
-        userRole === "org_admin_inactive" &&
-        path !== "/application-rejected" &&
-        !PUBLIC_PATHS.includes(path)
-      ) {
-        return NextResponse.redirect(
-          new URL("/application-rejected", request.url)
-        );
-      }
-
-      if (
-        userRole === "org_admin_pending" &&
-        path !== "/pending-approval" &&
-        !PUBLIC_PATHS.includes(path)
-      ) {
-        return NextResponse.redirect(new URL("/pending-approval", request.url));
-      }
-
-      if (
-        userRole === "user_inactive" &&
-        path !== "/account-suspended" &&
-        !PUBLIC_PATHS.includes(path)
-      ) {
-        return NextResponse.redirect(
-          new URL("/account-suspended", request.url)
-        );
       }
 
       // Prevent authenticated users from accessing auth pages
-      if (
-        ["/sign-in", "/organization-signup", "/forgot-password"].includes(path)
-      ) {
-        switch (userRole) {
-          case "org_admin_active":
-            return NextResponse.redirect(
-              new URL("/org-admin/organization-dashboard", request.url)
-            );
-          case "org_admin_pending":
-            return NextResponse.redirect(
-              new URL("/pending-approval", request.url)
-            );
-          case "org_admin_inactive":
-            return NextResponse.redirect(
-              new URL("/application-rejected", request.url)
-            );
-          case "cin_admin":
-            return NextResponse.redirect(
-              new URL("/cin-admin/dashboard", request.url)
-            );
-          case "super_admin":
-            return NextResponse.redirect(
-              new URL("/super-admin/super-admin-dashboard", request.url)
-            );
-          default:
-            return NextResponse.redirect(new URL("/dashboard", request.url));
-        }
+      if (["/sign-in", "/organization-signup", "/forgot-password"].includes(path)) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
       }
     }
 
