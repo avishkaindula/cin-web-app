@@ -17,8 +17,7 @@ export default function OrganizationApprovalPage() {
       submittedAt: "2024-07-10",
       requestedCapabilities: [
         { type: 'player_org', status: 'pending' },
-        { type: 'mission_creator', status: 'pending' },
-        { type: 'reward_creator', status: 'pending' }
+        { type: 'mission_creator', status: 'pending' }
       ]
     },
     {
@@ -32,7 +31,8 @@ export default function OrganizationApprovalPage() {
       submittedAt: "2024-07-12",
       requestedCapabilities: [
         { type: 'player_org', status: 'pending' },
-        { type: 'mission_creator', status: 'pending' }
+        { type: 'mission_creator', status: 'pending' },
+        { type: 'reward_creator', status: 'pending' }
       ]
     }
   ];
@@ -70,8 +70,15 @@ export default function OrganizationApprovalPage() {
           Organization Approval
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Review and approve new organization registration requests
+          Review and approve new organization registration requests and their requested capabilities
         </p>
+        <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
+            <strong>Approval Process:</strong> Organizations can request different capabilities during signup. 
+            You can approve or reject each capability individually based on the organization's needs and credibility. 
+            Organizations need at least one approved capability to become active.
+          </p>
+        </div>
       </div>
 
       {/* Statistics */}
@@ -209,11 +216,19 @@ export default function OrganizationApprovalPage() {
                             </Badge>
                           </div>
                           <div className="flex space-x-2">
-                            <Button size="sm" variant="outline" className="text-green-600 border-green-600 hover:bg-green-50">
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="text-green-600 border-green-600 hover:bg-green-50 dark:hover:bg-green-950"
+                            >
                               <CheckCircle className="h-4 w-4 mr-1" />
                               Approve
                             </Button>
-                            <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                            >
                               <XCircle className="h-4 w-4 mr-1" />
                               Reject
                             </Button>

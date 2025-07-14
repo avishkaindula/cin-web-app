@@ -14,6 +14,13 @@ export const signUpAction = async (formData: FormData) => {
   const phone = formData.get("phone")?.toString();
   const address = formData.get("address")?.toString();
   const confirmPassword = formData.get("confirmPassword")?.toString();
+  
+  // Get selected capabilities from checkboxes
+  const selectedCapabilities = formData.getAll("capabilities");
+  const permissionTypes = selectedCapabilities.length > 0 
+    ? selectedCapabilities.join(',') 
+    : 'player_org'; // Default to player_org if nothing selected
+    
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
@@ -52,7 +59,7 @@ export const signUpAction = async (formData: FormData) => {
         phone,
         address,
         organization_name: organizationName,
-        permission_types: 'player_org,mission_creator,reward_creator', // Request all capabilities
+        permission_types: permissionTypes, // Use selected capabilities
       },
     },
   });
