@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,10 +24,11 @@ export default function AddAdminsPage() {
           Add Organization Admins
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          {isCinAdmin 
-            ? `Invite new organization administrators to ${activeOrganization?.name || "the Climate Intelligence Network"}`
-            : "Invite new administrators to your organization"
-          }
+          {isCinAdmin
+            ? `Invite new organization administrators to ${
+                activeOrganization?.name || "the Climate Intelligence Network"
+              }`
+            : "Invite new administrators to your organization"}
         </p>
       </div>
 
@@ -30,7 +37,11 @@ export default function AddAdminsPage() {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            <strong>Note for CIN Administrators:</strong> Adding an admin here will create an <strong>Organization Admin</strong> for {activeOrganization?.name || "the Climate Intelligence Network"}, not a CIN Admin. To create CIN Admins, use the Supabase dashboard or contact your system administrator.
+            <strong>Note for CIN Administrators:</strong> Adding an admin here
+            will create an <strong>Organization Admin</strong> for{" "}
+            {activeOrganization?.name || "the Climate Intelligence Network"},
+            not a CIN Admin. To create CIN Admins with CIN Admin privileges,
+            contact your system administrator.
           </AlertDescription>
         </Alert>
       )}
@@ -51,27 +62,22 @@ export default function AddAdminsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="email">Email Address</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
+                <Input
+                  id="email"
+                  type="email"
                   placeholder="admin@example.com"
-                  required 
+                  required
                 />
               </div>
               <div>
                 <Label htmlFor="name">Full Name</Label>
-                <Input 
-                  id="name" 
-                  type="text" 
-                  placeholder="John Doe"
-                  required 
-                />
+                <Input id="name" type="text" placeholder="John Doe" required />
               </div>
             </div>
             <div>
               <Label htmlFor="role">Admin Role</Label>
-              <select 
-                id="role" 
+              <select
+                id="role"
                 className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-gray-700 dark:bg-gray-800"
               >
                 <option value="org_admin">Organization Admin</option>
@@ -106,21 +112,27 @@ export default function AddAdminsPage() {
                 email: "john@greentech.com",
                 role: "org_admin",
                 status: "active",
-                joinedAt: "2024-01-15"
+                joinedAt: "2024-01-15",
               },
               {
                 name: "Jane Smith",
                 email: "jane@greentech.com",
                 role: "org_moderator",
                 status: "pending",
-                joinedAt: "2024-02-01"
-              }
+                joinedAt: "2024-02-01",
+              },
             ].map((admin, index) => (
-              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+              <div
+                key={index}
+                className="flex items-center justify-between p-4 border rounded-lg"
+              >
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
                     <span className="text-green-600 dark:text-green-300 font-semibold">
-                      {admin.name.split(' ').map(n => n[0]).join('')}
+                      {admin.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </span>
                   </div>
                   <div>
@@ -136,18 +148,18 @@ export default function AddAdminsPage() {
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Badge 
+                  <Badge
                     className={
-                      admin.role === 'org_admin' 
+                      admin.role === "org_admin"
                         ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
                         : "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
                     }
                   >
-                    {admin.role === 'org_admin' ? 'Admin' : 'Moderator'}
+                    {admin.role === "org_admin" ? "Admin" : "Moderator"}
                   </Badge>
-                  <Badge 
+                  <Badge
                     className={
-                      admin.status === 'active' 
+                      admin.status === "active"
                         ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
                         : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
                     }

@@ -66,7 +66,7 @@ const getDashboardNavigation = (
     // Common Admin Routes - Accessible by both CIN admins and org admins
     {
       name: "Add Organization Admins",
-      href: "/add-admins",
+      href: "/add-organization-admins",
       icon: Crown,
       show: true, // Show for both CIN admins and org admins
     },

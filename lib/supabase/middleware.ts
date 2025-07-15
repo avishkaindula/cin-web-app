@@ -27,7 +27,7 @@ const ROUTE_PERMISSIONS: Record<string, RoutePermission> = {
   "/review-submissions": { roles: ["cin_admin"], capabilities: [] },
   
   // Org Admin routes (organization management)
-  "/add-admins": { roles: ["org_admin"], capabilities: [] },
+  "/add-organization-admins": { roles: ["org_admin"], capabilities: [] },
   "/view-members": { roles: ["org_admin"], capabilities: [] },
   "/join-requests": { roles: ["org_admin"], capabilities: [] },
   

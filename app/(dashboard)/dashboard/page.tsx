@@ -119,13 +119,13 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link href="/dashboard/add-admins">
+              <Link href="/add-organization-admins">
                 <Button variant="outline" className="w-full justify-start">
                   <UserPlus className="h-4 w-4 mr-2" />
-                  Add Admins
+                  Add Organization Admins
                 </Button>
               </Link>
-              <Link href="/dashboard/view-members">
+              <Link href="/view-members">
                 <Button variant="outline" className="w-full justify-start">
                   <Users className="h-4 w-4 mr-2" />
                   View Members
@@ -145,13 +145,13 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link href="/dashboard/join-requests">
+              <Link href="/join-requests">
                 <Button variant="outline" className="w-full justify-start">
                   <UserPlus className="h-4 w-4 mr-2" />
                   Join Requests
                 </Button>
               </Link>
-              <Link href="/dashboard/create-events">
+              <Link href="/create-events">
                 <Button variant="outline" className="w-full justify-start">
                   <LayoutDashboard className="h-4 w-4 mr-2" />
                   Create Events
@@ -171,13 +171,13 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link href="/dashboard/create-missions">
+              <Link href="/create-missions">
                 <Button variant="outline" className="w-full justify-start">
                   <Target className="h-4 w-4 mr-2" />
                   Create Missions
                 </Button>
               </Link>
-              <Link href="/dashboard/manage-missions">
+              <Link href="/manage-missions">
                 <Button variant="outline" className="w-full justify-start">
                   <LayoutDashboard className="h-4 w-4 mr-2" />
                   Manage Missions
@@ -197,13 +197,13 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link href="/dashboard/create-rewards">
+              <Link href="/create-rewards">
                 <Button variant="outline" className="w-full justify-start">
                   <Gift className="h-4 w-4 mr-2" />
                   Create Rewards
                 </Button>
               </Link>
-              <Link href="/dashboard/manage-rewards">
+              <Link href="/manage-rewards">
                 <Button variant="outline" className="w-full justify-start">
                   <LayoutDashboard className="h-4 w-4 mr-2" />
                   Manage Rewards
@@ -223,25 +223,25 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link href="/dashboard/organization-approval">
+              <Link href="/organization-approval">
                 <Button variant="outline" className="w-full justify-start">
                   <CheckCircle className="h-4 w-4 mr-2" />
                   Organization Approval
                 </Button>
               </Link>
-              <Link href="/dashboard/review-submissions">
+              <Link href="/review-submissions">
                 <Button variant="outline" className="w-full justify-start">
                   <LayoutDashboard className="h-4 w-4 mr-2" />
                   Review Submissions
                 </Button>
               </Link>
-              <Link href="/dashboard/view-all-organizations">
+              <Link href="/view-all-organizations">
                 <Button variant="outline" className="w-full justify-start">
                   <Building className="h-4 w-4 mr-2" />
                   View All Organizations
                 </Button>
               </Link>
-              <Link href="/dashboard/view-all-users">
+              <Link href="/view-all-users">
                 <Button variant="outline" className="w-full justify-start">
                   <Users className="h-4 w-4 mr-2" />
                   View All Users
