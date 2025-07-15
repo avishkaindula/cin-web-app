@@ -37,14 +37,22 @@ export default function AddAdminsPage() {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            <strong>Important:</strong> You're about to add an Organization
-            Admin for{" "}
+            <strong>Important:</strong> You're about to add an Organization Admin for{" "}
             <strong>{activeOrganization?.name || "this organization"}</strong>.
-            This person will only be able to manage this specific organization's
-            activities (like overseeing players, creating missions, and managing
-            prizes). They will NOT have access to the CIN Admin specific
-            capabilities. If you need to create a CIN Admin, please contact your
-            system administrator instead.
+            
+            <div className="mt-2 text-sm space-y-2">
+              <p className="flex items-start gap-2">
+                <span className="text-green-600 mt-0.5">✓</span>
+                <span>This person <strong>will be able to</strong> manage this specific organization's activities (like overseeing players, creating missions, and managing prizes).</span>
+              </p>
+              <p className="flex items-start gap-2">
+                <span className="text-red-600 mt-0.5">✗</span>
+                <span>They <strong>will NOT have access to</strong> CIN Admin specific capabilities or other organizations.</span>
+              </p>
+              <p className="mt-3 text-xs border-t pt-2">
+                <strong>Need to create a CIN Admin instead?</strong> Please contact your system administrator.
+              </p>
+            </div>
           </AlertDescription>
         </Alert>
       )}
