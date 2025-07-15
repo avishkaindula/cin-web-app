@@ -1,245 +1,208 @@
-"use client"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Leaf, ArrowLeft, Users, Target, Gift } from "lucide-react";
+import { signUpAction } from "@/app/auth";
+import { FormMessage, Message } from "@/components/form-message";
+import { SubmitButton } from "@/components/submit-button";
 
-import type React from "react"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Leaf, Loader2, Upload } from "lucide-react"
-
-export default function OrganizationSignupPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [formData, setFormData] = useState({
-    organizationName: "",
-    description: "",
-    website: "",
-    contactEmail: "",
-    location: "",
-    adminName: "",
-    adminEmail: "",
-    adminPhone: "",
-    isPlayerOrg: false,
-    isTaskMaker: false,
-    isPrizeGiver: false,
-  })
-  const router = useRouter()
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    // Redirect to pending approval page
-    router.push("/pending-approval")
-  }
-
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+export default async function OrganizationSignUpPage({
+  searchParams,
+}: {
+  searchParams: Promise<Message>;
+}) {
+  const message = await searchParams;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-950 dark:to-blue-950 p-4">
-      <div className="container mx-auto max-w-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="relative flex items-center justify-center mb-8 min-h-[40px]">
+          <Link href="/" className="absolute left-0 flex items-center">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+          </Link>
+          <div className="flex items-center space-x-2">
+            <Leaf className="h-8 w-8 text-green-600" />
+            <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+              Climate Intelligence Network
+            </span>
+          </div>
+        </div>
+
         <Card>
-          <CardHeader className="text-center">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <Leaf className="h-8 w-8 text-green-600" />
-              <span className="text-xl font-bold">Climate Intelligence Network</span>
-            </div>
-            <CardTitle>Organization Registration</CardTitle>
-            <CardDescription>Join our network to create climate tasks and engage communities</CardDescription>
+          <CardHeader>
+            <CardTitle className="text-center mb-4">
+              Sign Up as Organization
+            </CardTitle>
+            <CardDescription className="text-center">
+              Register your organization to join Climate Intelligence Network and contribute to environmental data collection.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Organization Information */}
+            <form action={signUpAction} className="space-y-4">
+              <div>
+                <Label htmlFor="adminName">Admin Full Name</Label>
+                <Input id="adminName" name="adminName" required />
+              </div>
+              
+              <div>
+                <Label htmlFor="organizationName">Organization Name</Label>
+                <Input id="organizationName" name="organizationName" required />
+              </div>
+              
+              <div>
+                <Label htmlFor="email">Admin Email</Label>
+                <Input id="email" name="email" type="email" required />
+              </div>
+              
+              <div>
+                <Label htmlFor="phone">Contact Number</Label>
+                <Input 
+                  id="phone" 
+                  name="phone" 
+                  type="tel"
+                  placeholder="+94 (71) 123-4567"
+                  required 
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="address">Organization Address</Label>
+                <Textarea id="address" name="address" required />
+              </div>
+              
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" name="password" type="password" required />
+              </div>
+              
+              <div>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                />
+              </div>
+              
+              {/* Capability Selection */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Organization Information</h3>
-
-                <div className="space-y-2">
-                  <Label htmlFor="orgName">Organization Name *</Label>
-                  <Input
-                    id="orgName"
-                    placeholder="Enter organization name"
-                    value={formData.organizationName}
-                    onChange={(e) => handleInputChange("organizationName", e.target.value)}
-                    required
-                  />
+                <div>
+                  <Label className="text-base font-semibold">
+                    Request Organization Capabilities
+                  </Label>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Select the capabilities your organization needs. CIN admins will review and approve these requests.
+                  </p>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Describe your organization's mission and activities"
-                    value={formData.description}
-                    onChange={(e) => handleInputChange("description", e.target.value)}
-                    rows={3}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="logo">Organization Logo</Label>
-                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
-                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Click to upload or drag and drop</p>
-                    <p className="text-xs text-gray-500">PNG, JPG up to 2MB</p>
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="website">Website URL</Label>
-                    <Input
-                      id="website"
-                      type="url"
-                      placeholder="https://yourorganization.com"
-                      value={formData.website}
-                      onChange={(e) => handleInputChange("website", e.target.value)}
+                
+                <div className="space-y-4">
+                  {/* Player Organization Capability */}
+                  <div className="flex items-start space-x-3 p-4 border rounded-lg">
+                    <Checkbox 
+                      id="player_org" 
+                      name="capabilities" 
+                      value="player_org"
+                      defaultChecked
                     />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <Users className="h-4 w-4 text-blue-600" />
+                        <Label htmlFor="player_org" className="font-medium cursor-pointer">
+                          Player Organization
+                        </Label>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Allow users to join your organization and participate in climate missions. 
+                        This is the basic capability most organizations need.
+                      </p>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="contactEmail">Contact Email *</Label>
-                    <Input
-                      id="contactEmail"
-                      type="email"
-                      placeholder="contact@yourorg.com"
-                      value={formData.contactEmail}
-                      onChange={(e) => handleInputChange("contactEmail", e.target.value)}
-                      required
+
+                  {/* Mission Creator Capability */}
+                  <div className="flex items-start space-x-3 p-4 border rounded-lg">
+                    <Checkbox 
+                      id="mission_creator" 
+                      name="capabilities" 
+                      value="mission_creator"
                     />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <Target className="h-4 w-4 text-green-600" />
+                        <Label htmlFor="mission_creator" className="font-medium cursor-pointer">
+                          Mission Creator
+                        </Label>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Create and manage climate action missions for your organization and the network. 
+                        Requires approval based on organization credibility.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Reward Creator Capability */}
+                  <div className="flex items-start space-x-3 p-4 border rounded-lg">
+                    <Checkbox 
+                      id="reward_creator" 
+                      name="capabilities" 
+                      value="reward_creator"
+                    />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <Gift className="h-4 w-4 text-purple-600" />
+                        <Label htmlFor="reward_creator" className="font-medium cursor-pointer">
+                          Reward Creator
+                        </Label>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Create and distribute rewards for mission completion. 
+                        Requires approval and verification of reward fulfillment capability.
+                      </p>
+                    </div>
                   </div>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="location">Physical Location</Label>
-                  <Input
-                    id="location"
-                    placeholder="City, State/Country"
-                    value={formData.location}
-                    onChange={(e) => handleInputChange("location", e.target.value)}
-                  />
+                
+                <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-lg">
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    <strong>Note:</strong> Your organization will be in pending status until CIN admins 
+                    review and approve your requested capabilities. You'll be notified via email once approved.
+                  </p>
                 </div>
               </div>
-
-              {/* Organization Capabilities */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Organization Capabilities</h3>
+              
+              {message && <FormMessage message={message} />}
+              
+              <SubmitButton pendingText="Creating Account..." className="w-full">
+                Create Account
+              </SubmitButton>
+              
+              <div className="mt-4 text-center">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Select the capabilities your organization wants to have on the platform:
+                  Already have an account?{" "}
+                  <Link
+                    href="/sign-in"
+                    className="text-green-600 hover:underline"
+                  >
+                    Sign in
+                  </Link>
                 </p>
-
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="playerOrg"
-                      checked={formData.isPlayerOrg}
-                      onCheckedChange={(checked) => handleInputChange("isPlayerOrg", checked as boolean)}
-                    />
-                    <Label htmlFor="playerOrg" className="text-sm">
-                      <strong>Player Organization</strong> - Recruit and manage members
-                    </Label>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="taskMaker"
-                      checked={formData.isTaskMaker}
-                      onCheckedChange={(checked) => handleInputChange("isTaskMaker", checked as boolean)}
-                    />
-                    <Label htmlFor="taskMaker" className="text-sm">
-                      <strong>Task Maker</strong> - Create and manage climate tasks
-                    </Label>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="prizeGiver"
-                      checked={formData.isPrizeGiver}
-                      onCheckedChange={(checked) => handleInputChange("isPrizeGiver", checked as boolean)}
-                    />
-                    <Label htmlFor="prizeGiver" className="text-sm">
-                      <strong>Prize Giver</strong> - Offer rewards and recognition
-                    </Label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Admin Details */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Administrator Details</h3>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="adminName">Full Name *</Label>
-                    <Input
-                      id="adminName"
-                      placeholder="Enter your full name"
-                      value={formData.adminName}
-                      onChange={(e) => handleInputChange("adminName", e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="adminEmail">Email *</Label>
-                    <Input
-                      id="adminEmail"
-                      type="email"
-                      placeholder="your.email@yourorg.com"
-                      value={formData.adminEmail}
-                      onChange={(e) => handleInputChange("adminEmail", e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="adminPhone">Phone Number</Label>
-                  <Input
-                    id="adminPhone"
-                    type="tel"
-                    placeholder="+94 (71) 123-4567"
-                    value={formData.adminPhone}
-                    onChange={(e) => handleInputChange("adminPhone", e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <Alert>
-                <AlertDescription>
-                  Your application will be reviewed by our team within 2-5 business days. You'll receive an email
-                  notification once the review is complete.
-                </AlertDescription>
-              </Alert>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button type="submit" className="flex-1" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Submit Application
-                </Button>
-                <Button type="button" variant="outline" asChild>
-                  <Link href="/">Cancel</Link>
-                </Button>
               </div>
             </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Already have an account?</p>
-              <Button variant="link" asChild>
-                <Link href="/sign-in">Sign in here</Link>
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }

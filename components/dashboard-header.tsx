@@ -11,26 +11,24 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { User, LogOut } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 
 interface DashboardHeaderProps {
   title: string
-  userName: string
-  userEmail: string
 }
 
-export function DashboardHeader({ title, userName, userEmail }: DashboardHeaderProps) {
-  const router = useRouter()
+export function DashboardHeader({ title }: DashboardHeaderProps) {
+  const { user, signOut } = useAuth()
 
-  const handleSignOut = () => {
-    // In a real app, this would clear authentication state
-    router.push("/")
+  const handleSignOut = async () => {
+    await signOut()
   }
 
   return (
-    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4 sticky top-0 z-30">
       <div className="flex items-center justify-between">
-        <div className="md:ml-64">
+        {/* Title with proper mobile spacing for hamburger menu */}
+        <div className="ml-12 md:ml-0">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h1>
         </div>
 
@@ -46,8 +44,8 @@ export function DashboardHeader({ title, userName, userEmail }: DashboardHeaderP
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">{userName}</p>
-                  <p className="text-xs text-gray-500">{userEmail}</p>
+                  <p className="text-sm font-medium">{user?.user_metadata?.full_name || user?.email || "User"}</p>
+                  <p className="text-xs text-gray-500">{user?.email}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
