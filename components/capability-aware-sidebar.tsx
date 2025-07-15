@@ -90,7 +90,7 @@ const getDashboardNavigation = (isCinAdmin: boolean, activeOrganization: UserOrg
       icon: Target,
       show: hasMissionCreator,
       badge: hasMissionCreator ? "Mission Creator" : undefined,
-      badgeColor: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+      badgeColor: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
     },
     {
       name: "Manage Missions",
@@ -98,7 +98,7 @@ const getDashboardNavigation = (isCinAdmin: boolean, activeOrganization: UserOrg
       icon: Settings,
       show: hasMissionCreator,
       badge: hasMissionCreator ? "Mission Creator" : undefined,
-      badgeColor: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+      badgeColor: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
     },
 
     // Reward Creator Specific Routes
