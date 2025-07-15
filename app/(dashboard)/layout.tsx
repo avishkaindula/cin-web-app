@@ -10,12 +10,16 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <CapabilityAwareSidebar />
-      <DashboardHeader
-        title="Climate Intelligence Network"
-        userName="Admin User"
-        userEmail="admin@greentech.com"
-      />
-      <main className="md:ml-80 pt-20 p-6">{children}</main>
+      
+      {/* Main content area with proper sidebar offset */}
+      <div className="md:ml-80">
+        <DashboardHeader
+          title="Climate Intelligence Network"
+          userName="Admin User"
+          userEmail="admin@greentech.com"
+        />
+        <main className="p-6">{children}</main>
+      </div>
     </div>
   );
 }

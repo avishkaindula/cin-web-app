@@ -61,7 +61,7 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     // Main Dashboard - Always visible
     {
       name: "Dashboard",
-      href: "/dashboard/dashboard",
+      href: "/dashboard",
       icon: LayoutDashboard,
       show: true,
     },
@@ -69,13 +69,13 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     // Common Org Admin Routes - Always visible for org_admin
     {
       name: "Add Admins",
-      href: "/dashboard/add-admins",
+      href: "/add-admins",
       icon: Crown,
       show: true,
     },
     {
       name: "View Members",
-      href: "/dashboard/view-members",
+      href: "/view-members",
       icon: Users,
       show: true,
     },
@@ -83,7 +83,7 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     // Player Organization Specific Routes
     {
       name: "Join Requests",
-      href: "/dashboard/join-requests",
+      href: "/join-requests",
       icon: UserPlus,
       show: hasPlayerOrg,
       badge: hasPlayerOrg ? "Player Org" : undefined,
@@ -91,7 +91,7 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     },
     {
       name: "Create Events",
-      href: "/dashboard/create-events",
+      href: "/create-events",
       icon: Calendar,
       show: hasPlayerOrg,
       badge: hasPlayerOrg ? "Player Org" : undefined,
@@ -101,7 +101,7 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     // Mission Creator Specific Routes
     {
       name: "Create Missions",
-      href: "/dashboard/create-missions",
+      href: "/create-missions",
       icon: Target,
       show: hasMissionCreator,
       badge: hasMissionCreator ? "Mission Creator" : undefined,
@@ -109,7 +109,7 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     },
     {
       name: "Manage Missions",
-      href: "/dashboard/manage-missions",
+      href: "/manage-missions",
       icon: Settings,
       show: hasMissionCreator,
       badge: hasMissionCreator ? "Mission Creator" : undefined,
@@ -119,7 +119,7 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     // Reward Creator Specific Routes
     {
       name: "Create Rewards",
-      href: "/dashboard/create-rewards",
+      href: "/create-rewards",
       icon: Gift,
       show: hasRewardCreator,
       badge: hasRewardCreator ? "Reward Creator" : undefined,
@@ -127,7 +127,7 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     },
     {
       name: "Manage Rewards",
-      href: "/dashboard/manage-rewards",
+      href: "/manage-rewards",
       icon: Settings,
       show: hasRewardCreator,
       badge: hasRewardCreator ? "Reward Creator" : undefined,
@@ -137,7 +137,7 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     // CIN Admin Specific Routes
     {
       name: "Organization Approval",
-      href: "/dashboard/organization-approval",
+      href: "/organization-approval",
       icon: CheckCircle,
       show: isCinAdmin,
       badge: isCinAdmin ? "CIN Admin" : undefined,
@@ -145,7 +145,7 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     },
     {
       name: "Review Submissions",
-      href: "/dashboard/review-submissions",
+      href: "/review-submissions",
       icon: FileText,
       show: isCinAdmin,
       badge: isCinAdmin ? "CIN Admin" : undefined,
@@ -153,7 +153,7 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     },
     {
       name: "View All Organizations",
-      href: "/dashboard/view-all-organizations",
+      href: "/view-all-organizations",
       icon: Building,
       show: isCinAdmin,
       badge: isCinAdmin ? "CIN Admin" : undefined,
@@ -161,7 +161,7 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
     },
     {
       name: "View All Users",
-      href: "/dashboard/view-all-users",
+      href: "/view-all-users",
       icon: Eye,
       show: isCinAdmin,
       badge: isCinAdmin ? "CIN Admin" : undefined,
@@ -179,17 +179,17 @@ export function CapabilityAwareSidebar() {
 
   return (
     <>
-      {/* Mobile menu button */}
+      {/* Mobile menu button - positioned in header area but only visible on mobile */}
       <Button
         variant="ghost"
         size="icon"
-        className="md:hidden fixed top-4 left-4 z-50"
+        className="md:hidden fixed top-4 left-4 z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       >
         {isMobileMenuOpen ? (
-          <X className="h-6 w-6" />
+          <X className="h-5 w-5" />
         ) : (
-          <Menu className="h-6 w-6" />
+          <Menu className="h-5 w-5" />
         )}
       </Button>
 
