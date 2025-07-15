@@ -183,14 +183,10 @@ export function CapabilityAwareSidebar() {
       <Button
         variant="ghost"
         size="icon"
-        className="md:hidden fixed top-4 left-4 z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="md:hidden fixed top-4 left-4 z-40 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
+        onClick={() => setIsMobileMenuOpen(true)}
       >
-        {isMobileMenuOpen ? (
-          <X className="h-5 w-5" />
-        ) : (
-          <Menu className="h-5 w-5" />
-        )}
+        <Menu className="h-5 w-5" />
       </Button>
 
       {/* Mobile overlay */}
@@ -212,12 +208,27 @@ export function CapabilityAwareSidebar() {
       >
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {organization.name}
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {isCinAdmin ? "CIN Administrator" : "Organization Admin"}
-            </p>
+            {/* Header with close button for mobile */}
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {organization.name}
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {isCinAdmin ? "CIN Administrator" : "Organization Admin"}
+                </p>
+              </div>
+              
+              {/* Close button - only visible on mobile */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
             
             {/* Organization Capabilities Status */}
             <div className="mt-3 space-y-1">
