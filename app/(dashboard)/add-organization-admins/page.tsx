@@ -37,11 +37,14 @@ export default function AddAdminsPage() {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            <strong>Note for CIN Administrators:</strong> Adding an admin here
-            will create an <strong>Organization Admin</strong> for{" "}
-            {activeOrganization?.name || "the Climate Intelligence Network"},
-            not a CIN Admin. To create CIN Admins with CIN Admin privileges,
-            contact your system administrator.
+            <strong>Important:</strong> You're about to add an Organization
+            Admin for{" "}
+            <strong>{activeOrganization?.name || "this organization"}</strong>.
+            This person will only be able to manage this specific organization's
+            activities (like overseeing players, creating missions, and managing
+            prizes). They will NOT have access to the CIN Admin specific
+            capabilities. If you need to create a CIN Admin, please contact your
+            system administrator instead.
           </AlertDescription>
         </Alert>
       )}
