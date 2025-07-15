@@ -14,13 +14,14 @@ export const signUpAction = async (formData: FormData) => {
   const phone = formData.get("phone")?.toString();
   const address = formData.get("address")?.toString();
   const confirmPassword = formData.get("confirmPassword")?.toString();
-  
+
   // Get selected capabilities from checkboxes
   const selectedCapabilities = formData.getAll("capabilities");
-  const permissionTypes = selectedCapabilities.length > 0 
-    ? selectedCapabilities.join(',') 
-    : 'player_org'; // Default to player_org if nothing selected
-    
+  const permissionTypes =
+    selectedCapabilities.length > 0
+      ? selectedCapabilities.join(",")
+      : "player_org"; // Default to player_org if nothing selected
+
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
@@ -54,7 +55,7 @@ export const signUpAction = async (formData: FormData) => {
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
       data: {
-        user_type: 'admin',
+        user_type: "admin",
         full_name: adminName,
         phone,
         address,
@@ -91,18 +92,6 @@ export const signInAction = async (formData: FormData) => {
 
   if (error) {
     return encodedRedirect("error", "/sign-in", error.message);
-  }
-
-  // Role-based redirection
-  let userRole: string | undefined;
-  if (session?.access_token) {
-    try {
-      const jwt: any = jwtDecode(session.access_token);
-      userRole = jwt.user_role;
-    } catch (e) {
-      // If decoding fails, fallback to generic protected route
-      return redirect("/dashboard");
-    }
   }
 
   // Redirect based on role - All authenticated users go to common dashboard
