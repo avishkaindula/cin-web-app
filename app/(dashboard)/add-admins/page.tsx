@@ -1,31 +1,49 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { UserPlus, Mail, Shield, Trash2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { UserPlus, Mail, Shield, Trash2, AlertTriangle } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function AddAdminsPage() {
+  const { isCinAdmin, activeOrganization } = useAuth();
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Add Admins
+          Add Organization Admins
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Invite new administrators to your organization
+          {isCinAdmin 
+            ? `Invite new organization administrators to ${activeOrganization?.name || "the Climate Intelligence Network"}`
+            : "Invite new administrators to your organization"
+          }
         </p>
       </div>
+
+      {/* Warning for CIN Admins */}
+      {isCinAdmin && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Note for CIN Administrators:</strong> Adding an admin here will create an <strong>Organization Admin</strong> for {activeOrganization?.name || "the Climate Intelligence Network"}, not a CIN Admin. To create CIN Admins, use the Supabase dashboard or contact your system administrator.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Add New Admin Form */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <UserPlus className="h-5 w-5" />
-            <span>Invite New Admin</span>
+            <span>Invite New Organization Admin</span>
           </CardTitle>
           <CardDescription>
-            Send an invitation to a new administrator
+            Send an invitation to a new organization administrator
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -73,7 +91,7 @@ export default function AddAdminsPage() {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Shield className="h-5 w-5" />
-            <span>Current Administrators</span>
+            <span>Current Organization Administrators</span>
           </CardTitle>
           <CardDescription>
             Manage existing organization administrators

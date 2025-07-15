@@ -63,12 +63,12 @@ const getDashboardNavigation = (
       show: true,
     },
 
-    // Common Org Admin Routes - Only show for org admins, not CIN admins
+    // Common Admin Routes - Accessible by both CIN admins and org admins
     {
-      name: "Add Admins",
+      name: "Add Organization Admins",
       href: "/add-admins",
       icon: Crown,
-      show: !isCinAdmin, // Hide for CIN admins since this should be done via Supabase dashboard
+      show: true, // Show for both CIN admins and org admins
     },
     {
       name: "View Members",
