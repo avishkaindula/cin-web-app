@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,21 +15,7 @@ import {
   XCircle 
 } from "lucide-react";
 import Link from "next/link";
-
-// This would come from JWT/user context in real implementation
-const mockUserData = {
-  role: "org_admin", // or "cin_admin"
-  organization: {
-    id: "123",
-    name: "Green Tech Solutions",
-    capabilities: [
-      { status: 'approved', type: 'player_org' },
-      { status: 'approved', type: 'mission_creator' },
-      { status: 'pending', type: 'reward_creator' }
-    ]
-  },
-  isCinAdmin: false // This would be true if user has cin_admin role
-};
+import { useAuth } from "@/contexts/auth-context";
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -56,10 +44,21 @@ const getStatusColor = (status: string) => {
 };
 
 export default function DashboardPage() {
-  const { organization, isCinAdmin } = mockUserData;
-  
-  // Get approved capabilities
-  const approvedCapabilities = organization.capabilities.filter(cap => cap.status === 'approved');
+  const { isCinAdmin, isOrgAdmin, activeOrganization, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Get approved capabilities if we have an active organization
+  const approvedCapabilities = activeOrganization?.capabilities?.filter(cap => cap.status === 'approved') || [];
   const hasPlayerOrg = approvedCapabilities.some(cap => cap.type === 'player_org');
   const hasMissionCreator = approvedCapabilities.some(cap => cap.type === 'mission_creator');
   const hasRewardCreator = approvedCapabilities.some(cap => cap.type === 'reward_creator');
@@ -71,66 +70,70 @@ export default function DashboardPage() {
           Welcome to Climate Intelligence Network
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          {isCinAdmin ? "Global Network Administrator" : `${organization.name} - Organization Dashboard`}
+          {isCinAdmin ? "Global Network Administrator" : activeOrganization ? `${activeOrganization.name} - Organization Dashboard` : "Dashboard"}
         </p>
       </div>
 
-      {/* Organization Status Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Building className="h-5 w-5" />
-            <span>Organization Status</span>
-          </CardTitle>
-          <CardDescription>
-            Current capabilities and approval status for {organization.name}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {organization.capabilities.map((capability) => (
-              <div key={capability.type} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center space-x-2">
-                  {getStatusIcon(capability.status)}
-                  <span className="font-medium capitalize">
-                    {capability.type.replace('_', ' ')}
-                  </span>
+      {/* Organization Status Card - Only show if user has an active organization */}
+      {activeOrganization && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Building className="h-5 w-5" />
+              <span>{activeOrganization.name}</span>
+            </CardTitle>
+            <CardDescription>
+              Current capabilities and approval status for {activeOrganization.name}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {activeOrganization.capabilities?.map((capability) => (
+                <div key={capability.type} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    {getStatusIcon(capability.status)}
+                    <span className="font-medium capitalize">
+                      {capability.type.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <Badge className={getStatusColor(capability.status)}>
+                    {capability.status}
+                  </Badge>
                 </div>
-                <Badge className={getStatusColor(capability.status)}>
-                  {capability.status}
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              )) || []}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Quick Actions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         
         {/* Common Org Admin Routes */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Users className="h-5 w-5" />
-              <span>Organization Management</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Link href="/dashboard/add-admins">
-              <Button variant="outline" className="w-full justify-start">
-                <UserPlus className="h-4 w-4 mr-2" />
-                Add Admins
-              </Button>
-            </Link>
-            <Link href="/dashboard/view-members">
-              <Button variant="outline" className="w-full justify-start">
-                <Users className="h-4 w-4 mr-2" />
-                View Members
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        {isOrgAdmin && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Users className="h-5 w-5" />
+                <span>Organization Management</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Link href="/dashboard/add-admins">
+                <Button variant="outline" className="w-full justify-start">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Add Admins
+                </Button>
+              </Link>
+              <Link href="/dashboard/view-members">
+                <Button variant="outline" className="w-full justify-start">
+                  <Users className="h-4 w-4 mr-2" />
+                  View Members
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Player Organization Capabilities */}
         {hasPlayerOrg && (
@@ -250,7 +253,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Pending Capabilities Notice */}
-      {organization.capabilities.some(cap => cap.status === 'pending') && (
+      {activeOrganization?.capabilities?.some(cap => cap.status === 'pending') && (
         <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
           <CardHeader>
             <CardTitle className="text-yellow-800 dark:text-yellow-200">

@@ -23,21 +23,8 @@ import {
   Eye,
 } from "lucide-react";
 import { useState } from "react";
-
-// This would come from JWT context in real implementation
-const mockUserData = {
-  role: "org_admin", // or "cin_admin"
-  organization: {
-    id: "123",
-    name: "Green Tech Solutions",
-    capabilities: [
-      { status: 'approved', type: 'player_org' },
-      { status: 'approved', type: 'mission_creator' },
-      { status: 'pending', type: 'reward_creator' }
-    ]
-  },
-  isCinAdmin: false // This would be true if user has cin_admin role
-};
+import { useAuth } from "@/contexts/auth-context";
+import type { UserOrganization } from "@/lib/types/auth";
 
 interface NavigationItem {
   name: string;
@@ -48,11 +35,9 @@ interface NavigationItem {
   badgeColor?: string;
 }
 
-const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[] => {
-  const { organization, isCinAdmin } = userData;
-  
+const getDashboardNavigation = (isCinAdmin: boolean, activeOrganization: UserOrganization | null): NavigationItem[] => {
   // Get approved capabilities
-  const approvedCapabilities = organization.capabilities.filter(cap => cap.status === 'approved');
+  const approvedCapabilities = activeOrganization?.capabilities?.filter(cap => cap.status === 'approved') || [];
   const hasPlayerOrg = approvedCapabilities.some(cap => cap.type === 'player_org');
   const hasMissionCreator = approvedCapabilities.some(cap => cap.type === 'mission_creator');
   const hasRewardCreator = approvedCapabilities.some(cap => cap.type === 'reward_creator');
@@ -173,9 +158,33 @@ const getDashboardNavigation = (userData: typeof mockUserData): NavigationItem[]
 export function CapabilityAwareSidebar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const navigation = getDashboardNavigation(mockUserData).filter((item) => item.show);
+  const { isCinAdmin, isOrgAdmin, activeOrganization, isLoading } = useAuth();
 
-  const { organization, isCinAdmin } = mockUserData;
+  // Show loading state while auth is being determined
+  if (isLoading) {
+    return (
+      <div className="fixed left-0 top-0 z-40 h-full w-80 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-center h-full">
+          <div className="text-gray-500">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // If no active organization and not a CIN admin, show no organization state
+  if (!activeOrganization && !isCinAdmin) {
+    return (
+      <div className="fixed left-0 top-0 z-40 h-full w-80 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-center h-full p-6 text-center">
+          <div className="text-gray-500">
+            No organization assigned
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const navigation = getDashboardNavigation(isCinAdmin, activeOrganization).filter((item) => item.show);
 
   return (
     <>
@@ -212,7 +221,7 @@ export function CapabilityAwareSidebar() {
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {organization.name}
+                  {activeOrganization?.name || "CIN Admin"}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {isCinAdmin ? "CIN Administrator" : "Organization Admin"}
@@ -231,25 +240,27 @@ export function CapabilityAwareSidebar() {
             </div>
             
             {/* Organization Capabilities Status */}
-            <div className="mt-3 space-y-1">
-              {organization.capabilities.map((capability) => (
-                <div key={capability.type} className="flex items-center justify-between text-xs">
-                  <span className="capitalize text-gray-600 dark:text-gray-400">
-                    {capability.type.replace('_', ' ')}
-                  </span>
-                  <Badge 
-                    className={cn(
-                      "text-xs px-1 py-0",
-                      capability.status === 'approved' && "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-                      capability.status === 'pending' && "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-                      capability.status === 'rejected' && "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                    )}
-                  >
-                    {capability.status}
-                  </Badge>
-                </div>
-              ))}
-            </div>
+            {activeOrganization?.capabilities && (
+              <div className="mt-3 space-y-1">
+                {activeOrganization.capabilities.map((capability) => (
+                  <div key={capability.type} className="flex items-center justify-between text-xs">
+                    <span className="capitalize text-gray-600 dark:text-gray-400">
+                      {capability.type.replace('_', ' ')}
+                    </span>
+                    <Badge 
+                      className={cn(
+                        "text-xs px-1 py-0",
+                        capability.status === 'approved' && "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                        capability.status === 'pending' && "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+                        capability.status === 'rejected' && "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                      )}
+                    >
+                      {capability.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -282,7 +293,7 @@ export function CapabilityAwareSidebar() {
           </nav>
 
           {/* Pending Capabilities Notice */}
-          {organization.capabilities.some(cap => cap.status === 'pending') && (
+          {activeOrganization?.capabilities?.some(cap => cap.status === 'pending') && (
             <div className="p-4 border-t border-gray-200 dark:border-gray-700">
               <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
                 <div className="flex items-center space-x-2">

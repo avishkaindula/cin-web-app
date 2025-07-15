@@ -52,7 +52,7 @@ const hasRequiredCapabilities = (userCapabilities: UserCapability[], requiredCap
   
   return requiredCapabilities.every(required => 
     userCapabilities.some(cap => 
-      cap.capability === required && cap.status === 'approved'
+      cap.type === required && cap.status === 'approved'
     )
   );
 };
@@ -111,7 +111,11 @@ export const updateSession = async (request: NextRequest) => {
         const jwt = jwtDecode<JWTPayload>(session.access_token);
         userRoles = jwt.user_roles || [];
         userOrganizations = jwt.user_organizations || [];
-        userCapabilities = jwt.user_capabilities || [];
+        
+        // Extract capabilities from active organization
+        const activeOrgId = jwt.active_organization_id;
+        const activeOrg = userOrganizations.find((org: any) => org.id === activeOrgId);
+        userCapabilities = activeOrg?.capabilities || [];
         
         // Check if user has cin_admin role (global)
         isCinAdmin = userRoles.some((role: UserRole) => 

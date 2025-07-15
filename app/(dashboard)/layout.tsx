@@ -15,8 +15,6 @@ export default function DashboardLayout({
       <div className="md:ml-80">
         <DashboardHeader
           title="Climate Intelligence Network"
-          userName="Admin User"
-          userEmail="admin@greentech.com"
         />
         <main className="p-6">{children}</main>
       </div>
