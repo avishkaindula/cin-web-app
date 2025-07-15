@@ -183,7 +183,7 @@ export function CapabilityAwareSidebar() {
       <Button
         variant="ghost"
         size="icon"
-        className="md:hidden fixed top-4 left-4 z-40 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
+        className="md:hidden fixed top-4 left-4 z-40 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
         onClick={() => setIsMobileMenuOpen(true)}
       >
         <Menu className="h-5 w-5" />
@@ -223,7 +223,7 @@ export function CapabilityAwareSidebar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden"
+                className="md:hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <X className="h-5 w-5" />
