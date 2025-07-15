@@ -53,7 +53,8 @@ export default function AddAdminsPage() {
                 <span className="text-red-600 mt-0.5">✗</span>
                 <span>
                   They <strong>will NOT have access to</strong> CIN Admin
-                  specific capabilities.
+                  specific capabilities like organization approval or submission
+                  review.
                 </span>
               </p>
               <p className="mt-3 text-xs border-t pt-2">
