@@ -35,12 +35,24 @@ interface NavigationItem {
   badgeColor?: string;
 }
 
-const getDashboardNavigation = (isCinAdmin: boolean, activeOrganization: UserOrganization | null): NavigationItem[] => {
+const getDashboardNavigation = (
+  isCinAdmin: boolean,
+  activeOrganization: UserOrganization | null
+): NavigationItem[] => {
   // Get approved capabilities
-  const approvedCapabilities = activeOrganization?.capabilities?.filter(cap => cap.status === 'approved') || [];
-  const hasPlayerOrg = approvedCapabilities.some(cap => cap.type === 'player_org');
-  const hasMissionCreator = approvedCapabilities.some(cap => cap.type === 'mission_creator');
-  const hasRewardCreator = approvedCapabilities.some(cap => cap.type === 'reward_creator');
+  const approvedCapabilities =
+    activeOrganization?.capabilities?.filter(
+      (cap) => cap.status === "approved"
+    ) || [];
+  const hasPlayerOrg = approvedCapabilities.some(
+    (cap) => cap.type === "player_org"
+  );
+  const hasMissionCreator = approvedCapabilities.some(
+    (cap) => cap.type === "mission_creator"
+  );
+  const hasRewardCreator = approvedCapabilities.some(
+    (cap) => cap.type === "reward_creator"
+  );
 
   return [
     // Main Dashboard - Always visible
@@ -51,12 +63,12 @@ const getDashboardNavigation = (isCinAdmin: boolean, activeOrganization: UserOrg
       show: true,
     },
 
-    // Common Org Admin Routes - Always visible for org_admin
+    // Common Org Admin Routes - Only show for org admins, not CIN admins
     {
       name: "Add Admins",
       href: "/add-admins",
       icon: Crown,
-      show: true,
+      show: !isCinAdmin, // Hide for CIN admins since this should be done via Supabase dashboard
     },
     {
       name: "View Members",
@@ -65,61 +77,7 @@ const getDashboardNavigation = (isCinAdmin: boolean, activeOrganization: UserOrg
       show: true,
     },
 
-    // Player Organization Specific Routes
-    {
-      name: "Join Requests",
-      href: "/join-requests",
-      icon: UserPlus,
-      show: hasPlayerOrg,
-      badge: hasPlayerOrg ? "Player Org" : undefined,
-      badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-    },
-    {
-      name: "Create Events",
-      href: "/create-events",
-      icon: Calendar,
-      show: hasPlayerOrg,
-      badge: hasPlayerOrg ? "Player Org" : undefined,
-      badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-    },
-
-    // Mission Creator Specific Routes
-    {
-      name: "Create Missions",
-      href: "/create-missions",
-      icon: Target,
-      show: hasMissionCreator,
-      badge: hasMissionCreator ? "Mission Creator" : undefined,
-      badgeColor: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
-    },
-    {
-      name: "Manage Missions",
-      href: "/manage-missions",
-      icon: Settings,
-      show: hasMissionCreator,
-      badge: hasMissionCreator ? "Mission Creator" : undefined,
-      badgeColor: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
-    },
-
-    // Reward Creator Specific Routes
-    {
-      name: "Create Rewards",
-      href: "/create-rewards",
-      icon: Gift,
-      show: hasRewardCreator,
-      badge: hasRewardCreator ? "Reward Creator" : undefined,
-      badgeColor: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
-    },
-    {
-      name: "Manage Rewards",
-      href: "/manage-rewards",
-      icon: Settings,
-      show: hasRewardCreator,
-      badge: hasRewardCreator ? "Reward Creator" : undefined,
-      badgeColor: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
-    },
-
-    // CIN Admin Specific Routes
+    // CIN Admin Specific Routes - Show at top for CIN admins
     {
       name: "Organization Approval",
       href: "/organization-approval",
@@ -152,6 +110,66 @@ const getDashboardNavigation = (isCinAdmin: boolean, activeOrganization: UserOrg
       badge: isCinAdmin ? "CIN Admin" : undefined,
       badgeColor: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
     },
+
+    // Player Organization Specific Routes
+    {
+      name: "Join Requests",
+      href: "/join-requests",
+      icon: UserPlus,
+      show: hasPlayerOrg,
+      badge: hasPlayerOrg ? "Player Org" : undefined,
+      badgeColor:
+        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+    },
+    {
+      name: "Create Events",
+      href: "/create-events",
+      icon: Calendar,
+      show: hasPlayerOrg,
+      badge: hasPlayerOrg ? "Player Org" : undefined,
+      badgeColor:
+        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+    },
+
+    // Mission Creator Specific Routes
+    {
+      name: "Create Missions",
+      href: "/create-missions",
+      icon: Target,
+      show: hasMissionCreator,
+      badge: hasMissionCreator ? "Mission Creator" : undefined,
+      badgeColor:
+        "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
+    },
+    {
+      name: "Manage Missions",
+      href: "/manage-missions",
+      icon: Settings,
+      show: hasMissionCreator,
+      badge: hasMissionCreator ? "Mission Creator" : undefined,
+      badgeColor:
+        "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
+    },
+
+    // Reward Creator Specific Routes
+    {
+      name: "Create Rewards",
+      href: "/create-rewards",
+      icon: Gift,
+      show: hasRewardCreator,
+      badge: hasRewardCreator ? "Reward Creator" : undefined,
+      badgeColor:
+        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+    },
+    {
+      name: "Manage Rewards",
+      href: "/manage-rewards",
+      icon: Settings,
+      show: hasRewardCreator,
+      badge: hasRewardCreator ? "Reward Creator" : undefined,
+      badgeColor:
+        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+    },
   ];
 };
 
@@ -176,15 +194,16 @@ export function CapabilityAwareSidebar() {
     return (
       <div className="fixed left-0 top-0 z-40 h-full w-80 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-center h-full p-6 text-center">
-          <div className="text-gray-500">
-            No organization assigned
-          </div>
+          <div className="text-gray-500">No organization assigned</div>
         </div>
       </div>
     );
   }
 
-  const navigation = getDashboardNavigation(isCinAdmin, activeOrganization).filter((item) => item.show);
+  const navigation = getDashboardNavigation(
+    isCinAdmin,
+    activeOrganization
+  ).filter((item) => item.show);
 
   return (
     <>
@@ -227,7 +246,7 @@ export function CapabilityAwareSidebar() {
                   {isCinAdmin ? "CIN Administrator" : "Organization Admin"}
                 </p>
               </div>
-              
+
               {/* Close button - only visible on mobile */}
               <Button
                 variant="ghost"
@@ -238,21 +257,27 @@ export function CapabilityAwareSidebar() {
                 <X className="h-5 w-5" />
               </Button>
             </div>
-            
+
             {/* Organization Capabilities Status */}
             {activeOrganization?.capabilities && (
               <div className="mt-3 space-y-1">
                 {activeOrganization.capabilities.map((capability) => (
-                  <div key={capability.type} className="flex items-center justify-between text-xs">
+                  <div
+                    key={capability.type}
+                    className="flex items-center justify-between text-xs"
+                  >
                     <span className="capitalize text-gray-600 dark:text-gray-400">
-                      {capability.type.replace('_', ' ')}
+                      {capability.type.replace("_", " ")}
                     </span>
-                    <Badge 
+                    <Badge
                       className={cn(
                         "text-xs px-1 py-0",
-                        capability.status === 'approved' && "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-                        capability.status === 'pending' && "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-                        capability.status === 'rejected' && "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                        capability.status === "approved" &&
+                          "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                        capability.status === "pending" &&
+                          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+                        capability.status === "rejected" &&
+                          "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
                       )}
                     >
                       {capability.status}
@@ -293,7 +318,9 @@ export function CapabilityAwareSidebar() {
           </nav>
 
           {/* Pending Capabilities Notice */}
-          {activeOrganization?.capabilities?.some(cap => cap.status === 'pending') && (
+          {activeOrganization?.capabilities?.some(
+            (cap) => cap.status === "pending"
+          ) && (
             <div className="p-4 border-t border-gray-200 dark:border-gray-700">
               <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
                 <div className="flex items-center space-x-2">
