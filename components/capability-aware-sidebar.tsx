@@ -21,6 +21,7 @@ import {
   Settings,
   FileText,
   Eye,
+  QrCode,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
@@ -125,6 +126,15 @@ const getDashboardNavigation = (
       name: "Create Events",
       href: "/create-events",
       icon: Calendar,
+      show: hasPlayerOrg,
+      badge: hasPlayerOrg ? "Player Org" : undefined,
+      badgeColor:
+        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+    },
+    {
+      name: "Scan Event QR Codes",
+      href: "/scan-event-qr",
+      icon: QrCode,
       show: hasPlayerOrg,
       badge: hasPlayerOrg ? "Player Org" : undefined,
       badgeColor:

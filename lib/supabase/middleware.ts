@@ -41,6 +41,7 @@ const ROUTE_PERMISSIONS: Record<string, RoutePermission> = {
   
   // Event management (requires player_org capability)
   "/create-events": { roles: ["org_admin"], capabilities: ["player_org"] },
+  "/scan-event-qr": { roles: ["org_admin"], capabilities: ["player_org"] },
   
   // Dashboard (accessible to both roles)
   "/dashboard": { roles: ["cin_admin", "org_admin"], capabilities: [] },
