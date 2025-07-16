@@ -94,16 +94,6 @@ export default function AddAdminsPage() {
                 <Input id="name" type="text" placeholder="John Doe" required />
               </div>
             </div>
-            <div>
-              <Label htmlFor="role">Admin Role</Label>
-              <select
-                id="role"
-                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-gray-700 dark:bg-gray-800"
-              >
-                <option value="org_admin">Organization Admin</option>
-                <option value="org_moderator">Organization Moderator</option>
-              </select>
-            </div>
             <Button className="w-full md:w-auto">
               <Mail className="h-4 w-4 mr-2" />
               Send Invitation
