@@ -8,20 +8,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
-  LayoutDashboard,
-  Users,
-  Target,
-  Gift,
-  UserPlus,
   Building,
   CheckCircle,
   Clock,
   XCircle,
 } from "lucide-react";
-import Link from "next/link";
 import { useAuth } from "@/contexts/auth-context";
+import {StatDashboard} from "@/components/StatDashboard";
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -129,150 +123,8 @@ export default function DashboardPage() {
         </Card>
       )}
 
-      {/* Quick Actions Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Common Org Admin Routes */}
-        {isOrgAdmin && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Users className="h-5 w-5" />
-                <span>Organization Management</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Link href="/add-organization-admins">
-                <Button variant="outline" className="w-full justify-start">
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Add Organization Admins
-                </Button>
-              </Link>
-              <Link href="/view-members">
-                <Button variant="outline" className="w-full justify-start">
-                  <Users className="h-4 w-4 mr-2" />
-                  View Members
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Player Organization Capabilities */}
-        {hasPlayerOrg && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Users className="h-5 w-5" />
-                <span>Player Organization</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Link href="/join-requests">
-                <Button variant="outline" className="w-full justify-start">
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Join Requests
-                </Button>
-              </Link>
-              <Link href="/create-events">
-                <Button variant="outline" className="w-full justify-start">
-                  <LayoutDashboard className="h-4 w-4 mr-2" />
-                  Create Events
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Mission Creator Capabilities */}
-        {hasMissionCreator && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Target className="h-5 w-5" />
-                <span>Mission Creator</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Link href="/create-missions">
-                <Button variant="outline" className="w-full justify-start">
-                  <Target className="h-4 w-4 mr-2" />
-                  Create Missions
-                </Button>
-              </Link>
-              <Link href="/manage-missions">
-                <Button variant="outline" className="w-full justify-start">
-                  <LayoutDashboard className="h-4 w-4 mr-2" />
-                  Manage Missions
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Reward Creator Capabilities */}
-        {hasRewardCreator && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Gift className="h-5 w-5" />
-                <span>Reward Creator</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Link href="/create-rewards">
-                <Button variant="outline" className="w-full justify-start">
-                  <Gift className="h-4 w-4 mr-2" />
-                  Create Rewards
-                </Button>
-              </Link>
-              <Link href="/manage-rewards">
-                <Button variant="outline" className="w-full justify-start">
-                  <LayoutDashboard className="h-4 w-4 mr-2" />
-                  Manage Rewards
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* CIN Admin Specific Routes */}
-        {isCinAdmin && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Building className="h-5 w-5" />
-                <span>CIN Administration</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Link href="/organization-approval">
-                <Button variant="outline" className="w-full justify-start">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Organization Approval
-                </Button>
-              </Link>
-              <Link href="/review-submissions">
-                <Button variant="outline" className="w-full justify-start">
-                  <LayoutDashboard className="h-4 w-4 mr-2" />
-                  Review Submissions
-                </Button>
-              </Link>
-              <Link href="/view-all-organizations">
-                <Button variant="outline" className="w-full justify-start">
-                  <Building className="h-4 w-4 mr-2" />
-                  View All Organizations
-                </Button>
-              </Link>
-              <Link href="/view-all-users">
-                <Button variant="outline" className="w-full justify-start">
-                  <Users className="h-4 w-4 mr-2" />
-                  View All Users
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      {/* Stat Grid */}
+      <StatDashboard/>
 
       {/* Pending Capabilities Notice */}
       {activeOrganization?.capabilities?.some(
