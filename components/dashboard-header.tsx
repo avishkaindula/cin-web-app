@@ -14,7 +14,7 @@ import { User, LogOut } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 
 interface DashboardHeaderProps {
-  title: string
+  title?: string
 }
 
 export function DashboardHeader({ title }: DashboardHeaderProps) {

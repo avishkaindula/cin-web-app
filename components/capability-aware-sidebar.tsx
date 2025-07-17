@@ -11,8 +11,6 @@ import {
   Users,
   Gift,
   UserPlus,
-  Crown,
-  BarChart3,
   Menu,
   X,
   Building,
@@ -20,20 +18,30 @@ import {
   Calendar,
   Settings,
   FileText,
-  Eye,
-  QrCode,
+  Trophy,
+  ChevronDown,
+  ChevronRight,
+  Crown,
+  UserCog,
+  ShieldCheck,
+  Building2,
+  FileCheck,
+  FileClock,
+  UserSearch,
+  CalendarPlus, ScanLine, CalendarClock, CirclePlus, SquareMousePointer
 } from "lucide-react";
-import { useState } from "react";
+import React, {useState} from "react";
 import { useAuth } from "@/contexts/auth-context";
 import type { UserOrganization } from "@/lib/types/auth";
 
 interface NavigationItem {
   name: string;
-  href: string;
+  href?: string;
   icon: any;
   show: boolean;
   badge?: string;
   badgeColor?: string;
+  children?: NavigationItem[];
 }
 
 const getDashboardNavigation = (
@@ -64,128 +72,171 @@ const getDashboardNavigation = (
       show: true,
     },
 
+    {
+      name: "Leaderboard",
+      href: "/leaderboard",
+      icon: Trophy,
+      show: true,
+    },
+
     // Common Admin Routes - Accessible by both CIN admins and org admins
     {
-      name: "Add Organization Admins",
-      href: "/add-organization-admins",
-      icon: Crown,
-      show: true, // Show for both CIN admins and org admins
-    },
-    {
-      name: "View Members",
-      href: "/view-members",
-      icon: Users,
+      name: "My Organization",
+      icon: Building,
       show: true,
+      children:[
+        {
+          name: "Organization Admins",
+          href: "/add-organization-admins",
+          icon: Crown,
+          show: true,
+        },
+        {
+          name: "Profile",
+          href: "/edit-organization",
+          icon: Settings,
+          show: true,
+        },
+      ]
     },
 
     // CIN Admin Specific Routes - Show at top for CIN admins
     {
-      name: "Organization Approval",
-      href: "/organization-approval",
-      icon: CheckCircle,
+      name: "Stakeholder Management",
+      icon: UserCog,
       show: isCinAdmin,
-      badge: isCinAdmin ? "CIN Admin" : undefined,
-      badgeColor: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+      children:[
+        {
+          name: "Role Approvals",
+          href: "/role-approvals",
+          icon: ShieldCheck,
+          show: isCinAdmin,
+        },
+        {
+          name: "Organizations",
+          href: "/view-all-organizations",
+          icon: Building2,
+          show: isCinAdmin,
+        },{
+          name: "Users",
+          href: "/view-all-users",
+          icon: Users,
+          show: isCinAdmin,
+        },
+      ]
     },
     {
-      name: "Review Submissions",
-      href: "/review-submissions",
+      name: "Mission Submissions",
       icon: FileText,
       show: isCinAdmin,
-      badge: isCinAdmin ? "CIN Admin" : undefined,
-      badgeColor: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-    },
-    {
-      name: "View All Organizations",
-      href: "/view-all-organizations",
-      icon: Building,
-      show: isCinAdmin,
-      badge: isCinAdmin ? "CIN Admin" : undefined,
-      badgeColor: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-    },
-    {
-      name: "View All Users",
-      href: "/view-all-users",
-      icon: Eye,
-      show: isCinAdmin,
-      badge: isCinAdmin ? "CIN Admin" : undefined,
-      badgeColor: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+      children:[
+        {
+          name: "Review Submissions",
+          href: "/review-submissions",
+          icon: FileCheck,
+          show: isCinAdmin,
+        },
+        {
+          name: "Submission History",
+          href: "/submission-log",
+          icon: FileClock,
+          show: isCinAdmin,
+        },
+      ]
     },
 
     // Player Organization Specific Routes
     {
-      name: "Join Requests",
-      href: "/join-requests",
-      icon: UserPlus,
+      name: "Members",
+      icon: Users,
       show: hasPlayerOrg,
-      badge: hasPlayerOrg ? "Player Org" : undefined,
-      badgeColor:
-        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+      children:[
+        {
+          name: "Join Requests",
+          href: "/join-requests",
+          icon: UserPlus,
+          show: hasPlayerOrg,
+        },
+        {
+          name: "View All Members",
+          href: "/view-members",
+          icon: UserSearch,
+          show: hasPlayerOrg,
+        },
+
+      ]
     },
     {
-      name: "Create Events",
-      href: "/create-events",
+      name: "Events",
       icon: Calendar,
       show: hasPlayerOrg,
-      badge: hasPlayerOrg ? "Player Org" : undefined,
-      badgeColor:
-        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-    },
-    {
-      name: "Scan Event QR Codes",
-      href: "/scan-event-qr",
-      icon: QrCode,
-      show: hasPlayerOrg,
-      badge: hasPlayerOrg ? "Player Org" : undefined,
-      badgeColor:
-        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+      children:[
+        {
+          name: "Create Events",
+          href: "/create-events",
+          icon: CalendarPlus,
+          show: hasPlayerOrg,
+        },{
+          name: "Scan QR",
+          href: "/scan-event-qr",
+          icon: ScanLine,
+          show: hasPlayerOrg,
+        },
+        {
+          name: "Event History",
+          href: "/events-history",
+          icon: CalendarClock,
+          show: hasPlayerOrg,
+        },
+      ]
     },
 
     // Mission Creator Specific Routes
     {
-      name: "Create Missions",
-      href: "/create-missions",
+      name: "Missions",
       icon: Target,
       show: hasMissionCreator,
-      badge: hasMissionCreator ? "Mission Creator" : undefined,
-      badgeColor:
-        "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
-    },
-    {
-      name: "Manage Missions",
-      href: "/manage-missions",
-      icon: Settings,
-      show: hasMissionCreator,
-      badge: hasMissionCreator ? "Mission Creator" : undefined,
-      badgeColor:
-        "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
+      children:[
+        {
+          name: "Create Missions",
+          href: "/create-missions",
+          icon: CirclePlus,
+          show: hasMissionCreator,
+        },{
+          name: "Manage Missions",
+          href: "/manage-missions",
+          icon: SquareMousePointer,
+          show: hasMissionCreator,
+        },
+      ]
     },
 
     // Reward Creator Specific Routes
     {
-      name: "Create Rewards",
-      href: "/create-rewards",
+      name: "Rewards",
       icon: Gift,
       show: hasRewardCreator,
-      badge: hasRewardCreator ? "Reward Creator" : undefined,
-      badgeColor:
-        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
-    },
-    {
-      name: "Manage Rewards",
-      href: "/manage-rewards",
-      icon: Settings,
-      show: hasRewardCreator,
-      badge: hasRewardCreator ? "Reward Creator" : undefined,
-      badgeColor:
-        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+      children:[
+        {
+          name: "Create Rewards",
+          href: "/create-rewards",
+          icon: Gift,
+          show: hasRewardCreator,
+        },{
+          name: "Manage Rewards",
+          href: "/manage-rewards",
+          icon: Settings,
+          show: hasRewardCreator,
+        },
+      ]
     },
   ];
 };
 
-export function CapabilityAwareSidebar() {
+export function CapabilityAwareSidebar(){
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const { isCinAdmin, isOrgAdmin, activeOrganization, isLoading } = useAuth();
 
   // Show loading state while auth is being determined
@@ -214,6 +265,9 @@ export function CapabilityAwareSidebar() {
     isCinAdmin,
     activeOrganization
   ).filter((item) => item.show);
+
+  const toggleGroup = (name: string) =>
+      setOpenGroups((prev) => ({ ...prev, [name]: !prev[name] }));
 
   return (
     <>
@@ -267,62 +321,87 @@ export function CapabilityAwareSidebar() {
                 <X className="h-5 w-5" />
               </Button>
             </div>
-
-            {/* Organization Capabilities Status */}
-            {activeOrganization?.capabilities && (
-              <div className="mt-3 space-y-1">
-                {activeOrganization.capabilities.map((capability) => (
-                  <div
-                    key={capability.type}
-                    className="flex items-center justify-between text-xs"
-                  >
-                    <span className="capitalize text-gray-600 dark:text-gray-400">
-                      {capability.type.replace("_", " ")}
-                    </span>
-                    <Badge
-                      className={cn(
-                        "text-xs px-1 py-0",
-                        capability.status === "approved" &&
-                          "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-                        capability.status === "pending" &&
-                          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-                        capability.status === "rejected" &&
-                          "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                      )}
-                    >
-                      {capability.status}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             {navigation.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = item.href && pathname === item.href;
+
+              if (item.children && item.children.length > 0) {
+                const isGroupOpen = openGroups[item.name] ?? false;
+                const isGroupActive = item.children.some((c) => c.href === pathname);
+
+                return (
+                    <div key={item.name}>
+                      <button
+                          className={cn(
+                              'flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-semibold transition-colors',
+                              isGroupActive
+                                  ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
+                          )}
+                          onClick={() => toggleGroup(item.name)}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <item.icon className="h-5 w-5" />
+                          <span>{item.name}</span>
+                        </div>
+                        {isGroupOpen ? (
+                            <ChevronDown className="w-4 h-4" />
+                        ) : (
+                            <ChevronRight className="w-4 h-4" />
+                        )}
+                      </button>
+                      {isGroupOpen && (
+                          <div className="ml-4 mt-1 space-y-1">
+                            {item.children.map((child) => {
+                              if (!child.show) return null;
+                              const isChildActive = child.href === pathname;
+                              return (
+                                  <Link
+                                      key={child.name}
+                                      href={child.href!}
+                                      className={cn(
+                                          'flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors',
+                                          isChildActive
+                                              ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                                              : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+                                      )}
+                                  >
+                                    <div className="flex items-center space-x-2">
+                                      <child.icon className="h-4 w-4" />
+                                      <span>{child.name}</span>
+                                    </div>
+                                  </Link>
+                              );
+                            })}
+                          </div>
+                      )}
+                    </div>
+                );
+              }
+
               return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors group",
-                    isActive
-                      ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-                  )}
-                >
-                  <div className="flex items-center space-x-3">
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.name}</span>
-                  </div>
-                  {item.badge && (
-                    <Badge className={cn("text-xs px-1 py-0", item.badgeColor)}>
-                      {item.badge}
-                    </Badge>
-                  )}
-                </Link>
+                  <Link
+                      key={item.name}
+                      href={item.href!}
+                      className={cn(
+                          'flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                          isActive
+                              ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                              : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
+                      )}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <item.icon className="h-5 w-5" />
+                      <span>{item.name}</span>
+                    </div>
+                    {item.badge && (
+                        <Badge className={cn('text-xs px-1 py-0', item.badgeColor)}>
+                          {item.badge}
+                        </Badge>
+                    )}
+                  </Link>
               );
             })}
           </nav>
@@ -345,6 +424,35 @@ export function CapabilityAwareSidebar() {
               </div>
             </div>
           )}
+          <div className={'px-4 py-4 border-t w-full border-t-gray-200 dark:border-t-gray-700'}>
+            {activeOrganization?.capabilities && (
+                <div className="mt-3 space-y-3">
+                  {activeOrganization.capabilities.map((capability) => (
+                      <div
+                          key={capability.type}
+                          className="flex items-center justify-between text-xs"
+                      >
+                    <span className="capitalize text-gray-600 dark:text-gray-400">
+                      {capability.type.replace("_", " ")}
+                    </span>
+                        <Badge
+                            className={cn(
+                                "text-xs px-1 py-0",
+                                capability.status === "approved" &&
+                                "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                                capability.status === "pending" &&
+                                "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+                                capability.status === "rejected" &&
+                                "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                            )}
+                        >
+                          {capability.status}
+                        </Badge>
+                      </div>
+                  ))}
+                </div>
+            )}
+          </div>
         </div>
       </div>
     </>
