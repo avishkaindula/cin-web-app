@@ -13,9 +13,7 @@ export default function DashboardLayout({
       
       {/* Main content area with proper sidebar offset */}
       <div className="md:ml-80">
-        <DashboardHeader
-          title="Climate Intelligence Network"
-        />
+        <DashboardHeader />
         <main className="p-6">{children}</main>
       </div>
     </div>
