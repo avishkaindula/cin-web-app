@@ -28,7 +28,7 @@ import {
   FileCheck,
   FileClock,
   UserSearch,
-  CalendarPlus, ScanLine, CalendarClock, CirclePlus, SquareMousePointer
+  CalendarPlus, ScanLine, CalendarClock, CirclePlus, SquareMousePointer, ShieldUser
 } from "lucide-react";
 import React, {useState} from "react";
 import { useAuth } from "@/contexts/auth-context";
@@ -118,7 +118,12 @@ const getDashboardNavigation = (
           icon: Building2,
           show: isCinAdmin,
         },{
-          name: "Users",
+          name: "Admin Portal Users",
+          href: "/view-all-users",
+          icon: ShieldUser,
+          show: isCinAdmin,
+        },{
+          name: "App Users",
           href: "/view-all-users",
           icon: Users,
           show: isCinAdmin,

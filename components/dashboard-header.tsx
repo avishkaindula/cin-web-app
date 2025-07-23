@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { User, LogOut } from "lucide-react"
+import {User, LogOut, Settings} from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 
 interface DashboardHeaderProps {
@@ -49,6 +49,10 @@ export function DashboardHeader({ title }: DashboardHeaderProps) {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Profile Settings</span>
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleSignOut}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Sign out</span>
