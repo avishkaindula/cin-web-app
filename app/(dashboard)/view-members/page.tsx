@@ -1,22 +1,18 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Users, Mail, Calendar, MoreVertical } from "lucide-react";
+import { Users, Mail, Calendar, MoreVertical, UserX } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 export default function ViewMembersPage() {
   // Mock data - in real app this would come from API/database
   const members = [
     {
       id: "1",
-      name: "John Doe",
-      email: "john@greentech.com",
-      role: "org_admin",
-      status: "active",
-      joinedAt: "2024-01-15",
-      lastActive: "2024-07-13"
-    },
-    {
-      id: "2", 
       name: "Jane Smith",
       email: "jane@greentech.com",
       role: "player",
@@ -25,14 +21,22 @@ export default function ViewMembersPage() {
       lastActive: "2024-07-12"
     },
     {
-      id: "3",
+      id: "2",
       name: "Bob Wilson",
       email: "bob@greentech.com", 
+      role: "player",
+      status: "active",
+      joinedAt: "2024-07-10",
+      lastActive: "2024-07-10"
+    },{
+      id: "3",
+      name: "Jane Doe",
+      email: "jane@greentech.com",
       role: "player",
       status: "pending",
       joinedAt: "2024-07-10",
       lastActive: "2024-07-10"
-    }
+    },
   ];
 
   const getRoleColor = (role: string) => {
@@ -77,23 +81,7 @@ export default function ViewMembersPage() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Users className="h-8 w-8 text-blue-600" />
-              <div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {members.length}
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Total Members
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
@@ -120,22 +108,6 @@ export default function ViewMembersPage() {
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Pending Approval
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Users className="h-8 w-8 text-purple-600" />
-              <div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {members.filter(m => m.role === 'org_admin').length}
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Administrators
                 </p>
               </div>
             </div>
@@ -187,9 +159,19 @@ export default function ViewMembersPage() {
                   <Badge className={getStatusColor(member.status)}>
                     {member.status}
                   </Badge>
-                  <Button variant="ghost" size="sm">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuItem>
+                        <UserX className="text-red-500 mr-2 h-4 w-4" />
+                        <span className={'text-red-500 font-semibold'}>Kick Out</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             ))}
