@@ -5,7 +5,6 @@ interface LeaderboardItemProps {
   item: {
     rank: number
     name: string
-    role: string
     points: number
     missions: number
     status: string
@@ -13,18 +12,12 @@ interface LeaderboardItemProps {
   }
 }
 export function LeaderboardItem({ item }: LeaderboardItemProps) {
-  const { rank, name, role, points, missions, status, avatar } = item
+  const { rank, name, points, missions, status, avatar } = item
   const getRankStyle = (rank: number) => {
     if (rank === 1) return 'bg-yellow-500 text-black'
     if (rank === 2) return 'bg-gray-300 text-black'
     if (rank === 3) return 'bg-amber-700 text-white'
     return 'bg-[#1c2432] text-white'
-  }
-  const getRoleStyle = (role: string) => {
-    if (role === 'Player Org') return 'bg-blue-900 text-blue-300'
-    if (role === 'Mission Creator') return 'bg-teal-900 text-teal-300'
-    if (role === 'Reward Creator') return 'bg-purple-900 text-purple-300'
-    return 'bg-gray-800 text-gray-300'
   }
   return (
       <TableRow>
@@ -44,13 +37,6 @@ export function LeaderboardItem({ item }: LeaderboardItemProps) {
             />
             <span className="font-medium">{name}</span>
           </div>
-        </TableCell>
-        <TableCell>
-        <span
-            className={`px-2 py-1 rounded-md text-xs font-medium ${getRoleStyle(role)}`}
-        >
-          {role}
-        </span>
         </TableCell>
         <TableCell className="font-medium">{points.toLocaleString()}</TableCell>
         <TableCell>{missions}</TableCell>

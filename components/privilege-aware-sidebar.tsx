@@ -32,8 +32,7 @@ import {
   ScanLine,
   CalendarClock,
   CirclePlus,
-  SquareMousePointer,
-  Shield
+  SquareMousePointer
 } from "lucide-react";
 import React, {useState} from "react";
 import { useAuth } from "@/contexts/auth-context";
@@ -123,12 +122,7 @@ const getDashboardNavigation = (
           icon: Building2,
           show: isCinAdmin,
         },{
-          name: "Admin Portal Users",
-          href: "/view-all-users",
-          icon: Shield,
-          show: isCinAdmin,
-        },{
-          name: "App Users",
+          name: "All Users",
           href: "/view-all-users",
           icon: Users,
           show: isCinAdmin,
