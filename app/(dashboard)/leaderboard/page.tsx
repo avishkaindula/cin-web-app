@@ -14,7 +14,6 @@ export default function Leaderboard() {
             name: 'EcoWarrior',
             points: 9840,
             missions: 42,
-            status: 'approved',
             avatar: 'https://randomuser.me/api/portraits/women/32.jpg',
         },
         {
@@ -22,7 +21,6 @@ export default function Leaderboard() {
             name: 'ClimateDefender',
             points: 8750,
             missions: 36,
-            status: 'approved',
             avatar: 'https://randomuser.me/api/portraits/men/54.jpg',
         },
         {
@@ -30,7 +28,6 @@ export default function Leaderboard() {
             name: 'GreenTech',
             points: 7890,
             missions: 33,
-            status: 'approved',
             avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
         },
         {
@@ -38,7 +35,6 @@ export default function Leaderboard() {
             name: 'EarthGuardian',
             points: 7560,
             missions: 29,
-            status: 'approved',
             avatar: 'https://randomuser.me/api/portraits/men/41.jpg',
         },
         {
@@ -46,7 +42,6 @@ export default function Leaderboard() {
             name: 'OceanProtector',
             points: 6980,
             missions: 27,
-            status: 'approved',
             avatar: 'https://randomuser.me/api/portraits/women/42.jpg',
         },
         {
@@ -54,7 +49,6 @@ export default function Leaderboard() {
             name: 'SustainableFuture',
             points: 6540,
             missions: 25,
-            status: 'pending',
             avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
         },
         {
@@ -62,7 +56,6 @@ export default function Leaderboard() {
             name: 'RenewableEnergy',
             points: 5890,
             missions: 22,
-            status: 'approved',
             avatar: 'https://randomuser.me/api/portraits/women/56.jpg',
         },
     ]
@@ -96,7 +89,6 @@ export default function Leaderboard() {
                                     <TableHead>Player</TableHead>
                                     <TableHead>Points</TableHead>
                                     <TableHead>Missions</TableHead>
-                                    <TableHead>Status</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
