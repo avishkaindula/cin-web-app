@@ -29,7 +29,7 @@ export default function OrganizationApprovalPage() {
       address: "123 Green Street, Colombo 03, Sri Lanka",
       website: "https://ecotech.lk",
       submittedAt: "2024-07-10",
-      requestedCapabilities: [
+      requestedPrivileges: [
         { type: "player_org", status: "pending" },
         { type: "mission_creator", status: "pending" },
       ],
@@ -43,7 +43,7 @@ export default function OrganizationApprovalPage() {
       address: "456 Environment Lane, Kandy, Sri Lanka",
       website: "https://climateaction.lk",
       submittedAt: "2024-07-12",
-      requestedCapabilities: [
+      requestedPrivileges: [
         { type: "player_org", status: "pending" },
         { type: "mission_creator", status: "pending" },
         { type: "reward_creator", status: "pending" },
@@ -51,7 +51,7 @@ export default function OrganizationApprovalPage() {
     },
   ];
 
-  const getCapabilityColor = (type: string) => {
+  const getPrivilegeColor = (type: string) => {
     switch (type) {
       case "player_org":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
@@ -64,7 +64,7 @@ export default function OrganizationApprovalPage() {
     }
   };
 
-  const getCapabilityName = (type: string) => {
+  const getPrivilegeName = (type: string) => {
     switch (type) {
       case "player_org":
         return "Player Organization";
@@ -214,16 +214,16 @@ export default function OrganizationApprovalPage() {
                       Requested Privileges
                     </h4>
                     <div className="space-y-2">
-                      {org.requestedCapabilities.map((capability, index) => (
+                      {org.requestedPrivileges.map((privilege, index) => (
                         <div
                           key={index}
                           className="flex items-center justify-between p-3 border rounded-lg"
                         >
                           <div className="flex items-center space-x-2">
                             <Badge
-                              className={getCapabilityColor(capability.type)}
+                              className={getPrivilegeColor(privilege.type)}
                             >
-                              {getCapabilityName(capability.type)}
+                              {getPrivilegeName(privilege.type)}
                             </Badge>
                           </div>
                           <div className="flex space-x-2">

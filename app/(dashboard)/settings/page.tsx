@@ -128,12 +128,12 @@ const organizationTags = {
 const allTags = Object.values(organizationTags).flat();
 
 export default function EditOrganizationPage() {
-  const { activeOrganization, hasCapability } = useAuth();
+  const { activeOrganization, hasPrivilege } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagSearchOpen, setTagSearchOpen] = useState(false);
   const [carouselPhotos, setCarouselPhotos] = useState<File[]>([]);
-  const [requestedCapabilities, setRequestedCapabilities] = useState<string[]>(
+  const [requestedPrivileges, setRequestedPrivileges] = useState<string[]>(
     []
   );
 
@@ -172,11 +172,11 @@ export default function EditOrganizationPage() {
     setCarouselPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleCapabilityRequest = (capability: string) => {
-    if (requestedCapabilities.includes(capability)) {
-      setRequestedCapabilities((prev) => prev.filter((c) => c !== capability));
+  const handlePrivilegeRequest = (privilege: string) => {
+    if (requestedPrivileges.includes(privilege)) {
+      setRequestedPrivileges((prev) => prev.filter((c) => c !== privilege));
     } else {
-      setRequestedCapabilities((prev) => [...prev, capability]);
+      setRequestedPrivileges((prev) => [...prev, privilege]);
     }
   };
 
@@ -186,14 +186,14 @@ export default function EditOrganizationPage() {
     setIsEditing(false);
   };
 
-  const handleRequestCapabilities = () => {
-    if (requestedCapabilities.length === 0) {
-      toast.error("Please select at least one capability to request");
+  const handleRequestPrivileges = () => {
+    if (requestedPrivileges.length === 0) {
+      toast.error("Please select at least one privilege to request");
       return;
     }
-    // Implement capability request logic here
-    toast.success("Capability request submitted successfully!");
-    setRequestedCapabilities([]);
+    // Implement privilege request logic here
+    toast.success("Privilege request submitted successfully!");
+    setRequestedPrivileges([]);
   };
 
   if (!activeOrganization) {
@@ -583,24 +583,24 @@ export default function EditOrganizationPage() {
           <div className="space-y-2">
             <Label>Current Privileges</Label>
             <div className="flex flex-wrap gap-2">
-              {activeOrganization.capabilities?.map((capability) => (
+              {activeOrganization.privileges?.map((privilege) => (
                 <Badge
-                  key={capability.type}
+                  key={privilege.type}
                   variant={
-                    capability.status === "approved" ? "default" : "secondary"
+                    privilege.status === "approved" ? "default" : "secondary"
                   }
                   className="flex items-center gap-1"
                 >
-                  {capability.type === "player_org" && (
+                  {privilege.type === "player_org" && (
                     <Users className="h-3 w-3" />
                   )}
-                  {capability.type === "mission_creator" && (
+                  {privilege.type === "mission_creator" && (
                     <Target className="h-3 w-3" />
                   )}
-                  {capability.type === "reward_creator" && (
+                  {privilege.type === "reward_creator" && (
                     <Gift className="h-3 w-3" />
                   )}
-                  {capability.type.replace("_", " ")} ({capability.status})
+                  {privilege.type.replace("_", " ")} ({privilege.status})
                 </Badge>
               ))}
             </div>
@@ -613,13 +613,13 @@ export default function EditOrganizationPage() {
             <Label>Request New Privileges</Label>
 
             {/* Mission Creator */}
-            {!hasCapability("mission_creator") && (
+            {!hasPrivilege("mission_creator") && (
               <div className="flex items-start space-x-3 p-4 border rounded-lg">
                 <Checkbox
                   id="mission_creator"
-                  checked={requestedCapabilities.includes("mission_creator")}
+                  checked={requestedPrivileges.includes("mission_creator")}
                   onCheckedChange={() =>
-                    handleCapabilityRequest("mission_creator")
+                    handlePrivilegeRequest("mission_creator")
                   }
                 />
                 <div className="flex-1 space-y-1">
@@ -642,13 +642,13 @@ export default function EditOrganizationPage() {
             )}
 
             {/* Reward Creator */}
-            {!hasCapability("reward_creator") && (
+            {!hasPrivilege("reward_creator") && (
               <div className="flex items-start space-x-3 p-4 border rounded-lg">
                 <Checkbox
                   id="reward_creator"
-                  checked={requestedCapabilities.includes("reward_creator")}
+                  checked={requestedPrivileges.includes("reward_creator")}
                   onCheckedChange={() =>
-                    handleCapabilityRequest("reward_creator")
+                    handlePrivilegeRequest("reward_creator")
                   }
                 />
                 <div className="flex-1 space-y-1">
@@ -664,23 +664,23 @@ export default function EditOrganizationPage() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Create and distribute rewards for mission completion.
                     Requires approval and verification of reward fulfillment
-                    capability.
+                    privileges.
                   </p>
                 </div>
               </div>
             )}
 
-            {requestedCapabilities.length === 0 &&
-              !hasCapability("mission_creator") &&
-              !hasCapability("reward_creator") && (
+            {requestedPrivileges.length === 0 &&
+              !hasPrivilege("mission_creator") &&
+              !hasPrivilege("reward_creator") && (
                 <p className="text-gray-500 text-center py-4">
                   Select privileges above to request additional access.
                 </p>
               )}
           </div>
 
-          {requestedCapabilities.length > 0 && (
-            <Button onClick={handleRequestCapabilities} className="w-full">
+          {requestedPrivileges.length > 0 && (
+            <Button onClick={handleRequestPrivileges} className="w-full">
               Submit Privilege Request
             </Button>
           )}

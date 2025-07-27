@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 import { jwtDecode } from "jwt-decode";
-import type { JWTPayload, UserCapability, UserRole, RoutePermission } from "../types/auth";
+import type { JWTPayload, UserPrivilege, UserRole, RoutePermission } from "../types/auth";
 
 const PUBLIC_PATHS = [
   "/sign-in",
@@ -18,43 +18,43 @@ const PUBLIC_PATHS = [
   "/auth/callback",
 ];
 
-// Define route permissions - what roles and capabilities are required for each route
+// Define route permissions - what roles and privileges are required for each route
 const ROUTE_PERMISSIONS: Record<string, RoutePermission> = {
   // CIN Admin only routes (global admin functions)
-  "/view-all-organizations": { roles: ["cin_admin"], capabilities: [] },
-  "/view-all-users": { roles: ["cin_admin"], capabilities: [] },
-  "/organization-requests": { roles: ["cin_admin"], capabilities: [] },
-  "/mission-approvals": { roles: ["cin_admin"], capabilities: [] },
-  "/review-submissions": { roles: ["cin_admin"], capabilities: [] },
+  "/view-all-organizations": { roles: ["cin_admin"], privileges: [] },
+  "/view-all-users": { roles: ["cin_admin"], privileges: [] },
+  "/organization-requests": { roles: ["cin_admin"], privileges: [] },
+  "/mission-approvals": { roles: ["cin_admin"], privileges: [] },
+  "/review-submissions": { roles: ["cin_admin"], privileges: [] },
   
   // Org Admin routes (organization management)
-  "/add-organization-admins": { roles: ["org_admin"], capabilities: [] },
-  "/view-members": { roles: ["org_admin"], capabilities: [] },
-  "/join-requests": { roles: ["org_admin"], capabilities: [] },
+  "/add-organization-admins": { roles: ["org_admin"], privileges: [] },
+  "/view-members": { roles: ["org_admin"], privileges: [] },
+  "/join-requests": { roles: ["org_admin"], privileges: [] },
   
-  // Mission management (requires mission_creator capability)
-  "/create-missions": { roles: ["org_admin"], capabilities: ["mission_creator"] },
-  "/manage-missions": { roles: ["org_admin"], capabilities: ["mission_creator"] },
+  // Mission management (requires mission_creator privilege)
+  "/create-missions": { roles: ["org_admin"], privileges: ["mission_creator"] },
+  "/manage-missions": { roles: ["org_admin"], privileges: ["mission_creator"] },
   
-  // Reward management (requires reward_creator capability)
-  "/create-rewards": { roles: ["org_admin"], capabilities: ["reward_creator"] },
-  "/manage-rewards": { roles: ["org_admin"], capabilities: ["reward_creator"] },
+  // Reward management (requires reward_creator privilege)
+  "/create-rewards": { roles: ["org_admin"], privileges: ["reward_creator"] },
+  "/manage-rewards": { roles: ["org_admin"], privileges: ["reward_creator"] },
   
-  // Event management (requires player_org capability)
-  "/create-events": { roles: ["org_admin"], capabilities: ["player_org"] },
-  "/scan-event-qr": { roles: ["org_admin"], capabilities: ["player_org"] },
+  // Event management (requires player_org privilege)
+  "/create-events": { roles: ["org_admin"], privileges: ["player_org"] },
+  "/scan-event-qr": { roles: ["org_admin"], privileges: ["player_org"] },
   
   // Dashboard (accessible to both roles)
-  "/dashboard": { roles: ["cin_admin", "org_admin"], capabilities: [] },
+  "/dashboard": { roles: ["cin_admin", "org_admin"], privileges: [] },
 };
 
-// Helper function to check if user has required capabilities
-const hasRequiredCapabilities = (userCapabilities: UserCapability[], requiredCapabilities: string[]): boolean => {
-  if (requiredCapabilities.length === 0) return true;
+// Helper function to check if user has required privileges
+const hasRequiredPrivileges = (userPrivileges: UserPrivilege[], requiredPrivileges: string[]): boolean => {
+  if (requiredPrivileges.length === 0) return true;
   
-  return requiredCapabilities.every(required => 
-    userCapabilities.some(cap => 
-      cap.type === required && cap.status === 'approved'
+  return requiredPrivileges.every(required => 
+    userPrivileges.some(priv => 
+      priv.type === required && priv.status === 'approved'
     )
   );
 };
@@ -104,7 +104,7 @@ export const updateSession = async (request: NextRequest) => {
 
     let userRoles: UserRole[] = [];
     let userOrganizations = [];
-    let userCapabilities: UserCapability[] = [];
+    let userPrivileges: UserPrivilege[] = [];
     let isCinAdmin = false;
     let isOrgAdmin = false;
 
@@ -114,10 +114,10 @@ export const updateSession = async (request: NextRequest) => {
         userRoles = jwt.user_roles || [];
         userOrganizations = jwt.user_organizations || [];
         
-        // Extract capabilities from active organization
+        // Extract privileges from active organization
         const activeOrgId = jwt.active_organization_id;
         const activeOrg = userOrganizations.find((org: any) => org.id === activeOrgId);
-        userCapabilities = activeOrg?.capabilities || [];
+        userPrivileges = activeOrg?.privileges || [];
         
         // Check if user has cin_admin role (global)
         isCinAdmin = userRoles.some((role: UserRole) => 
@@ -154,8 +154,8 @@ export const updateSession = async (request: NextRequest) => {
         // Check if user has required role
         const hasRole = hasRequiredRole(userRoles, routePermission.roles);
         
-        // Check if user has required capabilities (if any)
-        const hasCapabilities = hasRequiredCapabilities(userCapabilities, routePermission.capabilities);
+        // Check if user has required privileges (if any)
+        const hasPrivileges = hasRequiredPrivileges(userPrivileges, routePermission.privileges);
         
         if (!hasRole) {
           // User doesn't have required role - redirect to dashboard with error
@@ -165,11 +165,11 @@ export const updateSession = async (request: NextRequest) => {
           return NextResponse.redirect(redirectUrl);
         }
         
-        if (!hasCapabilities) {
-          // User doesn't have required capabilities - redirect to dashboard with error
+        if (!hasPrivileges) {
+          // User doesn't have required privileges - redirect to dashboard with error
           const redirectUrl = new URL("/dashboard", request.url);
-          redirectUrl.searchParams.set("error", "insufficient_capabilities");
-          redirectUrl.searchParams.set("required_capabilities", routePermission.capabilities.join(","));
+          redirectUrl.searchParams.set("error", "insufficient_privileges");
+          redirectUrl.searchParams.set("required_privileges", routePermission.privileges.join(","));
           return NextResponse.redirect(redirectUrl);
         }
       }

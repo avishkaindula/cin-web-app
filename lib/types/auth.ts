@@ -5,7 +5,7 @@ export interface UserRole {
   organization_name?: string;
 }
 
-export interface UserCapability {
+export interface UserPrivilege {
   type: 'player_org' | 'mission_creator' | 'reward_creator';
   status: 'pending' | 'approved' | 'rejected';
 }
@@ -14,7 +14,7 @@ export interface UserOrganization {
   id: string;
   name: string;
   membership_status: 'active' | 'pending' | 'inactive';
-  capabilities: UserCapability[];
+  privileges: UserPrivilege[];
 }
 
 export interface JWTPayload {
@@ -31,5 +31,5 @@ export interface JWTPayload {
 
 export interface RoutePermission {
   roles: string[];
-  capabilities: string[];
+  privileges: string[];
 }

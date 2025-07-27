@@ -142,11 +142,11 @@ export default async function OrganizationSignUpPage({
                 </div>
                 
                 <div className="space-y-4">
-                  {/* Player Organization Capability */}
+                  {/* Player Organization Privilege */}
                   <div className="flex items-start space-x-3 p-4 border rounded-lg">
                     <Checkbox 
                       id="player_org" 
-                      name="capabilities" 
+                      name="privileges" 
                       value="player_org"
                       defaultChecked
                     />
@@ -159,16 +159,16 @@ export default async function OrganizationSignUpPage({
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         Allow users to join your organization and participate in climate missions. 
-                        This is the basic capability most organizations need.
+                        This is the basic privilege most organizations need.
                       </p>
                     </div>
                   </div>
 
-                  {/* Mission Creator Capability */}
+                  {/* Mission Creator Privilege */}
                   <div className="flex items-start space-x-3 p-4 border rounded-lg">
                     <Checkbox 
                       id="mission_creator" 
-                      name="capabilities" 
+                      name="privileges" 
                       value="mission_creator"
                     />
                     <div className="flex-1 space-y-1">
@@ -185,11 +185,11 @@ export default async function OrganizationSignUpPage({
                     </div>
                   </div>
 
-                  {/* Reward Creator Capability */}
+                  {/* Reward Creator Privilege */}
                   <div className="flex items-start space-x-3 p-4 border rounded-lg">
                     <Checkbox 
                       id="reward_creator" 
-                      name="capabilities" 
+                      name="privileges" 
                       value="reward_creator"
                     />
                     <div className="flex-1 space-y-1">
@@ -201,7 +201,7 @@ export default async function OrganizationSignUpPage({
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         Create and distribute rewards for mission completion. 
-                        Requires approval and verification of reward fulfillment capability.
+                        Requires approval and verification of reward fulfillment privileges.
                       </p>
                     </div>
                   </div>

@@ -13,7 +13,7 @@ interface AuthContextType {
   isOrgAdmin: boolean;
   activeOrganization: UserOrganization | null;
   hasRole: (role: 'cin_admin' | 'org_admin') => boolean;
-  hasCapability: (capability: 'player_org' | 'mission_creator' | 'reward_creator') => boolean;
+  hasPrivilege: (privilege: 'player_org' | 'mission_creator' | 'reward_creator') => boolean;
   signOut: () => Promise<void>;
 }
 
@@ -90,10 +90,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return jwtPayload?.user_roles?.some(userRole => userRole.role === role) ?? false;
   };
 
-  const hasCapability = (capability: 'player_org' | 'mission_creator' | 'reward_creator'): boolean => {
+  const hasPrivilege = (privilege: 'player_org' | 'mission_creator' | 'reward_creator'): boolean => {
     if (!activeOrganization) return false;
-    return activeOrganization.capabilities?.some(
-      cap => cap.type === capability && cap.status === 'approved'
+    return activeOrganization.privileges?.some(
+      priv => priv.type === privilege && priv.status === 'approved'
     ) ?? false;
   };
 
@@ -109,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isOrgAdmin,
     activeOrganization,
     hasRole,
-    hasCapability,
+    hasPrivilege,
     signOut,
   };
 
