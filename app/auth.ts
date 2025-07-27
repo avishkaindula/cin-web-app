@@ -48,7 +48,7 @@ export const signUpAction = async (formData: FormData) => {
   }
 
   // This web app only handles organization signups - users sign up via mobile app
-  // New organizations get org_admin role with pending capabilities by default
+  // New organizations get org_admin role with pending privileges by default
   const { error } = await supabase.auth.signUp({
     email,
     password,

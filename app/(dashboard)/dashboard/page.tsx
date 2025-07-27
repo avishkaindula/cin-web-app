@@ -401,9 +401,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Pending Capabilities Notice */}
-      {activeOrganization?.capabilities?.some(
-        (cap) => cap.status === "pending"
+      {/* Pending Privileges Notice */}
+      {activeOrganization?.privileges?.some(
+        (priv) => priv.status === "pending"
       ) && (
         <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
           <CardHeader>
@@ -413,7 +413,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <p className="text-yellow-700 dark:text-yellow-300">
-              You have capabilities pending approval. Once approved by CIN
+              You have privileges pending approval. Once approved by CIN
               administrators, additional features will become available in your
               dashboard.
             </p>
