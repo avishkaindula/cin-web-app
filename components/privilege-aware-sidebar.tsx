@@ -59,13 +59,13 @@ const getDashboardNavigation = (
       (priv) => priv.status === "approved"
     ) || [];
   const hasPlayerOrg = approvedPrivileges.some(
-    (priv) => priv.type === "player_org"
+    (priv) => priv.type === "mobilizing_partners"
   );
   const hasMissionCreator = approvedPrivileges.some(
-    (priv) => priv.type === "mission_creator"
+    (priv) => priv.type === "mission_partners"
   );
   const hasRewardCreator = approvedPrivileges.some(
-    (priv) => priv.type === "reward_creator"
+    (priv) => priv.type === "reward_partners"
   );
 
   return [

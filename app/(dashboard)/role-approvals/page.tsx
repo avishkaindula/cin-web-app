@@ -29,9 +29,9 @@ export default function OrganizationApprovalPage() {
       address: "123 Green Street, Colombo 03, Sri Lanka",
       website: "https://ecotech.lk",
       submittedAt: "2024-07-10",
-      requestedCapabilities: [
-        { type: "player_org", status: "pending" },
-        { type: "mission_creator", status: "pending" },
+      requestedPrivileges: [
+        { type: "mobilizing_partners", status: "pending" },
+        { type: "mission_partners", status: "pending" },
       ],
     },
     {
@@ -43,35 +43,35 @@ export default function OrganizationApprovalPage() {
       address: "456 Environment Lane, Kandy, Sri Lanka",
       website: "https://climateaction.lk",
       submittedAt: "2024-07-12",
-      requestedCapabilities: [
-        { type: "player_org", status: "pending" },
-        { type: "mission_creator", status: "pending" },
-        { type: "reward_creator", status: "pending" },
+      requestedPrivileges: [
+        { type: "mobilizing_partners", status: "pending" },
+        { type: "mission_partners", status: "pending" },
+        { type: "reward_partners", status: "pending" },
       ],
     },
   ];
 
-  const getCapabilityColor = (type: string) => {
+  const getPrivilegeColor = (type: string) => {
     switch (type) {
-      case "player_org":
+      case "mobilizing_partners":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
-      case "mission_creator":
+      case "mission_partners":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      case "reward_creator":
+      case "reward_partners":
         return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
     }
   };
 
-  const getCapabilityName = (type: string) => {
+  const getPrivilegeName = (type: string) => {
     switch (type) {
-      case "player_org":
-        return "Player Organization";
-      case "mission_creator":
-        return "Mission Creator";
-      case "reward_creator":
-        return "Reward Creator";
+      case "mobilizing_partners":
+        return "Mobilizing Partners";
+      case "mission_partners":
+        return "Mission Partners";
+      case "reward_partners":
+        return "Reward Partners";
       default:
         return type;
     }
@@ -223,23 +223,23 @@ export default function OrganizationApprovalPage() {
                   </div>
                 </div>
 
-                {/* Requested Capabilities */}
+                {/* Requested Privileges */}
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-medium text-gray-900 dark:text-white mb-2">
-                      Requested Capabilities
+                      Requested Privileges
                     </h4>
                     <div className="space-y-2">
-                      {org.requestedCapabilities.map((capability, index) => (
+                      {org.requestedPrivileges.map((privilege, index) => (
                         <div
                           key={index}
                           className="flex items-center justify-between p-3 border rounded-lg"
                         >
                           <div className="flex items-center space-x-2">
                             <Badge
-                              className={getCapabilityColor(capability.type)}
+                              className={getPrivilegeColor(privilege.type)}
                             >
-                              {getCapabilityName(capability.type)}
+                              {getPrivilegeName(privilege.type)}
                             </Badge>
                           </div>
                           <div className="flex space-x-2">

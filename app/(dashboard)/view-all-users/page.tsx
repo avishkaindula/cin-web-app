@@ -24,7 +24,7 @@ const mockUsers = [
     joinedDate: "2024-03-15",
     lastActive: "2025-01-14",
     status: "active",
-    capabilities: ["player_org", "mission_creator"]
+    privileges: ["mobilizing_partners", "mission_partners"]
   },
   {
     id: "2",
@@ -35,7 +35,7 @@ const mockUsers = [
     joinedDate: "2024-12-20",
     lastActive: "2025-01-13",
     status: "pending",
-    capabilities: []
+    privileges: []
   },
   {
     id: "3",
@@ -46,7 +46,7 @@ const mockUsers = [
     joinedDate: "2024-01-01",
     lastActive: "2025-01-14",
     status: "active",
-    capabilities: ["player_org", "mission_creator", "reward_creator"]
+    privileges: ["mobilizing_partners", "mission_partners", "reward_partners"]
   },
   {
     id: "4",
@@ -57,7 +57,7 @@ const mockUsers = [
     joinedDate: "2024-02-10",
     lastActive: "2025-01-12",
     status: "active",
-    capabilities: ["player_org", "reward_creator"]
+    privileges: ["mobilizing_partners", "reward_partners"]
   },
   {
     id: "5",
@@ -68,7 +68,7 @@ const mockUsers = [
     joinedDate: "2024-11-05",
     lastActive: "2025-01-14", 
     status: "active",
-    capabilities: []
+    privileges: []
   },
   {
     id: "6",
@@ -79,7 +79,7 @@ const mockUsers = [
     joinedDate: "2024-04-20",
     lastActive: "2025-01-11",
     status: "active",
-    capabilities: []
+    privileges: []
   }
 ];
 
@@ -201,11 +201,11 @@ export default function ViewAllUsersPage() {
                     </Badge>
                   </div>
                   
-                  {user.capabilities.length > 0 && (
+                  {user.privileges.length > 0 && (
                     <div className="flex flex-wrap gap-1">
-                      {user.capabilities.map((capability) => (
-                        <Badge key={capability} variant="outline" className="text-xs">
-                          {capability.replace('_', ' ')}
+                      {user.privileges.map((privilege) => (
+                        <Badge key={privilege} variant="outline" className="text-xs">
+                          {privilege.replace('_', ' ')}
                         </Badge>
                       ))}
                     </div>

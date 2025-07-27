@@ -24,10 +24,10 @@ const mockOrganizations = [
     joinedDate: "2024-01-01",
     website: "https://climateintelligence.network",
     contact: "contact@climateintelligence.network",
-    capabilities: [
-      { type: "player_org", status: "approved" },
-      { type: "mission_creator", status: "approved" },
-      { type: "reward_creator", status: "approved" }
+    privileges: [
+      { type: "mobilizing_partners", status: "approved" },
+      { type: "mission_partners", status: "approved" },
+      { type: "reward_partners", status: "approved" }
     ]
   },
   {
@@ -39,10 +39,10 @@ const mockOrganizations = [
     joinedDate: "2024-03-15",
     website: "https://greentech.example.com",
     contact: "admin@greentech.example.com", 
-    capabilities: [
-      { type: "player_org", status: "approved" },
-      { type: "mission_creator", status: "approved" },
-      { type: "reward_creator", status: "pending" }
+    privileges: [
+      { type: "mobilizing_partners", status: "approved" },
+      { type: "mission_partners", status: "approved" },
+      { type: "reward_partners", status: "pending" }
     ]
   },
   {
@@ -54,10 +54,10 @@ const mockOrganizations = [
     joinedDate: "2024-12-20",
     website: "https://ecoalliance.org",
     contact: "info@ecoalliance.org",
-    capabilities: [
-      { type: "player_org", status: "pending" },
-      { type: "mission_creator", status: "pending" },
-      { type: "reward_creator", status: "rejected" }
+    privileges: [
+      { type: "mobilizing_partners", status: "pending" },
+      { type: "mission_partners", status: "pending" },
+      { type: "reward_partners", status: "rejected" }
     ]
   },
   {
@@ -69,10 +69,10 @@ const mockOrganizations = [
     joinedDate: "2024-02-10",
     website: "https://climatewarriors.net",
     contact: "admin@climatewarriors.net",
-    capabilities: [
-      { type: "player_org", status: "approved" },
-      { type: "mission_creator", status: "rejected" },
-      { type: "reward_creator", status: "approved" }
+    privileges: [
+      { type: "mobilizing_partners", status: "approved" },
+      { type: "mission_partners", status: "rejected" },
+      { type: "reward_partners", status: "approved" }
     ]
   }
 ];
@@ -177,30 +177,30 @@ export default function ViewAllOrganizationsPage() {
                   <p className="text-sm text-gray-900 dark:text-white">{org.contact}</p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Capabilities</span>
+                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Privileges</span>
                   <div className="flex space-x-1">
-                    {org.capabilities.map((cap) => (
-                      <div key={cap.type} className="flex items-center">
-                        {getStatusIcon(cap.status)}
+                    {org.privileges.map((priv) => (
+                      <div key={priv.type} className="flex items-center">
+                        {getStatusIcon(priv.status)}
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* Capabilities Detail */}
+              {/* Privileges Detail */}
               <div className="mb-4">
                 <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">
-                  Capability Status
+                  Privilege Status
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  {org.capabilities.map((cap) => (
-                    <Badge key={cap.type} variant="outline" className={getStatusColor(cap.status)}>
+                  {org.privileges.map((priv) => (
+                    <Badge key={priv.type} variant="outline" className={getStatusColor(priv.status)}>
                       <span className="capitalize">
-                        {cap.type.replace('_', ' ')}
+                        {priv.type.replace('_', ' ')}
                       </span>
                       <span className="mx-1">•</span>
-                      <span>{cap.status}</span>
+                      <span>{priv.status}</span>
                     </Badge>
                   ))}
                 </div>
