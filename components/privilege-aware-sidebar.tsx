@@ -32,9 +32,9 @@ import {
   ScanLine,
   CalendarClock,
   CirclePlus,
-  SquareMousePointer
+  SquareMousePointer,
 } from "lucide-react";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import type { UserOrganization } from "@/lib/types/auth";
 
@@ -88,7 +88,7 @@ const getDashboardNavigation = (
       name: "My Organization",
       icon: Building,
       show: true,
-      children:[
+      children: [
         {
           name: "Organization Admins",
           href: "/add-organization-admins",
@@ -101,7 +101,7 @@ const getDashboardNavigation = (
           icon: Settings,
           show: true,
         },
-      ]
+      ],
     },
 
     // CIN Admin Specific Routes - Show at top for CIN admins
@@ -109,7 +109,7 @@ const getDashboardNavigation = (
       name: "App Management",
       icon: UserCog,
       show: isCinAdmin,
-      children:[
+      children: [
         {
           name: "Organization Requests",
           href: "/organization-requests",
@@ -121,19 +121,20 @@ const getDashboardNavigation = (
           href: "/view-all-organizations",
           icon: Building2,
           show: isCinAdmin,
-        },{
+        },
+        {
           name: "All Users",
           href: "/view-all-users",
           icon: Users,
           show: isCinAdmin,
         },
-      ]
+      ],
     },
     {
       name: "Mission Submissions",
       icon: FileText,
       show: isCinAdmin,
-      children:[
+      children: [
         {
           name: "Review Submissions",
           href: "/review-submissions",
@@ -152,7 +153,7 @@ const getDashboardNavigation = (
           icon: Target,
           show: isCinAdmin,
         },
-      ]
+      ],
     },
 
     // Player Organization Specific Routes
@@ -160,7 +161,7 @@ const getDashboardNavigation = (
       name: "Members",
       icon: Users,
       show: hasMobilizingPartners,
-      children:[
+      children: [
         {
           name: "Join Requests",
           href: "/join-requests",
@@ -173,20 +174,20 @@ const getDashboardNavigation = (
           icon: UserSearch,
           show: hasMobilizingPartners,
         },
-
-      ]
+      ],
     },
     {
       name: "Events",
       icon: Calendar,
       show: hasMobilizingPartners,
-      children:[
+      children: [
         {
           name: "Create Events",
           href: "/create-events",
           icon: CalendarPlus,
           show: hasMobilizingPartners,
-        },{
+        },
+        {
           name: "Scan QR",
           href: "/scan-event-qr",
           icon: ScanLine,
@@ -198,7 +199,7 @@ const getDashboardNavigation = (
           icon: CalendarClock,
           show: hasMobilizingPartners,
         },
-      ]
+      ],
     },
 
     // Mission Creator Specific Routes
@@ -206,19 +207,20 @@ const getDashboardNavigation = (
       name: "Missions",
       icon: Target,
       show: hasMissionPartners,
-      children:[
+      children: [
         {
           name: "Create Missions",
           href: "/create-missions",
           icon: CirclePlus,
           show: hasMissionPartners,
-        },{
+        },
+        {
           name: "Manage Missions",
           href: "/manage-missions",
           icon: SquareMousePointer,
           show: hasMissionPartners,
         },
-      ]
+      ],
     },
 
     // Reward Creator Specific Routes
@@ -226,24 +228,25 @@ const getDashboardNavigation = (
       name: "Rewards",
       icon: Gift,
       show: hasRewardPartners,
-      children:[
+      children: [
         {
           name: "Create Rewards",
           href: "/create-rewards",
           icon: Gift,
           show: hasRewardPartners,
-        },{
+        },
+        {
           name: "Manage Rewards",
           href: "/manage-rewards",
           icon: Settings,
           show: hasRewardPartners,
         },
-      ]
+      ],
     },
   ];
 };
 
-export function PrivilegeAwareSidebar(){
+export function PrivilegeAwareSidebar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
@@ -277,7 +280,7 @@ export function PrivilegeAwareSidebar(){
   ).filter((item) => item.show);
 
   const toggleGroup = (name: string) =>
-      setOpenGroups((prev) => ({ ...prev, [name]: !prev[name] }));
+    setOpenGroups((prev) => ({ ...prev, [name]: !prev[name] }));
 
   return (
     <>
@@ -314,7 +317,7 @@ export function PrivilegeAwareSidebar(){
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                    {activeOrganization?.name || "CIN Admin"}
+                  {activeOrganization?.name || "CIN Admin"}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {isCinAdmin ? "CIN Administrator" : "Organization Admin"}
@@ -339,79 +342,81 @@ export function PrivilegeAwareSidebar(){
 
               if (item.children && item.children.length > 0) {
                 const isGroupOpen = openGroups[item.name] ?? false;
-                const isGroupActive = item.children.some((c) => c.href === pathname);
+                const isGroupActive = item.children.some(
+                  (c) => c.href === pathname
+                );
 
                 return (
-                    <div key={item.name}>
-                      <button
-                          className={cn(
-                              'flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-semibold transition-colors',
-                              isGroupActive
-                                  ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
-                          )}
-                          onClick={() => toggleGroup(item.name)}
-                      >
-                        <div className="flex items-center space-x-2">
-                          <item.icon className="h-5 w-5" />
-                          <span>{item.name}</span>
-                        </div>
-                        {isGroupOpen ? (
-                            <ChevronDown className="w-4 h-4" />
-                        ) : (
-                            <ChevronRight className="w-4 h-4" />
-                        )}
-                      </button>
-                      {isGroupOpen && (
-                          <div className="ml-4 mt-1 space-y-1">
-                            {item.children.map((child) => {
-                              if (!child.show) return null;
-                              const isChildActive = child.href === pathname;
-                              return (
-                                  <Link
-                                      key={child.name}
-                                      href={child.href!}
-                                      className={cn(
-                                          'flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors',
-                                          isChildActive
-                                              ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                                              : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
-                                      )}
-                                  >
-                                    <div className="flex items-center space-x-2">
-                                      <child.icon className="h-4 w-4" />
-                                      <span>{child.name}</span>
-                                    </div>
-                                  </Link>
-                              );
-                            })}
-                          </div>
+                  <div key={item.name}>
+                    <button
+                      className={cn(
+                        "flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-semibold transition-colors",
+                        isGroupActive
+                          ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                          : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                       )}
-                    </div>
+                      onClick={() => toggleGroup(item.name)}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.name}</span>
+                      </div>
+                      {isGroupOpen ? (
+                        <ChevronDown className="w-4 h-4" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4" />
+                      )}
+                    </button>
+                    {isGroupOpen && (
+                      <div className="ml-4 mt-1 space-y-1">
+                        {item.children.map((child) => {
+                          if (!child.show) return null;
+                          const isChildActive = child.href === pathname;
+                          return (
+                            <Link
+                              key={child.name}
+                              href={child.href!}
+                              className={cn(
+                                "flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors",
+                                isChildActive
+                                  ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+                              )}
+                            >
+                              <div className="flex items-center space-x-2">
+                                <child.icon className="h-4 w-4" />
+                                <span>{child.name}</span>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               }
 
               return (
-                  <Link
-                      key={item.name}
-                      href={item.href!}
-                      className={cn(
-                          'flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                          isActive
-                              ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                              : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
-                      )}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.name}</span>
-                    </div>
-                    {item.badge && (
-                        <Badge className={cn('text-xs px-1 py-0', item.badgeColor)}>
-                          {item.badge}
-                        </Badge>
-                    )}
-                  </Link>
+                <Link
+                  key={item.name}
+                  href={item.href!}
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                  )}
+                >
+                  <div className="flex items-center space-x-2">
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.name}</span>
+                  </div>
+                  {item.badge && (
+                    <Badge className={cn("text-xs px-1 py-0", item.badgeColor)}>
+                      {item.badge}
+                    </Badge>
+                  )}
+                </Link>
               );
             })}
           </nav>
@@ -434,35 +439,6 @@ export function PrivilegeAwareSidebar(){
               </div>
             </div>
           )}
-          <div className={'px-4 py-4 border-t w-full border-t-gray-200 dark:border-t-gray-700'}>
-            {activeOrganization?.privileges && (
-                <div className="mt-3 space-y-3">
-                  {activeOrganization.privileges.map((privilege) => (
-                      <div
-                          key={privilege.type}
-                          className="flex items-center justify-between text-xs"
-                      >
-                    <span className="capitalize text-gray-600 dark:text-gray-400">
-                      {privilege.type.replace("_", " ")}
-                    </span>
-                        <Badge
-                            className={cn(
-                                "text-xs px-1 py-0",
-                                privilege.status === "approved" &&
-                                "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-                                privilege.status === "pending" &&
-                                "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-                                privilege.status === "rejected" &&
-                                "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                            )}
-                        >
-                          {privilege.status}
-                        </Badge>
-                      </div>
-                  ))}
-                </div>
-            )}
-          </div>
         </div>
       </div>
     </>

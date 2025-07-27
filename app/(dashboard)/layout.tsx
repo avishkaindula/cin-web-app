@@ -1,6 +1,6 @@
 import type React from "react";
 import { DashboardHeader } from "@/components/dashboard-header";
-import { PrivilegeAwareSidebar } from "@/components/capability-aware-sidebar";
+import { PrivilegeAwareSidebar } from "@/components/privilege-aware-sidebar";
 
 export default function DashboardLayout({
   children,
