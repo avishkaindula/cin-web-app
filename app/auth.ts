@@ -15,12 +15,12 @@ export const signUpAction = async (formData: FormData) => {
   const address = formData.get("address")?.toString();
   const confirmPassword = formData.get("confirmPassword")?.toString();
 
-  // Get selected capabilities from checkboxes
-  const selectedCapabilities = formData.getAll("capabilities");
+  // Get selected privileges from checkboxes
+  const selectedPrivileges = formData.getAll("privileges");
   const permissionTypes =
-    selectedCapabilities.length > 0
-      ? selectedCapabilities.join(",")
-      : "player_org"; // Default to player_org if nothing selected
+    selectedPrivileges.length > 0
+      ? selectedPrivileges.join(",")
+      : "mobilizing_partners"; // Default to mobilizing_partners if nothing selected
 
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
@@ -60,7 +60,7 @@ export const signUpAction = async (formData: FormData) => {
         phone,
         address,
         organization_name: organizationName,
-        permission_types: permissionTypes, // Use selected capabilities
+        permission_types: permissionTypes, // Use selected privileges
       },
     },
   });

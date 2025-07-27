@@ -32,17 +32,17 @@ const ROUTE_PERMISSIONS: Record<string, RoutePermission> = {
   "/view-members": { roles: ["org_admin"], privileges: [] },
   "/join-requests": { roles: ["org_admin"], privileges: [] },
   
-  // Mission management (requires mission_creator privilege)
-  "/create-missions": { roles: ["org_admin"], privileges: ["mission_creator"] },
-  "/manage-missions": { roles: ["org_admin"], privileges: ["mission_creator"] },
+  // Mission management (requires mission_partners privilege)
+  "/create-missions": { roles: ["org_admin"], privileges: ["mission_partners"] },
+  "/manage-missions": { roles: ["org_admin"], privileges: ["mission_partners"] },
   
-  // Reward management (requires reward_creator privilege)
-  "/create-rewards": { roles: ["org_admin"], privileges: ["reward_creator"] },
-  "/manage-rewards": { roles: ["org_admin"], privileges: ["reward_creator"] },
+  // Reward management (requires reward_partners privilege)
+  "/create-rewards": { roles: ["org_admin"], privileges: ["reward_partners"] },
+  "/manage-rewards": { roles: ["org_admin"], privileges: ["reward_partners"] },
   
-  // Event management (requires player_org privilege)
-  "/create-events": { roles: ["org_admin"], privileges: ["player_org"] },
-  "/scan-event-qr": { roles: ["org_admin"], privileges: ["player_org"] },
+  // Event management (requires mobilizing_partners privilege)
+  "/create-events": { roles: ["org_admin"], privileges: ["mobilizing_partners"] },
+  "/scan-event-qr": { roles: ["org_admin"], privileges: ["mobilizing_partners"] },
   
   // Dashboard (accessible to both roles)
   "/dashboard": { roles: ["cin_admin", "org_admin"], privileges: [] },

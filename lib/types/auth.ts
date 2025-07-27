@@ -6,7 +6,7 @@ export interface UserRole {
 }
 
 export interface UserPrivilege {
-  type: 'player_org' | 'mission_creator' | 'reward_creator';
+  type: 'mobilizing_partners' | 'mission_partners' | 'reward_partners';
   status: 'pending' | 'approved' | 'rejected';
 }
 

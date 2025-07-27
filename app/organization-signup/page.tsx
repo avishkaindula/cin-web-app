@@ -142,19 +142,19 @@ export default async function OrganizationSignUpPage({
                 </div>
                 
                 <div className="space-y-4">
-                  {/* Player Organization Privilege */}
+                  {/* Mobilizing Partners Privilege */}
                   <div className="flex items-start space-x-3 p-4 border rounded-lg">
                     <Checkbox 
-                      id="player_org" 
+                      id="mobilizing_partners" 
                       name="privileges" 
-                      value="player_org"
+                      value="mobilizing_partners"
                       defaultChecked
                     />
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center space-x-2">
                         <Users className="h-4 w-4 text-blue-600" />
-                        <Label htmlFor="player_org" className="font-medium cursor-pointer">
-                          Player Organization
+                        <Label htmlFor="mobilizing_partners" className="font-medium cursor-pointer">
+                          Mobilizing Partners
                         </Label>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -164,18 +164,18 @@ export default async function OrganizationSignUpPage({
                     </div>
                   </div>
 
-                  {/* Mission Creator Privilege */}
+                  {/* Mission Partners Privilege */}
                   <div className="flex items-start space-x-3 p-4 border rounded-lg">
                     <Checkbox 
-                      id="mission_creator" 
+                      id="mission_partners" 
                       name="privileges" 
-                      value="mission_creator"
+                      value="mission_partners"
                     />
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center space-x-2">
                         <Target className="h-4 w-4 text-green-600" />
-                        <Label htmlFor="mission_creator" className="font-medium cursor-pointer">
-                          Mission Creator
+                        <Label htmlFor="mission_partners" className="font-medium cursor-pointer">
+                          Mission Partners
                         </Label>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -185,18 +185,18 @@ export default async function OrganizationSignUpPage({
                     </div>
                   </div>
 
-                  {/* Reward Creator Privilege */}
+                  {/* Reward Partners Privilege */}
                   <div className="flex items-start space-x-3 p-4 border rounded-lg">
                     <Checkbox 
-                      id="reward_creator" 
+                      id="reward_partners" 
                       name="privileges" 
-                      value="reward_creator"
+                      value="reward_partners"
                     />
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center space-x-2">
                         <Gift className="h-4 w-4 text-purple-600" />
-                        <Label htmlFor="reward_creator" className="font-medium cursor-pointer">
-                          Reward Creator
+                        <Label htmlFor="reward_partners" className="font-medium cursor-pointer">
+                          Reward Partners
                         </Label>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">

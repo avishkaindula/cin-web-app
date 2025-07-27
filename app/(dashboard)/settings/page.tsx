@@ -591,13 +591,13 @@ export default function EditOrganizationPage() {
                   }
                   className="flex items-center gap-1"
                 >
-                  {privilege.type === "player_org" && (
+                  {privilege.type === "mobilizing_partners" && (
                     <Users className="h-3 w-3" />
                   )}
-                  {privilege.type === "mission_creator" && (
+                  {privilege.type === "mission_partners" && (
                     <Target className="h-3 w-3" />
                   )}
-                  {privilege.type === "reward_creator" && (
+                  {privilege.type === "reward_partners" && (
                     <Gift className="h-3 w-3" />
                   )}
                   {privilege.type.replace("_", " ")} ({privilege.status})
@@ -612,24 +612,24 @@ export default function EditOrganizationPage() {
           <div className="space-y-4">
             <Label>Request New Privileges</Label>
 
-            {/* Mission Creator */}
-            {!hasPrivilege("mission_creator") && (
+            {/* Mission Partners */}
+            {!hasPrivilege("mission_partners") && (
               <div className="flex items-start space-x-3 p-4 border rounded-lg">
                 <Checkbox
-                  id="mission_creator"
-                  checked={requestedPrivileges.includes("mission_creator")}
+                  id="mission_partners"
+                  checked={requestedPrivileges.includes("mission_partners")}
                   onCheckedChange={() =>
-                    handlePrivilegeRequest("mission_creator")
+                    handlePrivilegeRequest("mission_partners")
                   }
                 />
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center space-x-2">
                     <Target className="h-4 w-4 text-green-600" />
                     <Label
-                      htmlFor="mission_creator"
+                      htmlFor="mission_partners"
                       className="font-medium cursor-pointer"
                     >
-                      Mission Creator
+                      Mission Partners
                     </Label>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -641,24 +641,24 @@ export default function EditOrganizationPage() {
               </div>
             )}
 
-            {/* Reward Creator */}
-            {!hasPrivilege("reward_creator") && (
+            {/* Reward Partners */}
+            {!hasPrivilege("reward_partners") && (
               <div className="flex items-start space-x-3 p-4 border rounded-lg">
                 <Checkbox
-                  id="reward_creator"
-                  checked={requestedPrivileges.includes("reward_creator")}
+                  id="reward_partners"
+                  checked={requestedPrivileges.includes("reward_partners")}
                   onCheckedChange={() =>
-                    handlePrivilegeRequest("reward_creator")
+                    handlePrivilegeRequest("reward_partners")
                   }
                 />
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center space-x-2">
                     <Gift className="h-4 w-4 text-purple-600" />
                     <Label
-                      htmlFor="reward_creator"
+                      htmlFor="reward_partners"
                       className="font-medium cursor-pointer"
                     >
-                      Reward Creator
+                      Reward Partners
                     </Label>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -671,8 +671,8 @@ export default function EditOrganizationPage() {
             )}
 
             {requestedPrivileges.length === 0 &&
-              !hasPrivilege("mission_creator") &&
-              !hasPrivilege("reward_creator") && (
+              !hasPrivilege("mission_partners") &&
+              !hasPrivilege("reward_partners") && (
                 <p className="text-gray-500 text-center py-4">
                   Select privileges above to request additional access.
                 </p>
