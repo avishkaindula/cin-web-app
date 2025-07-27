@@ -58,13 +58,13 @@ const getDashboardNavigation = (
     activeOrganization?.privileges?.filter(
       (priv) => priv.status === "approved"
     ) || [];
-  const hasPlayerOrg = approvedPrivileges.some(
+  const hasMobilizingPartners = approvedPrivileges.some(
     (priv) => priv.type === "mobilizing_partners"
   );
-  const hasMissionCreator = approvedPrivileges.some(
+  const hasMissionPartners = approvedPrivileges.some(
     (priv) => priv.type === "mission_partners"
   );
-  const hasRewardCreator = approvedPrivileges.some(
+  const hasRewardPartners = approvedPrivileges.some(
     (priv) => priv.type === "reward_partners"
   );
 
@@ -165,19 +165,19 @@ const getDashboardNavigation = (
     {
       name: "Members",
       icon: Users,
-      show: hasPlayerOrg,
+      show: hasMobilizingPartners,
       children:[
         {
           name: "Join Requests",
           href: "/join-requests",
           icon: UserPlus,
-          show: hasPlayerOrg,
+          show: hasMobilizingPartners,
         },
         {
           name: "View All Members",
           href: "/view-members",
           icon: UserSearch,
-          show: hasPlayerOrg,
+          show: hasMobilizingPartners,
         },
 
       ]
@@ -185,24 +185,24 @@ const getDashboardNavigation = (
     {
       name: "Events",
       icon: Calendar,
-      show: hasPlayerOrg,
+      show: hasMobilizingPartners,
       children:[
         {
           name: "Create Events",
           href: "/create-events",
           icon: CalendarPlus,
-          show: hasPlayerOrg,
+          show: hasMobilizingPartners,
         },{
           name: "Scan QR",
           href: "/scan-event-qr",
           icon: ScanLine,
-          show: hasPlayerOrg,
+          show: hasMobilizingPartners,
         },
         {
           name: "Event History",
           href: "/events-history",
           icon: CalendarClock,
-          show: hasPlayerOrg,
+          show: hasMobilizingPartners,
         },
       ]
     },
@@ -211,18 +211,18 @@ const getDashboardNavigation = (
     {
       name: "Missions",
       icon: Target,
-      show: hasMissionCreator,
+      show: hasMissionPartners,
       children:[
         {
           name: "Create Missions",
           href: "/create-missions",
           icon: CirclePlus,
-          show: hasMissionCreator,
+          show: hasMissionPartners,
         },{
           name: "Manage Missions",
           href: "/manage-missions",
           icon: SquareMousePointer,
-          show: hasMissionCreator,
+          show: hasMissionPartners,
         },
       ]
     },
@@ -231,18 +231,18 @@ const getDashboardNavigation = (
     {
       name: "Rewards",
       icon: Gift,
-      show: hasRewardCreator,
+      show: hasRewardPartners,
       children:[
         {
           name: "Create Rewards",
           href: "/create-rewards",
           icon: Gift,
-          show: hasRewardCreator,
+          show: hasRewardPartners,
         },{
           name: "Manage Rewards",
           href: "/manage-rewards",
           icon: Settings,
-          show: hasRewardCreator,
+          show: hasRewardPartners,
         },
       ]
     },
