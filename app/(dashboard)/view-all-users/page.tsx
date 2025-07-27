@@ -39,10 +39,10 @@ const mockUsers = [
   },
   {
     id: "3",
-    name: "Mission 1.5° Administrator",
-    email: "admin1@mission1point5.org", 
+    name: "CIN Administrator",
+    email: "cinadmin1@climateintel.org", 
     role: "cin_admin",
-    organization: "Mission 1.5°",
+    organization: "The Climate Intelligence Network",
     joinedDate: "2024-01-01",
     lastActive: "2025-01-14",
     status: "active",
@@ -130,7 +130,7 @@ export default function ViewAllUsersPage() {
           All Users
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Manage and overview all users in Mission 1.5°
+          Manage and overview all users in the Climate Intelligence Network
         </p>
       </div>
 
@@ -255,7 +255,7 @@ export default function ViewAllUsersPage() {
                 {mockUsers.filter(u => u.role === 'cin_admin').length}
               </div>
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                Mission 1.5° Admins
+                CIN Admins
               </div>
             </div>
           </CardContent>

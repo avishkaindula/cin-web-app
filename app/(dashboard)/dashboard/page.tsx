@@ -153,7 +153,7 @@ export default function DashboardPage() {
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
           {isCinAdmin
-            ? "Mission 1.5° Administrator"
+            ? "CIN Administrator"
             : activeOrganization
             ? `${activeOrganization.name} - Organization Dashboard`
             : "Dashboard"}
@@ -413,7 +413,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <p className="text-yellow-700 dark:text-yellow-300">
-              You have privileges pending approval. Once approved by Mission 1.5°
+              You have privileges pending approval. Once approved by CIN
               administrators, additional features will become available in your
               dashboard.
             </p>

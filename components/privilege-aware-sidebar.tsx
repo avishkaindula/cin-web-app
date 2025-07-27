@@ -84,7 +84,7 @@ const getDashboardNavigation = (
       show: true,
     },
 
-    // Common Admin Routes - Accessible by both Mission 1.5° admins and org admins
+    // Common Admin Routes - Accessible by both CIN admins and org admins
     {
       name: "My Organization",
       icon: Building,
@@ -105,7 +105,7 @@ const getDashboardNavigation = (
       ]
     },
 
-    // Mission 1.5° Admin Specific Routes - Show at top for Mission 1.5° admins
+    // CIN Admin Specific Routes - Show at top for CIN admins
     {
       name: "App Management",
       icon: UserCog,
@@ -266,7 +266,7 @@ export function PrivilegeAwareSidebar(){
     );
   }
 
-  // If no active organization and not a Mission 1.5° admin, show no organization state
+  // If no active organization and not a CIN admin, show no organization state
   if (!activeOrganization && !isCinAdmin) {
     return (
       <div className="fixed left-0 top-0 z-40 h-full w-80 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
@@ -320,10 +320,10 @@ export function PrivilegeAwareSidebar(){
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {activeOrganization?.name || "Mission 1.5° Admin"}
+                                    {activeOrganization?.name || "CIN Admin"}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {isCinAdmin ? "Mission 1.5° Administrator" : "Organization Admin"}
+                  {isCinAdmin ? "CIN Administrator" : "Organization Admin"}
                 </p>
               </div>
 
@@ -435,7 +435,7 @@ export function PrivilegeAwareSidebar(){
                   </span>
                 </div>
                 <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
-                  Some privileges are pending Mission 1.5° admin approval
+                  Some privileges are pending CIN admin approval
                 </p>
               </div>
             </div>

@@ -49,7 +49,7 @@ export default function AddAdminsPage() {
         <p className="text-gray-600 dark:text-gray-400 mt-2">
           {isCinAdmin
             ? `Invite new organization administrators to ${
-                activeOrganization?.name || "Mission 1.5°"
+                activeOrganization?.name || "the Climate Intelligence Network"
               }`
             : "Invite new administrators to your organization"}
         </p>
@@ -90,13 +90,13 @@ export default function AddAdminsPage() {
               <p className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">✗</span>
                 <span>
-                  They <strong>will NOT have access to</strong> Mission 1.5° Admin
+                  They <strong>will NOT have access to</strong> CIN Admin
                   specific privileges like organization approval or submission
                   review.
                 </span>
               </p>
               <p className="mt-3 text-xs border-t pt-2">
-                <strong>Need to create a Mission 1.5° Admin instead?</strong> Please
+                <strong>Need to create a CIN Admin instead?</strong> Please
                 contact your system administrator.
               </p>
             </div>
