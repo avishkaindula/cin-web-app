@@ -255,10 +255,10 @@ export default function EditOrganizationPage() {
             <p className="text-sm text-gray-600 dark:text-gray-400">
               To change the organization name, send an email to{" "}
               <a
-                href="mailto:team@theclimateintel.org"
+                href="mailto:support@mission1point5.org"
                 className="text-blue-600 hover:underline"
               >
-                team@theclimateintel.org
+                support@mission1point5.org
               </a>
             </p>
           </div>
@@ -575,13 +575,13 @@ export default function EditOrganizationPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <p className="text-gray-600 dark:text-gray-400">
-            Request additional capabilities for your organization. All requests
-            will be reviewed by CIN administrators.
+            Request additional privileges for your organization. All requests
+            will be reviewed by Mission 1.5° administrators.
           </p>
 
-          {/* Current Capabilities */}
+          {/* Current Privileges */}
           <div className="space-y-2">
-            <Label>Current Capabilities</Label>
+            <Label>Current Privileges</Label>
             <div className="flex flex-wrap gap-2">
               {activeOrganization.capabilities?.map((capability) => (
                 <Badge
@@ -608,9 +608,9 @@ export default function EditOrganizationPage() {
 
           <Separator />
 
-          {/* Request New Capabilities */}
+          {/* Request New Privileges */}
           <div className="space-y-4">
-            <Label>Request New Capabilities</Label>
+            <Label>Request New Privileges</Label>
 
             {/* Mission Creator */}
             {!hasCapability("mission_creator") && (
@@ -674,14 +674,14 @@ export default function EditOrganizationPage() {
               !hasCapability("mission_creator") &&
               !hasCapability("reward_creator") && (
                 <p className="text-gray-500 text-center py-4">
-                  Select capabilities above to request additional privileges.
+                  Select privileges above to request additional access.
                 </p>
               )}
           </div>
 
           {requestedCapabilities.length > 0 && (
             <Button onClick={handleRequestCapabilities} className="w-full">
-              Submit Capability Request
+              Submit Privilege Request
             </Button>
           )}
         </CardContent>

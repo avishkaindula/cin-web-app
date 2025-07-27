@@ -97,8 +97,8 @@ const getDashboardNavigation = (
           show: true,
         },
         {
-          name: "Profile",
-          href: "/edit-organization",
+          name: "Settings",
+          href: "/settings",
           icon: Settings,
           show: true,
         },
