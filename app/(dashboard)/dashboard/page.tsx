@@ -130,26 +130,26 @@ export default function DashboardPage() {
     );
   }
 
-  // Get approved capabilities if we have an active organization
-  const approvedCapabilities =
-    activeOrganization?.capabilities?.filter(
-      (cap) => cap.status === "approved"
+  // Get approved privileges if we have an active organization
+  const approvedPrivileges =
+    activeOrganization?.privileges?.filter(
+      (priv) => priv.status === "approved"
     ) || [];
-  const hasPlayerOrg = approvedCapabilities.some(
-    (cap) => cap.type === "player_org"
+  const hasMobilizingPartners = approvedPrivileges.some(
+    (priv) => priv.type === "mobilizing_partners"
   );
-  const hasMissionCreator = approvedCapabilities.some(
-    (cap) => cap.type === "mission_creator"
+  const hasMissionPartners = approvedPrivileges.some(
+    (priv) => priv.type === "mission_partners"
   );
-  const hasRewardCreator = approvedCapabilities.some(
-    (cap) => cap.type === "reward_creator"
+  const hasRewardPartners = approvedPrivileges.some(
+    (priv) => priv.type === "reward_partners"
   );
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Welcome to Climate Intelligence Network
+          Welcome to Mission 1.5°
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
           {isCinAdmin
@@ -169,25 +169,25 @@ export default function DashboardPage() {
               <span>{activeOrganization.name}</span>
             </CardTitle>
             <CardDescription>
-              Current capabilities and approval status for{" "}
+              Current privileges and approval status for{" "}
               {activeOrganization.name}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {activeOrganization.capabilities?.map((capability) => (
+              {activeOrganization.privileges?.map((privilege) => (
                 <div
-                  key={capability.type}
+                  key={privilege.type}
                   className="flex items-center justify-between p-3 border rounded-lg"
                 >
                   <div className="flex items-center space-x-2">
-                    {getStatusIcon(capability.status)}
+                    {getStatusIcon(privilege.status)}
                     <span className="font-medium capitalize">
-                      {capability.type.replace("_", " ")}
+                      {privilege.type.replace("_", " ")}
                     </span>
                   </div>
-                  <Badge className={getStatusColor(capability.status)}>
-                    {capability.status}
+                  <Badge className={getStatusColor(privilege.status)}>
+                    {privilege.status}
                   </Badge>
                 </div>
               )) || []}
@@ -401,9 +401,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Pending Capabilities Notice */}
-      {activeOrganization?.capabilities?.some(
-        (cap) => cap.status === "pending"
+      {/* Pending Privileges Notice */}
+      {activeOrganization?.privileges?.some(
+        (priv) => priv.status === "pending"
       ) && (
         <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
           <CardHeader>
@@ -413,7 +413,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <p className="text-yellow-700 dark:text-yellow-300">
-              You have capabilities pending approval. Once approved by CIN
+              You have privileges pending approval. Once approved by CIN
               administrators, additional features will become available in your
               dashboard.
             </p>

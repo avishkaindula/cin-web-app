@@ -8,7 +8,7 @@ import { AuthProvider } from "@/contexts/auth-context"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Climate Intelligence Network",
+  title: "Mission 1.5°",
   description: "Gamify Climate Action, Make Real Impact",
     generator: 'v0.dev'
 }

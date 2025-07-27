@@ -171,40 +171,11 @@ export default function OrganizationApprovalPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Organization Details */}
+                {/* Admin Contact & Organization Info */}
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-medium text-gray-900 dark:text-white mb-2">
-                      Organization Details
-                    </h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center space-x-2">
-                        <Building className="h-4 w-4 text-gray-400" />
-                        <span>{org.name}</span>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <span className="h-4 w-4 text-gray-400 mt-0.5">📍</span>
-                        <span>{org.address}</span>
-                      </div>
-                      {org.website && (
-                        <div className="flex items-center space-x-2">
-                          <span className="h-4 w-4 text-gray-400">🌐</span>
-                          <a
-                            href={org.website}
-                            className="text-blue-600 hover:underline"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {org.website}
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-medium text-gray-900 dark:text-white mb-2">
-                      Admin Contact
+                      Admin Contact & Organization Info
                     </h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center space-x-2">
@@ -219,6 +190,19 @@ export default function OrganizationApprovalPage() {
                         <Phone className="h-4 w-4 text-gray-400" />
                         <span>{org.adminPhone}</span>
                       </div>
+                      {org.website && (
+                        <div className="flex items-center space-x-2">
+                          <span className="h-4 w-4 text-gray-400">🌐</span>
+                          <a
+                            href={org.website}
+                            className="text-blue-600 hover:underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {org.website}
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -270,10 +254,6 @@ export default function OrganizationApprovalPage() {
                     <Button className="flex-1">
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Approve All
-                    </Button>
-                    <Button variant="outline" className="flex-1">
-                      <Eye className="h-4 w-4 mr-2" />
-                      View Details
                     </Button>
                     <Button variant="destructive" className="flex-1">
                       <XCircle className="h-4 w-4 mr-2" />

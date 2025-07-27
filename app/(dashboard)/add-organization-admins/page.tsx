@@ -17,6 +17,29 @@ import { useAuth } from "@/contexts/auth-context";
 
 export default function AddAdminsPage() {
   const { isCinAdmin, activeOrganization } = useAuth();
+  
+  // Mock data for current admins - in real app this would come from API/database
+  const currentAdmins = [
+    {
+      name: "John Doe",
+      email: "john@greentech.com",
+      role: "org_admin",
+      status: "active",
+      joinedAt: "2024-01-15",
+    },
+    {
+      name: "Jane Smith",
+      email: "jane@greentech.com",
+      role: "org_admin",
+      status: "pending",
+      joinedAt: "2024-02-01",
+    },
+  ];
+  
+  const MAX_ADMINS = 5;
+  const canAddMoreAdmins = currentAdmins.length < MAX_ADMINS;
+  const adminSlotsRemaining = MAX_ADMINS - currentAdmins.length;
+  
   return (
     <div className="space-y-6">
       <div>
@@ -30,7 +53,22 @@ export default function AddAdminsPage() {
               }`
             : "Invite new administrators to your organization"}
         </p>
+        <div className="mt-2 text-sm text-gray-500">
+          {currentAdmins.length} of {MAX_ADMINS} admin slots used
+          {adminSlotsRemaining > 0 && ` • ${adminSlotsRemaining} slots remaining`}
+        </div>
       </div>
+
+      {/* Admin Limit Warning */}
+      {!canAddMoreAdmins && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Admin Limit Reached:</strong> Your organization has reached the maximum limit of {MAX_ADMINS} administrators. 
+            To add a new admin, you must first remove an existing admin.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Warning for CIN Admins */}
       {isCinAdmin && (
@@ -53,7 +91,7 @@ export default function AddAdminsPage() {
                 <span className="text-red-600 mt-0.5">✗</span>
                 <span>
                   They <strong>will NOT have access to</strong> CIN Admin
-                  specific capabilities like organization approval or submission
+                  specific privileges like organization approval or submission
                   review.
                 </span>
               </p>
@@ -86,17 +124,27 @@ export default function AddAdminsPage() {
                   id="email"
                   type="email"
                   placeholder="admin@example.com"
+                  disabled={!canAddMoreAdmins}
                   required
                 />
               </div>
               <div>
                 <Label htmlFor="name">Full Name</Label>
-                <Input id="name" type="text" placeholder="John Doe" required />
+                <Input 
+                  id="name" 
+                  type="text" 
+                  placeholder="John Doe" 
+                  disabled={!canAddMoreAdmins}
+                  required 
+                />
               </div>
             </div>
-            <Button className="w-full md:w-auto">
+            <Button 
+              className="w-full md:w-auto" 
+              disabled={!canAddMoreAdmins}
+            >
               <Mail className="h-4 w-4 mr-2" />
-              Send Invitation
+              {canAddMoreAdmins ? "Send Invitation" : "Admin Limit Reached"}
             </Button>
           </form>
         </CardContent>
@@ -115,23 +163,8 @@ export default function AddAdminsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {/* Example admin entries */}
-            {[
-              {
-                name: "John Doe",
-                email: "john@greentech.com",
-                role: "org_admin",
-                status: "active",
-                joinedAt: "2024-01-15",
-              },
-              {
-                name: "Jane Smith",
-                email: "jane@greentech.com",
-                role: "org_moderator",
-                status: "pending",
-                joinedAt: "2024-02-01",
-              },
-            ].map((admin, index) => (
+            {/* Current admin entries */}
+            {currentAdmins.map((admin, index) => (
               <div
                 key={index}
                 className="flex items-center justify-between p-4 border rounded-lg"
@@ -176,12 +209,20 @@ export default function AddAdminsPage() {
                   >
                     {admin.status}
                   </Badge>
-                  <Button variant="outline" size="sm">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {admin.status === "active" && (
+                    <Button variant="outline" size="sm">
+                      <Trash2 className="h-4 w-4 text-red-600" />
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}
+            
+            {currentAdmins.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                No administrators have been added yet.
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
