@@ -82,6 +82,14 @@ interface MissionStep {
   description: string;
 }
 
+interface GuidanceStep {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  requiredEvidence: string[];
+}
+
 interface DataField {
   id: string;
   name: string;
@@ -95,8 +103,10 @@ export default function CreateMissionsPage() {
   const [selectedEvidence, setSelectedEvidence] = useState<string[]>([]);
   const [locationType, setLocationType] = useState<string>("");
   const [steps, setSteps] = useState<MissionStep[]>([]);
+  const [guidanceSteps, setGuidanceSteps] = useState<GuidanceStep[]>([]);
   const [dataFields, setDataFields] = useState<DataField[]>([]);
   const [showIconSelector, setShowIconSelector] = useState<string | null>(null);
+  const [showGuidanceIconSelector, setShowGuidanceIconSelector] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   // Form data state
@@ -104,6 +114,7 @@ export default function CreateMissionsPage() {
     title: "",
     description: "",
     points: "",
+    experience: "",
     thumbnailImage: null as File | null,
     locationName: "",
     latitude: "",
@@ -137,6 +148,42 @@ export default function CreateMissionsPage() {
     setSteps(steps.filter(step => step.id !== id));
   };
 
+  // Guidance Steps Functions
+  const addGuidanceStep = () => {
+    const newGuidanceStep: GuidanceStep = {
+      id: `guidance-${Date.now()}`,
+      icon: "target",
+      title: "",
+      description: "",
+      requiredEvidence: []
+    };
+    setGuidanceSteps([...guidanceSteps, newGuidanceStep]);
+  };
+
+  const updateGuidanceStep = (id: string, field: keyof GuidanceStep, value: string | string[]) => {
+    setGuidanceSteps(guidanceSteps.map(step => 
+      step.id === id ? { ...step, [field]: value } : step
+    ));
+  };
+
+  const removeGuidanceStep = (id: string) => {
+    setGuidanceSteps(guidanceSteps.filter(step => step.id !== id));
+  };
+
+  const handleGuidanceEvidenceChange = (stepId: string, evidenceType: string, checked: boolean) => {
+    const step = guidanceSteps.find(s => s.id === stepId);
+    if (!step) return;
+    
+    let newEvidence: string[];
+    if (checked) {
+      newEvidence = [...step.requiredEvidence, evidenceType];
+    } else {
+      newEvidence = step.requiredEvidence.filter(e => e !== evidenceType);
+    }
+    
+    updateGuidanceStep(stepId, 'requiredEvidence', newEvidence);
+  };
+
   const addDataField = () => {
     const newField: DataField = {
       id: `field-${Date.now()}`,
@@ -168,8 +215,8 @@ export default function CreateMissionsPage() {
 
   const handleSubmit = () => {
     // Validate required fields
-    if (!formData.title || !formData.description || !missionType) {
-      toast.error("Please fill in all required fields");
+    if (!formData.title || !formData.description || !missionType || !formData.points || !formData.experience) {
+      toast.error("Please fill in all required fields including points and experience");
       return;
     }
     
@@ -653,8 +700,123 @@ export default function CreateMissionsPage() {
               </Button>
             </div>
 
-            {/* Points and Mission Type */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Guidance Steps */}
+            <div>
+              <Label className="text-base font-semibold">Guidance Steps with Evidence Requirements</Label>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                Define guidance steps and specify what evidence volunteers need to submit for each step
+              </p>
+              
+              {guidanceSteps.map((step, index) => (
+                <div key={step.id} className="border rounded-lg p-4 mb-3 bg-blue-50 dark:bg-blue-950">
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowGuidanceIconSelector(step.id)}
+                        className="w-10 h-10 p-0"
+                      >
+                        {React.createElement(stepIcons.find(icon => icon.name === step.icon)?.icon || Target, { className: "h-4 w-4" })}
+                      </Button>
+                      
+                      {showGuidanceIconSelector === step.id && (
+                        <div className="absolute z-10 mt-2 p-3 bg-white dark:bg-gray-800 border rounded-lg shadow-lg">
+                          <div className="grid grid-cols-5 gap-2 mb-2">
+                            {stepIcons.map((iconOption) => (
+                              <Button
+                                key={iconOption.name}
+                                variant="ghost"
+                                size="sm"
+                                className="w-8 h-8 p-0"
+                                onClick={() => {
+                                  updateGuidanceStep(step.id, 'icon', iconOption.name);
+                                  setShowGuidanceIconSelector(null);
+                                }}
+                              >
+                                {React.createElement(iconOption.icon, { className: "h-4 w-4" })}
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex-1 space-y-3">
+                      <div>
+                        <Label>Guidance Step Title</Label>
+                        <Input
+                          value={step.title}
+                          onChange={(e) => updateGuidanceStep(step.id, 'title', e.target.value)}
+                          placeholder="e.g., Document Species Found"
+                          maxLength={20}
+                        />
+                        <p className="text-xs text-gray-500">{step.title.length}/20 characters</p>
+                      </div>
+                      
+                      <div>
+                        <Label>Guidance Description</Label>
+                        <Textarea
+                          value={step.description}
+                          onChange={(e) => updateGuidanceStep(step.id, 'description', e.target.value)}
+                          placeholder="Explain what volunteers should do and how to document it..."
+                          maxLength={150}
+                          rows={2}
+                        />
+                        <p className="text-xs text-gray-500">{step.description.length}/150 characters</p>
+                      </div>
+                      
+                      <div>
+                        <Label className="font-medium">Required Evidence for This Step</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                          {evidenceTypes.filter(e => e.value !== 'none').map((evidence) => (
+                            <div key={evidence.value} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`${step.id}-${evidence.value}`}
+                                checked={step.requiredEvidence.includes(evidence.value)}
+                                onCheckedChange={(checked) => 
+                                  handleGuidanceEvidenceChange(step.id, evidence.value, checked as boolean)
+                                }
+                              />
+                              <Label htmlFor={`${step.id}-${evidence.value}`} className="text-sm">
+                                {evidence.label}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                        {step.requiredEvidence.length > 0 && (
+                          <div className="mt-2">
+                            <div className="flex flex-wrap gap-1">
+                              {step.requiredEvidence.map((evidence) => (
+                                <Badge key={evidence} variant="secondary" className="text-xs">
+                                  {evidenceTypes.find(e => e.value === evidence)?.label}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeGuidanceStep(step.id)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              
+              <Button variant="outline" onClick={addGuidanceStep} className="border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-950">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Guidance Step
+              </Button>
+            </div>
+
+            {/* Points, Experience and Mission Type */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="points">Points Awarded *</Label>
                 <Input
@@ -665,6 +827,20 @@ export default function CreateMissionsPage() {
                   placeholder="50"
                   className="mt-1"
                 />
+                <p className="text-xs text-gray-500 mt-1">Regular points for completion</p>
+              </div>
+              
+              <div>
+                <Label htmlFor="experience">Experience Points *</Label>
+                <Input
+                  id="experience"
+                  type="number"
+                  value={formData.experience}
+                  onChange={(e) => setFormData({...formData, experience: e.target.value})}
+                  placeholder="25"
+                  className="mt-1"
+                />
+                <p className="text-xs text-gray-500 mt-1">XP for skill development</p>
               </div>
               
               <div>
