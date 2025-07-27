@@ -320,7 +320,7 @@ export function PrivilegeAwareSidebar() {
                   Mission 1.5°
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {activeOrganization?.name}
+                  {activeOrganization?.name || "Organization Admin"}
                 </p>
               </div>
 
