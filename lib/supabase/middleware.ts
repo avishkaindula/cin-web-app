@@ -23,7 +23,8 @@ const ROUTE_PERMISSIONS: Record<string, RoutePermission> = {
   // CIN Admin only routes (global admin functions)
   "/view-all-organizations": { roles: ["cin_admin"], capabilities: [] },
   "/view-all-users": { roles: ["cin_admin"], capabilities: [] },
-  "/organization-approval": { roles: ["cin_admin"], capabilities: [] },
+  "/organization-requests": { roles: ["cin_admin"], capabilities: [] },
+  "/mission-approvals": { roles: ["cin_admin"], capabilities: [] },
   "/review-submissions": { roles: ["cin_admin"], capabilities: [] },
   
   // Org Admin routes (organization management)

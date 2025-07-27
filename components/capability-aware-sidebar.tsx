@@ -107,13 +107,13 @@ const getDashboardNavigation = (
 
     // CIN Admin Specific Routes - Show at top for CIN admins
     {
-      name: "Stakeholder Management",
+      name: "App Management",
       icon: UserCog,
       show: isCinAdmin,
       children:[
         {
-          name: "Role Approvals",
-          href: "/role-approvals",
+          name: "Organization Requests",
+          href: "/organization-requests",
           icon: ShieldCheck,
           show: isCinAdmin,
         },
@@ -150,6 +150,12 @@ const getDashboardNavigation = (
           name: "Submission History",
           href: "/submission-log",
           icon: FileClock,
+          show: isCinAdmin,
+        },
+        {
+          name: "Mission Approvals",
+          href: "/mission-approvals",
+          icon: Target,
           show: isCinAdmin,
         },
       ]
