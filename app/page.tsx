@@ -27,7 +27,7 @@ export default function HomePage() {
           <div className="flex items-center space-x-2">
             <Leaf className="h-8 w-8 text-green-600" />
             <span className="text-xl font-bold text-gray-900 dark:text-white">
-              Climate Intelligence Network
+              Mission 1.5°
             </span>
           </div>
           <nav className="hidden md:flex items-center space-x-6">
@@ -259,7 +259,7 @@ export default function HomePage() {
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <Leaf className="h-6 w-6 text-green-400" />
-                <span className="font-bold">Climate Intelligence Network</span>
+                <span className="font-bold">Mission 1.5°</span>
               </div>
               <p className="text-gray-400 text-sm">
                 Empowering global climate action through gamification and
@@ -325,7 +325,7 @@ export default function HomePage() {
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
             <p>
-              &copy; 2024 Climate Intelligence Network. All rights reserved.
+              &copy; 2024 Mission 1.5°. All rights reserved.
             </p>
           </div>
         </div>

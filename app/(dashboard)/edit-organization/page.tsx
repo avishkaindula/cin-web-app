@@ -255,10 +255,10 @@ export default function EditOrganizationPage() {
             <p className="text-sm text-gray-600 dark:text-gray-400">
               To change the organization name, send an email to{" "}
               <a
-                href="mailto:team@theclimateintel.org"
+                href="mailto:team@mission1point5.org"
                 className="text-blue-600 hover:underline"
               >
-                team@theclimateintel.org
+                team@mission1point5.org
               </a>
             </p>
           </div>

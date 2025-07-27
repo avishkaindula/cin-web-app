@@ -33,7 +33,7 @@ export default async function SignInPage({
           <div className="flex items-center space-x-2">
             <Leaf className="h-8 w-8 text-green-600" />
             <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              Climate Intelligence Network
+              Mission 1.5°
             </span>
           </div>
         </div>
@@ -42,7 +42,7 @@ export default async function SignInPage({
           <CardHeader>
             <CardTitle>Welcome Back</CardTitle>
             <CardDescription>
-              Sign in to your Climate Intelligence Network account
+              Sign in to your Mission 1.5° account
             </CardDescription>
           </CardHeader>
           <CardContent>

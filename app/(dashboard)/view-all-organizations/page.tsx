@@ -17,13 +17,13 @@ import {
 const mockOrganizations = [
   {
     id: "1",
-    name: "The Climate Intelligence Network",
-    type: "CIN Organization",
+    name: "Mission 1.5°",
+    type: "Mission 1.5° Organization",
     memberCount: 15,
     status: "active",
     joinedDate: "2024-01-01",
-    website: "https://climateintelligence.network",
-    contact: "contact@climateintelligence.network",
+    website: "https://mission1point5.org",
+    contact: "contact@mission1point5.org",
     privileges: [
       { type: "mobilizing_partners", status: "approved" },
       { type: "mission_partners", status: "approved" },
@@ -114,7 +114,7 @@ export default function ViewAllOrganizationsPage() {
           All Organizations
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Manage and overview all organizations in the Climate Intelligence Network
+          Manage and overview all organizations in Mission 1.5°
         </p>
       </div>
 

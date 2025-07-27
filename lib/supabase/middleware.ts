@@ -20,7 +20,7 @@ const PUBLIC_PATHS = [
 
 // Define route permissions - what roles and privileges are required for each route
 const ROUTE_PERMISSIONS: Record<string, RoutePermission> = {
-  // CIN Admin only routes (global admin functions)
+  // Mission 1.5° Admin only routes (global admin functions)
   "/view-all-organizations": { roles: ["cin_admin"], privileges: [] },
   "/view-all-users": { roles: ["cin_admin"], privileges: [] },
   "/organization-requests": { roles: ["cin_admin"], privileges: [] },

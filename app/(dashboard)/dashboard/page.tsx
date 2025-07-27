@@ -149,11 +149,11 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Welcome to Climate Intelligence Network
+          Welcome to Mission 1.5°
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
           {isCinAdmin
-            ? "CIN Administrator"
+            ? "Mission 1.5° Administrator"
             : activeOrganization
             ? `${activeOrganization.name} - Organization Dashboard`
             : "Dashboard"}
@@ -413,7 +413,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <p className="text-yellow-700 dark:text-yellow-300">
-              You have privileges pending approval. Once approved by CIN
+              You have privileges pending approval. Once approved by Mission 1.5°
               administrators, additional features will become available in your
               dashboard.
             </p>
