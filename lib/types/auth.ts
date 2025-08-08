@@ -1,12 +1,12 @@
 export interface UserRole {
-  role: 'cin_admin' | 'org_admin';
+  role: 'admin' | 'agent';
   scope: 'global' | 'organization';
   organization_id?: string;
   organization_name?: string;
 }
 
 export interface UserPrivilege {
-  type: 'mobilizing_partners' | 'mission_partners' | 'reward_partners';
+  type: 'mobilizing_partners' | 'mission_partners' | 'reward_partners' | 'cin_administrators';
   status: 'pending' | 'approved' | 'rejected';
 }
 

@@ -20,32 +20,32 @@ const PUBLIC_PATHS = [
 
 // Define route permissions - what roles and privileges are required for each route
 const ROUTE_PERMISSIONS: Record<string, RoutePermission> = {
-  // CIN Admin only routes (global admin functions)
-  "/view-all-organizations": { roles: ["cin_admin"], privileges: [] },
-  "/view-all-users": { roles: ["cin_admin"], privileges: [] },
-  "/organization-requests": { roles: ["cin_admin"], privileges: [] },
-  "/mission-approvals": { roles: ["cin_admin"], privileges: [] },
-  "/review-submissions": { roles: ["cin_admin"], privileges: [] },
+  // CIN Administrator only routes (global admin functions)
+  "/view-all-organizations": { roles: ["admin"], privileges: ["cin_administrators"] },
+  "/view-all-users": { roles: ["admin"], privileges: ["cin_administrators"] },
+  "/organization-requests": { roles: ["admin"], privileges: ["cin_administrators"] },
+  "/mission-approvals": { roles: ["admin"], privileges: ["cin_administrators"] },
+  "/review-submissions": { roles: ["admin"], privileges: ["cin_administrators"] },
   
   // Org Admin routes (organization management)
-  "/add-organization-admins": { roles: ["org_admin"], privileges: [] },
-  "/view-members": { roles: ["org_admin"], privileges: [] },
-  "/join-requests": { roles: ["org_admin"], privileges: [] },
+  "/add-organization-admins": { roles: ["admin"], privileges: [] },
+  "/view-members": { roles: ["admin"], privileges: [] },
+  "/join-requests": { roles: ["admin"], privileges: [] },
   
   // Mission management (requires mission_partners privilege)
-  "/create-missions": { roles: ["org_admin"], privileges: ["mission_partners"] },
-  "/manage-missions": { roles: ["org_admin"], privileges: ["mission_partners"] },
+  "/create-missions": { roles: ["admin"], privileges: ["mission_partners"] },
+  "/manage-missions": { roles: ["admin"], privileges: ["mission_partners"] },
   
   // Reward management (requires reward_partners privilege)
-  "/create-rewards": { roles: ["org_admin"], privileges: ["reward_partners"] },
-  "/manage-rewards": { roles: ["org_admin"], privileges: ["reward_partners"] },
+  "/create-rewards": { roles: ["admin"], privileges: ["reward_partners"] },
+  "/manage-rewards": { roles: ["admin"], privileges: ["reward_partners"] },
   
   // Event management (requires mobilizing_partners privilege)
-  "/create-events": { roles: ["org_admin"], privileges: ["mobilizing_partners"] },
-  "/scan-event-qr": { roles: ["org_admin"], privileges: ["mobilizing_partners"] },
+  "/create-events": { roles: ["admin"], privileges: ["mobilizing_partners"] },
+  "/scan-event-qr": { roles: ["admin"], privileges: ["mobilizing_partners"] },
   
-  // Dashboard (accessible to both roles)
-  "/dashboard": { roles: ["cin_admin", "org_admin"], privileges: [] },
+  // Dashboard (accessible to admin role)
+  "/dashboard": { roles: ["admin"], privileges: [] },
 };
 
 // Helper function to check if user has required privileges
@@ -106,7 +106,7 @@ export const updateSession = async (request: NextRequest) => {
     let userOrganizations = [];
     let userPrivileges: UserPrivilege[] = [];
     let isCinAdmin = false;
-    let isOrgAdmin = false;
+    let isAdmin = false;
 
     if (session?.access_token) {
       try {
@@ -119,14 +119,14 @@ export const updateSession = async (request: NextRequest) => {
         const activeOrg = userOrganizations.find((org: any) => org.id === activeOrgId);
         userPrivileges = activeOrg?.privileges || [];
         
-        // Check if user has cin_admin role (global)
-        isCinAdmin = userRoles.some((role: UserRole) => 
-          role.role === 'cin_admin' && role.scope === 'global'
+        // Check if user has admin role
+        isAdmin = userRoles.some((role: UserRole) => 
+          role.role === 'admin' && role.scope === 'organization'
         );
         
-        // Check if user has org_admin role (for any organization)
-        isOrgAdmin = userRoles.some((role: UserRole) => 
-          role.role === 'org_admin' && role.scope === 'organization'
+        // Check if user has CIN administrator privileges (privilege-based now)
+        isCinAdmin = userPrivileges.some((priv: UserPrivilege) => 
+          priv.type === 'cin_administrators' && priv.status === 'approved'
         );
       } catch (e) {
         // If JWT decoding fails, continue without role
@@ -141,7 +141,7 @@ export const updateSession = async (request: NextRequest) => {
     }
 
     // If authenticated, handle role-based routing
-    if (!user.error && (isCinAdmin || isOrgAdmin)) {
+    if (!user.error && (isCinAdmin || isAdmin)) {
       // Handle root path redirection - all authenticated users go to unified dashboard
       if (path === "/") {
         return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -174,8 +174,8 @@ export const updateSession = async (request: NextRequest) => {
         }
       }
 
-      // Protect dashboard routes - only authenticated org_admin or cin_admin can access
-      if (path.startsWith("/dashboard") && !isCinAdmin && !isOrgAdmin) {
+      // Protect dashboard routes - only authenticated admin can access
+      if (path.startsWith("/dashboard") && !isCinAdmin && !isAdmin) {
         return NextResponse.redirect(new URL("/sign-in", request.url));
       }
 
@@ -184,7 +184,7 @@ export const updateSession = async (request: NextRequest) => {
         return NextResponse.redirect(new URL("/dashboard", request.url));
       }
     } else if (!user.error) {
-      // User is authenticated but doesn't have required roles (cin_admin or org_admin)
+      // User is authenticated but doesn't have required roles (admin)
       // This could happen if user has other roles or is pending approval
       if (!PUBLIC_PATHS.includes(path)) {
         const redirectUrl = new URL("/dashboard", request.url);

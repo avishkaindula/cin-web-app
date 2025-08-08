@@ -10,10 +10,10 @@ interface AuthContextType {
   jwtPayload: JWTPayload | null;
   isLoading: boolean;
   isCinAdmin: boolean;
-  isOrgAdmin: boolean;
+  isAdmin: boolean;
   activeOrganization: UserOrganization | null;
-  hasRole: (role: 'cin_admin' | 'org_admin') => boolean;
-  hasPrivilege: (privilege: 'mobilizing_partners' | 'mission_partners' | 'reward_partners') => boolean;
+  hasRole: (role: 'admin' | 'agent') => boolean;
+  hasPrivilege: (privilege: 'mobilizing_partners' | 'mission_partners' | 'reward_partners' | 'cin_administrators') => boolean;
   signOut: () => Promise<void>;
 }
 
@@ -79,18 +79,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase.auth]);
 
   // Helper functions
-  const isCinAdmin = jwtPayload?.user_roles?.some(role => role.role === 'cin_admin') ?? false;
-  const isOrgAdmin = jwtPayload?.user_roles?.some(role => role.role === 'org_admin') ?? false;
+  const isAdmin = jwtPayload?.user_roles?.some(role => role.role === 'admin') ?? false;
 
   const activeOrganization = jwtPayload?.active_organization_id 
     ? jwtPayload.user_organizations?.find(org => org.id === jwtPayload.active_organization_id) || null
     : jwtPayload?.user_organizations?.[0] || null;
+  
+  // Check if user has CIN administrator privileges (privilege-based now)
+  const isCinAdmin = activeOrganization?.privileges?.some(
+    priv => priv.type === 'cin_administrators' && priv.status === 'approved'
+  ) ?? false;
 
-  const hasRole = (role: 'cin_admin' | 'org_admin'): boolean => {
+  const hasRole = (role: 'admin' | 'agent'): boolean => {
     return jwtPayload?.user_roles?.some(userRole => userRole.role === role) ?? false;
   };
 
-  const hasPrivilege = (privilege: 'mobilizing_partners' | 'mission_partners' | 'reward_partners'): boolean => {
+  const hasPrivilege = (privilege: 'mobilizing_partners' | 'mission_partners' | 'reward_partners' | 'cin_administrators'): boolean => {
     if (!activeOrganization) return false;
     return activeOrganization.privileges?.some(
       priv => priv.type === privilege && priv.status === 'approved'
@@ -106,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     jwtPayload,
     isLoading,
     isCinAdmin,
-    isOrgAdmin,
+    isAdmin,
     activeOrganization,
     hasRole,
     hasPrivilege,
