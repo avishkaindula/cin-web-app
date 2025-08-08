@@ -65,7 +65,7 @@ export default function Leaderboard() {
                 <div className="mb-4">
                     <h2 className="text-3xl font-bold">Leaderboard</h2>
                     <p className="text-gray-400 mt-1">
-                        Top players in the Mission 1.5° community
+                        Top agents in the Mission 1.5° community
                     </p>
                 </div>
             </header>
@@ -74,7 +74,7 @@ export default function Leaderboard() {
                     <div className="flex items-center justify-between mb-4">
                         <CardTitle className="mt-6 flex items-center">
                             <Award size={20} className="mr-2 text-yellow-500" />
-                            Top Players
+                            Top Agents
                         </CardTitle>
                         <div className="flex items-center bg-[#1c2432] rounded-md px-3 py-1">
                             <BarChart3 size={16} className="text-gray-400 mr-2" />
@@ -86,7 +86,7 @@ export default function Leaderboard() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-16">Rank</TableHead>
-                                    <TableHead>Player</TableHead>
+                                    <TableHead>Agent</TableHead>
                                     <TableHead>Points</TableHead>
                                     <TableHead>Missions</TableHead>
                                 </TableRow>

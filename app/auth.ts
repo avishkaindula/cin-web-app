@@ -48,7 +48,7 @@ export const signUpAction = async (formData: FormData) => {
   }
 
   // This web app only handles organization signups - users sign up via mobile app
-  // New organizations get org_admin role with pending privileges by default
+  // New organizations get admin role with pending privileges by default
   const { error } = await supabase.auth.signUp({
     email,
     password,
@@ -95,7 +95,7 @@ export const signInAction = async (formData: FormData) => {
   }
 
   // Redirect based on role - All authenticated users go to common dashboard
-  // In the new system, both cin_admin and org_admin use the unified dashboard
+  // In the new system, all admins use the unified dashboard
   return redirect("/dashboard");
 };
 
