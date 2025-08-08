@@ -15,7 +15,7 @@ export default function ViewMembersPage() {
       id: "1",
       name: "Jane Smith",
       email: "jane@greentech.com",
-      role: "player",
+      role: "agent",
       status: "active",
       joinedAt: "2024-02-01",
       lastActive: "2024-07-12"
@@ -24,7 +24,7 @@ export default function ViewMembersPage() {
       id: "2",
       name: "Bob Wilson",
       email: "bob@greentech.com", 
-      role: "player",
+      role: "agent",
       status: "active",
       joinedAt: "2024-07-10",
       lastActive: "2024-07-10"
@@ -32,7 +32,7 @@ export default function ViewMembersPage() {
       id: "3",
       name: "Jane Doe",
       email: "jane@greentech.com",
-      role: "player",
+      role: "agent",
       status: "pending",
       joinedAt: "2024-07-10",
       lastActive: "2024-07-10"
@@ -41,9 +41,9 @@ export default function ViewMembersPage() {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'org_admin':
+      case 'admin':
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
-      case 'player':
+      case 'agent':
         return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
@@ -154,7 +154,7 @@ export default function ViewMembersPage() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <Badge className={getRoleColor(member.role)}>
-                    {member.role === 'org_admin' ? 'Admin' : 'Player'}
+                    {member.role === 'admin' ? 'Admin' : 'Agent'}
                   </Badge>
                   <Badge className={getStatusColor(member.status)}>
                     {member.status}

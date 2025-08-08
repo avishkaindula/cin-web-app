@@ -23,14 +23,14 @@ export default function AddAdminsPage() {
     {
       name: "John Doe",
       email: "john@greentech.com",
-      role: "org_admin",
+      role: "admin",
       status: "active",
       joinedAt: "2024-01-15",
     },
     {
       name: "Jane Smith",
       email: "jane@greentech.com",
-      role: "org_admin",
+      role: "admin",
       status: "pending",
       joinedAt: "2024-02-01",
     },
@@ -193,12 +193,12 @@ export default function AddAdminsPage() {
                 <div className="flex items-center space-x-3">
                   <Badge
                     className={
-                      admin.role === "org_admin"
+                      admin.role === "admin"
                         ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
                         : "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
                     }
                   >
-                    {admin.role === "org_admin" ? "Admin" : "Moderator"}
+                    {admin.role === "admin" ? "Admin" : "Moderator"}
                   </Badge>
                   <Badge
                     className={
