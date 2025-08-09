@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,12 +15,18 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FileUploadZone } from "@/components/ui/file-upload-zone";
-import { 
-  Target, 
-  Calendar, 
-  MapPin, 
+import {
+  Target,
+  Calendar,
+  MapPin,
   Award,
   Clock,
   Plus,
@@ -30,18 +42,30 @@ import {
   Eye,
   TreePine,
   Megaphone,
-  Zap
+  Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 
 // Mission types and their icons
 const missionTypes = [
-  { value: "citizen-science", label: "Citizen Science Data Collection", icon: Target },
+  {
+    value: "citizen-science",
+    label: "Citizen Science Data Collection",
+    icon: Target,
+  },
   { value: "cleanup", label: "Cleanup & Waste Management", icon: Recycle },
   { value: "monitoring", label: "Monitoring & Reporting", icon: Eye },
-  { value: "reforestation", label: "Reforestation & Habitat Restoration", icon: TreePine },
-  { value: "awareness", label: "Awareness & Education Campaigns", icon: Megaphone },
-  { value: "energy-audit", label: "Energy & Resource Audits", icon: Zap }
+  {
+    value: "reforestation",
+    label: "Reforestation & Habitat Restoration",
+    icon: TreePine,
+  },
+  {
+    value: "awareness",
+    label: "Awareness & Education Campaigns",
+    icon: Megaphone,
+  },
+  { value: "energy-audit", label: "Energy & Resource Audits", icon: Zap },
 ];
 
 // Evidence types
@@ -50,14 +74,14 @@ const evidenceTypes = [
   { value: "video", label: "Video" },
   { value: "text", label: "Text Input" },
   { value: "gps", label: "GPS Location" },
-  { value: "none", label: "None (Attendance Only)" }
+  { value: "none", label: "None (Attendance Only)" },
 ];
 
 // Location types
 const locationTypes = [
   { value: "coordinates", label: "Specific Coordinates" },
   { value: "general", label: "General Area" },
-  { value: "current", label: "User's Current Location" }
+  { value: "current", label: "User's Current Location" },
 ];
 
 // Available icons for steps (subset for demo)
@@ -71,7 +95,7 @@ const stepIcons = [
   { name: "image", icon: Image },
   { name: "file", icon: FileText },
   { name: "map", icon: MapPin },
-  { name: "clock", icon: Clock }
+  { name: "clock", icon: Clock },
 ];
 
 // Form state interface
@@ -93,7 +117,14 @@ interface GuidanceStep {
 interface DataField {
   id: string;
   name: string;
-  type: 'text' | 'number' | 'decimal' | 'dropdown' | 'checkbox' | 'date' | 'time';
+  type:
+    | "text"
+    | "number"
+    | "decimal"
+    | "dropdown"
+    | "checkbox"
+    | "date"
+    | "time";
   required: boolean;
   options?: string[];
 }
@@ -106,7 +137,9 @@ export default function CreateMissionsPage() {
   const [guidanceSteps, setGuidanceSteps] = useState<GuidanceStep[]>([]);
   const [dataFields, setDataFields] = useState<DataField[]>([]);
   const [showIconSelector, setShowIconSelector] = useState<string | null>(null);
-  const [showGuidanceIconSelector, setShowGuidanceIconSelector] = useState<string | null>(null);
+  const [showGuidanceIconSelector, setShowGuidanceIconSelector] = useState<
+    string | null
+  >(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   // Form data state
@@ -125,7 +158,7 @@ export default function CreateMissionsPage() {
     endDate: "",
     endTime: "",
     repeatFrequency: "",
-    status: "draft"
+    status: "draft",
   });
 
   const addStep = () => {
@@ -133,19 +166,19 @@ export default function CreateMissionsPage() {
       id: `step-${Date.now()}`,
       icon: "target",
       title: "",
-      description: ""
+      description: "",
     };
     setSteps([...steps, newStep]);
   };
 
   const updateStep = (id: string, field: keyof MissionStep, value: string) => {
-    setSteps(steps.map(step => 
-      step.id === id ? { ...step, [field]: value } : step
-    ));
+    setSteps(
+      steps.map((step) => (step.id === id ? { ...step, [field]: value } : step))
+    );
   };
 
   const removeStep = (id: string) => {
-    setSteps(steps.filter(step => step.id !== id));
+    setSteps(steps.filter((step) => step.id !== id));
   };
 
   // Guidance Steps Functions
@@ -155,33 +188,43 @@ export default function CreateMissionsPage() {
       icon: "target",
       title: "",
       description: "",
-      requiredEvidence: []
+      requiredEvidence: [],
     };
     setGuidanceSteps([...guidanceSteps, newGuidanceStep]);
   };
 
-  const updateGuidanceStep = (id: string, field: keyof GuidanceStep, value: string | string[]) => {
-    setGuidanceSteps(guidanceSteps.map(step => 
-      step.id === id ? { ...step, [field]: value } : step
-    ));
+  const updateGuidanceStep = (
+    id: string,
+    field: keyof GuidanceStep,
+    value: string | string[]
+  ) => {
+    setGuidanceSteps(
+      guidanceSteps.map((step) =>
+        step.id === id ? { ...step, [field]: value } : step
+      )
+    );
   };
 
   const removeGuidanceStep = (id: string) => {
-    setGuidanceSteps(guidanceSteps.filter(step => step.id !== id));
+    setGuidanceSteps(guidanceSteps.filter((step) => step.id !== id));
   };
 
-  const handleGuidanceEvidenceChange = (stepId: string, evidenceType: string, checked: boolean) => {
-    const step = guidanceSteps.find(s => s.id === stepId);
+  const handleGuidanceEvidenceChange = (
+    stepId: string,
+    evidenceType: string,
+    checked: boolean
+  ) => {
+    const step = guidanceSteps.find((s) => s.id === stepId);
     if (!step) return;
-    
+
     let newEvidence: string[];
     if (checked) {
       newEvidence = [...step.requiredEvidence, evidenceType];
     } else {
-      newEvidence = step.requiredEvidence.filter(e => e !== evidenceType);
+      newEvidence = step.requiredEvidence.filter((e) => e !== evidenceType);
     }
-    
-    updateGuidanceStep(stepId, 'requiredEvidence', newEvidence);
+
+    updateGuidanceStep(stepId, "requiredEvidence", newEvidence);
   };
 
   const addDataField = () => {
@@ -190,36 +233,44 @@ export default function CreateMissionsPage() {
       name: "",
       type: "text",
       required: false,
-      options: []
+      options: [],
     };
     setDataFields([...dataFields, newField]);
   };
 
   const updateDataField = (id: string, field: keyof DataField, value: any) => {
-    setDataFields(dataFields.map(df => 
-      df.id === id ? { ...df, [field]: value } : df
-    ));
+    setDataFields(
+      dataFields.map((df) => (df.id === id ? { ...df, [field]: value } : df))
+    );
   };
 
   const removeDataField = (id: string) => {
-    setDataFields(dataFields.filter(df => df.id !== id));
+    setDataFields(dataFields.filter((df) => df.id !== id));
   };
 
   const handleEvidenceChange = (evidenceType: string, checked: boolean) => {
     if (checked) {
       setSelectedEvidence([...selectedEvidence, evidenceType]);
     } else {
-      setSelectedEvidence(selectedEvidence.filter(e => e !== evidenceType));
+      setSelectedEvidence(selectedEvidence.filter((e) => e !== evidenceType));
     }
   };
 
   const handleSubmit = () => {
     // Validate required fields
-    if (!formData.title || !formData.description || !missionType || !formData.points || !formData.experience) {
-      toast.error("Please fill in all required fields including points and experience");
+    if (
+      !formData.title ||
+      !formData.description ||
+      !missionType ||
+      !formData.points ||
+      !formData.experience
+    ) {
+      toast.error(
+        "Please fill in all required fields including points and experience"
+      );
       return;
     }
-    
+
     toast.success("Mission created successfully!");
   };
 
@@ -229,7 +280,9 @@ export default function CreateMissionsPage() {
         return (
           <div className="space-y-6">
             <div>
-              <Label className="text-base font-semibold">Data Fields to Collect</Label>
+              <Label className="text-base font-semibold">
+                Data Fields to Collect
+              </Label>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                 Define what data volunteers should collect
               </p>
@@ -240,15 +293,19 @@ export default function CreateMissionsPage() {
                       <Label>Field Name</Label>
                       <Input
                         value={field.name}
-                        onChange={(e) => updateDataField(field.id, 'name', e.target.value)}
+                        onChange={(e) =>
+                          updateDataField(field.id, "name", e.target.value)
+                        }
                         placeholder="e.g., Species Name"
                       />
                     </div>
                     <div>
                       <Label>Field Type</Label>
-                      <Select 
-                        value={field.type} 
-                        onValueChange={(value) => updateDataField(field.id, 'type', value)}
+                      <Select
+                        value={field.type}
+                        onValueChange={(value) =>
+                          updateDataField(field.id, "type", value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -257,18 +314,24 @@ export default function CreateMissionsPage() {
                           <SelectItem value="text">Text</SelectItem>
                           <SelectItem value="number">Number</SelectItem>
                           <SelectItem value="decimal">Decimal</SelectItem>
-                          <SelectItem value="dropdown">Single Choice (Dropdown)</SelectItem>
-                          <SelectItem value="checkbox">Multiple Choice (Checkboxes)</SelectItem>
+                          <SelectItem value="dropdown">
+                            Single Choice (Dropdown)
+                          </SelectItem>
+                          <SelectItem value="checkbox">
+                            Multiple Choice (Checkboxes)
+                          </SelectItem>
                           <SelectItem value="date">Date</SelectItem>
                           <SelectItem value="time">Time</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox 
+                      <Checkbox
                         id={`required-${field.id}`}
                         checked={field.required}
-                        onCheckedChange={(checked) => updateDataField(field.id, 'required', checked)}
+                        onCheckedChange={(checked) =>
+                          updateDataField(field.id, "required", checked)
+                        }
                       />
                       <Label htmlFor={`required-${field.id}`}>Required</Label>
                       <Button
@@ -281,13 +344,19 @@ export default function CreateMissionsPage() {
                       </Button>
                     </div>
                   </div>
-                  
-                  {(field.type === 'dropdown' || field.type === 'checkbox') && (
+
+                  {(field.type === "dropdown" || field.type === "checkbox") && (
                     <div>
                       <Label>Options (comma-separated)</Label>
                       <Textarea
-                        value={field.options?.join(', ') || ''}
-                        onChange={(e) => updateDataField(field.id, 'options', e.target.value.split(', '))}
+                        value={field.options?.join(", ") || ""}
+                        onChange={(e) =>
+                          updateDataField(
+                            field.id,
+                            "options",
+                            e.target.value.split(", ")
+                          )
+                        }
                         placeholder="Option 1, Option 2, Option 3"
                         rows={2}
                       />
@@ -316,9 +385,15 @@ export default function CreateMissionsPage() {
                   <SelectValue placeholder="Select research organization" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="university-colombo">University of Colombo - Marine Biology</SelectItem>
-                  <SelectItem value="wildlife-trust">Sri Lanka Wildlife Trust</SelectItem>
-                  <SelectItem value="environmental-foundation">Environmental Foundation</SelectItem>
+                  <SelectItem value="university-colombo">
+                    University of Colombo - Marine Biology
+                  </SelectItem>
+                  <SelectItem value="wildlife-trust">
+                    Sri Lanka Wildlife Trust
+                  </SelectItem>
+                  <SelectItem value="environmental-foundation">
+                    Environmental Foundation
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -331,7 +406,14 @@ export default function CreateMissionsPage() {
             <div>
               <Label>Target Waste Type</Label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                {['Plastics', 'Glass', 'Metals', 'E-Waste', 'Organic', 'General Litter'].map((type) => (
+                {[
+                  "Plastics",
+                  "Glass",
+                  "Metals",
+                  "E-Waste",
+                  "Organic",
+                  "General Litter",
+                ].map((type) => (
                   <div key={type} className="flex items-center space-x-2">
                     <Checkbox id={type} />
                     <Label htmlFor={type}>{type}</Label>
@@ -372,7 +454,13 @@ export default function CreateMissionsPage() {
             <div>
               <Label>Reporting Categories</Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                {['Illegal Dumping', 'Deforestation', 'Water Pollution', 'Wildlife Distress', 'Air Quality Issue'].map((category) => (
+                {[
+                  "Illegal Dumping",
+                  "Deforestation",
+                  "Water Pollution",
+                  "Wildlife Distress",
+                  "Air Quality Issue",
+                ].map((category) => (
                   <div key={category} className="flex items-center space-x-2">
                     <Checkbox id={category} />
                     <Label htmlFor={category}>{category}</Label>
@@ -396,9 +484,13 @@ export default function CreateMissionsPage() {
                   <SelectValue placeholder="Select scale type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low-medium-high">Low / Medium / High</SelectItem>
+                  <SelectItem value="low-medium-high">
+                    Low / Medium / High
+                  </SelectItem>
                   <SelectItem value="1-5-scale">1-5 Scale</SelectItem>
-                  <SelectItem value="critical-levels">Low / Medium / High / Critical</SelectItem>
+                  <SelectItem value="critical-levels">
+                    Low / Medium / High / Critical
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -406,7 +498,13 @@ export default function CreateMissionsPage() {
             <div>
               <Label>Relevant Authorities for Alert</Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                {['Environmental Authority', 'Police', 'Municipal Council', 'Wildlife Department', 'Coast Guard'].map((authority) => (
+                {[
+                  "Environmental Authority",
+                  "Police",
+                  "Municipal Council",
+                  "Wildlife Department",
+                  "Coast Guard",
+                ].map((authority) => (
                   <div key={authority} className="flex items-center space-x-2">
                     <Checkbox id={authority} />
                     <Label htmlFor={authority}>{authority}</Label>
@@ -489,7 +587,9 @@ export default function CreateMissionsPage() {
             </div>
 
             <div>
-              <Label className="text-base font-semibold">Audit Data Points to Collect</Label>
+              <Label className="text-base font-semibold">
+                Audit Data Points to Collect
+              </Label>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                 Define what specific measurements volunteers should record
               </p>
@@ -500,15 +600,19 @@ export default function CreateMissionsPage() {
                       <Label>Data Point Name</Label>
                       <Input
                         value={field.name}
-                        onChange={(e) => updateDataField(field.id, 'name', e.target.value)}
+                        onChange={(e) =>
+                          updateDataField(field.id, "name", e.target.value)
+                        }
                         placeholder="e.g., Monthly Electricity Bill"
                       />
                     </div>
                     <div>
                       <Label>Data Type</Label>
-                      <Select 
-                        value={field.type} 
-                        onValueChange={(value) => updateDataField(field.id, 'type', value)}
+                      <Select
+                        value={field.type}
+                        onValueChange={(value) =>
+                          updateDataField(field.id, "type", value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -523,12 +627,16 @@ export default function CreateMissionsPage() {
                       </Select>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox 
+                      <Checkbox
                         id={`audit-required-${field.id}`}
                         checked={field.required}
-                        onCheckedChange={(checked) => updateDataField(field.id, 'required', checked)}
+                        onCheckedChange={(checked) =>
+                          updateDataField(field.id, "required", checked)
+                        }
                       />
-                      <Label htmlFor={`audit-required-${field.id}`}>Required</Label>
+                      <Label htmlFor={`audit-required-${field.id}`}>
+                        Required
+                      </Label>
                       <Button
                         variant="outline"
                         size="sm"
@@ -579,21 +687,26 @@ export default function CreateMissionsPage() {
         <CardHeader>
           <CardTitle>Create New Mission</CardTitle>
           <CardDescription>
-            Design impactful climate missions with detailed instructions and requirements
+            Design impactful climate missions with detailed instructions and
+            requirements
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
           {/* Core Fields */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold border-b pb-2">Core Mission Information</h3>
-            
+            <h3 className="text-lg font-semibold border-b pb-2">
+              Core Mission Information
+            </h3>
+
             {/* Mission Title */}
             <div>
               <Label htmlFor="title">Mission Title *</Label>
               <Input
                 id="title"
                 value={formData.title}
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 placeholder="e.g., Beach Cleanup at Galle Face Green"
                 className="mt-1"
               />
@@ -605,7 +718,9 @@ export default function CreateMissionsPage() {
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Explain the purpose and importance of the mission..."
                 maxLength={300}
                 rows={4}
@@ -618,11 +733,13 @@ export default function CreateMissionsPage() {
 
             {/* Detailed Instructions */}
             <div>
-              <Label className="text-base font-semibold">Detailed Instructions</Label>
+              <Label className="text-base font-semibold">
+                Detailed Instructions
+              </Label>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                 Add step-by-step instructions for volunteers
               </p>
-              
+
               {steps.map((step, index) => (
                 <div key={step.id} className="border rounded-lg p-4 mb-3">
                   <div className="flex items-start space-x-4">
@@ -633,9 +750,13 @@ export default function CreateMissionsPage() {
                         onClick={() => setShowIconSelector(step.id)}
                         className="w-10 h-10 p-0"
                       >
-                        {React.createElement(stepIcons.find(icon => icon.name === step.icon)?.icon || Target, { className: "h-4 w-4" })}
+                        {React.createElement(
+                          stepIcons.find((icon) => icon.name === step.icon)
+                            ?.icon || Target,
+                          { className: "h-4 w-4" }
+                        )}
                       </Button>
-                      
+
                       {showIconSelector === step.id && (
                         <div className="absolute z-10 mt-2 p-3 bg-white dark:bg-gray-800 border rounded-lg shadow-lg">
                           <div className="grid grid-cols-5 gap-2 mb-2">
@@ -646,43 +767,53 @@ export default function CreateMissionsPage() {
                                 size="sm"
                                 className="w-8 h-8 p-0"
                                 onClick={() => {
-                                  updateStep(step.id, 'icon', iconOption.name);
+                                  updateStep(step.id, "icon", iconOption.name);
                                   setShowIconSelector(null);
                                 }}
                               >
-                                {React.createElement(iconOption.icon, { className: "h-4 w-4" })}
+                                {React.createElement(iconOption.icon, {
+                                  className: "h-4 w-4",
+                                })}
                               </Button>
                             ))}
                           </div>
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="flex-1 space-y-3">
                       <div>
                         <Label>Step Title</Label>
                         <Input
                           value={step.title}
-                          onChange={(e) => updateStep(step.id, 'title', e.target.value)}
+                          onChange={(e) =>
+                            updateStep(step.id, "title", e.target.value)
+                          }
                           placeholder="e.g., Gather Materials"
                           maxLength={15}
                         />
-                        <p className="text-xs text-gray-500">{step.title.length}/15 characters</p>
+                        <p className="text-xs text-gray-500">
+                          {step.title.length}/15 characters
+                        </p>
                       </div>
-                      
+
                       <div>
                         <Label>Step Description</Label>
                         <Textarea
                           value={step.description}
-                          onChange={(e) => updateStep(step.id, 'description', e.target.value)}
+                          onChange={(e) =>
+                            updateStep(step.id, "description", e.target.value)
+                          }
                           placeholder="Detailed instructions for this step..."
                           maxLength={100}
                           rows={2}
                         />
-                        <p className="text-xs text-gray-500">{step.description.length}/100 characters</p>
+                        <p className="text-xs text-gray-500">
+                          {step.description.length}/100 characters
+                        </p>
                       </div>
                     </div>
-                    
+
                     <Button
                       variant="outline"
                       size="sm"
@@ -693,7 +824,7 @@ export default function CreateMissionsPage() {
                   </div>
                 </div>
               ))}
-              
+
               <Button variant="outline" onClick={addStep}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add Step
@@ -702,13 +833,19 @@ export default function CreateMissionsPage() {
 
             {/* Guidance Steps */}
             <div>
-              <Label className="text-base font-semibold">Guidance Steps with Evidence Requirements</Label>
+              <Label className="text-base font-semibold">
+                Guidance Steps with Evidence Requirements
+              </Label>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                Define guidance steps and specify what evidence volunteers need to submit for each step
+                Define guidance steps and specify what evidence volunteers need
+                to submit for each step
               </p>
-              
+
               {guidanceSteps.map((step, index) => (
-                <div key={step.id} className="border rounded-lg p-4 mb-3 bg-blue-50 dark:bg-blue-950">
+                <div
+                  key={step.id}
+                  className="border rounded-lg p-4 mb-3 bg-blue-50 dark:bg-blue-950"
+                >
                   <div className="flex items-start space-x-4">
                     <div className="flex-shrink-0">
                       <Button
@@ -717,9 +854,13 @@ export default function CreateMissionsPage() {
                         onClick={() => setShowGuidanceIconSelector(step.id)}
                         className="w-10 h-10 p-0"
                       >
-                        {React.createElement(stepIcons.find(icon => icon.name === step.icon)?.icon || Target, { className: "h-4 w-4" })}
+                        {React.createElement(
+                          stepIcons.find((icon) => icon.name === step.icon)
+                            ?.icon || Target,
+                          { className: "h-4 w-4" }
+                        )}
                       </Button>
-                      
+
                       {showGuidanceIconSelector === step.id && (
                         <div className="absolute z-10 mt-2 p-3 bg-white dark:bg-gray-800 border rounded-lg shadow-lg">
                           <div className="grid grid-cols-5 gap-2 mb-2">
@@ -730,66 +871,108 @@ export default function CreateMissionsPage() {
                                 size="sm"
                                 className="w-8 h-8 p-0"
                                 onClick={() => {
-                                  updateGuidanceStep(step.id, 'icon', iconOption.name);
+                                  updateGuidanceStep(
+                                    step.id,
+                                    "icon",
+                                    iconOption.name
+                                  );
                                   setShowGuidanceIconSelector(null);
                                 }}
                               >
-                                {React.createElement(iconOption.icon, { className: "h-4 w-4" })}
+                                {React.createElement(iconOption.icon, {
+                                  className: "h-4 w-4",
+                                })}
                               </Button>
                             ))}
                           </div>
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="flex-1 space-y-3">
                       <div>
                         <Label>Guidance Step Title</Label>
                         <Input
                           value={step.title}
-                          onChange={(e) => updateGuidanceStep(step.id, 'title', e.target.value)}
+                          onChange={(e) =>
+                            updateGuidanceStep(step.id, "title", e.target.value)
+                          }
                           placeholder="e.g., Document Species Found"
                           maxLength={20}
                         />
-                        <p className="text-xs text-gray-500">{step.title.length}/20 characters</p>
+                        <p className="text-xs text-gray-500">
+                          {step.title.length}/20 characters
+                        </p>
                       </div>
-                      
+
                       <div>
                         <Label>Guidance Description</Label>
                         <Textarea
                           value={step.description}
-                          onChange={(e) => updateGuidanceStep(step.id, 'description', e.target.value)}
+                          onChange={(e) =>
+                            updateGuidanceStep(
+                              step.id,
+                              "description",
+                              e.target.value
+                            )
+                          }
                           placeholder="Explain what volunteers should do and how to document it..."
                           maxLength={150}
                           rows={2}
                         />
-                        <p className="text-xs text-gray-500">{step.description.length}/150 characters</p>
+                        <p className="text-xs text-gray-500">
+                          {step.description.length}/150 characters
+                        </p>
                       </div>
-                      
+
                       <div>
-                        <Label className="font-medium">Required Evidence for This Step</Label>
+                        <Label className="font-medium">
+                          Required Evidence for This Step
+                        </Label>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                          {evidenceTypes.filter(e => e.value !== 'none').map((evidence) => (
-                            <div key={evidence.value} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={`${step.id}-${evidence.value}`}
-                                checked={step.requiredEvidence.includes(evidence.value)}
-                                onCheckedChange={(checked) => 
-                                  handleGuidanceEvidenceChange(step.id, evidence.value, checked as boolean)
-                                }
-                              />
-                              <Label htmlFor={`${step.id}-${evidence.value}`} className="text-sm">
-                                {evidence.label}
-                              </Label>
-                            </div>
-                          ))}
+                          {evidenceTypes
+                            .filter((e) => e.value !== "none")
+                            .map((evidence) => (
+                              <div
+                                key={evidence.value}
+                                className="flex items-center space-x-2"
+                              >
+                                <Checkbox
+                                  id={`${step.id}-${evidence.value}`}
+                                  checked={step.requiredEvidence.includes(
+                                    evidence.value
+                                  )}
+                                  onCheckedChange={(checked) =>
+                                    handleGuidanceEvidenceChange(
+                                      step.id,
+                                      evidence.value,
+                                      checked as boolean
+                                    )
+                                  }
+                                />
+                                <Label
+                                  htmlFor={`${step.id}-${evidence.value}`}
+                                  className="text-sm"
+                                >
+                                  {evidence.label}
+                                </Label>
+                              </div>
+                            ))}
                         </div>
                         {step.requiredEvidence.length > 0 && (
                           <div className="mt-2">
                             <div className="flex flex-wrap gap-1">
                               {step.requiredEvidence.map((evidence) => (
-                                <Badge key={evidence} variant="secondary" className="text-xs">
-                                  {evidenceTypes.find(e => e.value === evidence)?.label}
+                                <Badge
+                                  key={evidence}
+                                  variant="secondary"
+                                  className="text-xs"
+                                >
+                                  {
+                                    evidenceTypes.find(
+                                      (e) => e.value === evidence
+                                    )?.label
+                                  }
                                 </Badge>
                               ))}
                             </div>
@@ -797,7 +980,7 @@ export default function CreateMissionsPage() {
                         )}
                       </div>
                     </div>
-                    
+
                     <Button
                       variant="outline"
                       size="sm"
@@ -808,8 +991,12 @@ export default function CreateMissionsPage() {
                   </div>
                 </div>
               ))}
-              
-              <Button variant="outline" onClick={addGuidanceStep} className="border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-950">
+
+              <Button
+                variant="outline"
+                onClick={addGuidanceStep}
+                className="border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-950"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Guidance Step
               </Button>
@@ -823,26 +1010,34 @@ export default function CreateMissionsPage() {
                   id="points"
                   type="number"
                   value={formData.points}
-                  onChange={(e) => setFormData({...formData, points: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, points: e.target.value })
+                  }
                   placeholder="50"
                   className="mt-1"
                 />
-                <p className="text-xs text-gray-500 mt-1">Regular points for completion</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Regular points for completion
+                </p>
               </div>
-              
+
               <div>
                 <Label htmlFor="experience">Experience Points *</Label>
                 <Input
                   id="experience"
                   type="number"
                   value={formData.experience}
-                  onChange={(e) => setFormData({...formData, experience: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, experience: e.target.value })
+                  }
                   placeholder="25"
                   className="mt-1"
                 />
-                <p className="text-xs text-gray-500 mt-1">XP for skill development</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  XP for skill development
+                </p>
               </div>
-              
+
               <div>
                 <Label>Mission Type *</Label>
                 <Select value={missionType} onValueChange={setMissionType}>
@@ -853,7 +1048,9 @@ export default function CreateMissionsPage() {
                     {missionTypes.map((type) => (
                       <SelectItem key={type.value} value={type.value}>
                         <div className="flex items-center space-x-2">
-                          {React.createElement(type.icon, { className: "h-4 w-4" })}
+                          {React.createElement(type.icon, {
+                            className: "h-4 w-4",
+                          })}
                           <span>{type.label}</span>
                         </div>
                       </SelectItem>
@@ -862,28 +1059,10 @@ export default function CreateMissionsPage() {
                 </Select>
               </div>
             </div>
-
-            {/* Required Evidence Type */}
-            <div>
-              <Label className="text-base font-semibold">Required Evidence Type</Label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
-                {evidenceTypes.map((evidence) => (
-                  <div key={evidence.value} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={evidence.value}
-                      checked={selectedEvidence.includes(evidence.value)}
-                      onCheckedChange={(checked) => handleEvidenceChange(evidence.value, checked as boolean)}
-                    />
-                    <Label htmlFor={evidence.value}>{evidence.label}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* Location */}
             <div className="space-y-4">
               <Label className="text-base font-semibold">Location</Label>
-              
+
               <div>
                 <Label>Location Type</Label>
                 <Select value={locationType} onValueChange={setLocationType}>
@@ -904,7 +1083,9 @@ export default function CreateMissionsPage() {
                 <Label>Location Name/Description</Label>
                 <Input
                   value={formData.locationName}
-                  onChange={(e) => setFormData({...formData, locationName: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, locationName: e.target.value })
+                  }
                   placeholder="e.g., Galle Face Beach Stretch 1, Around Kandy Lake"
                   className="mt-1"
                 />
@@ -918,7 +1099,9 @@ export default function CreateMissionsPage() {
                       type="number"
                       step="any"
                       value={formData.latitude}
-                      onChange={(e) => setFormData({...formData, latitude: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, latitude: e.target.value })
+                      }
                       placeholder="6.9271"
                       className="mt-1"
                     />
@@ -929,7 +1112,9 @@ export default function CreateMissionsPage() {
                       type="number"
                       step="any"
                       value={formData.longitude}
-                      onChange={(e) => setFormData({...formData, longitude: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, longitude: e.target.value })
+                      }
                       placeholder="79.8612"
                       className="mt-1"
                     />
@@ -942,7 +1127,9 @@ export default function CreateMissionsPage() {
                 <Input
                   type="number"
                   value={formData.geofenceRadius}
-                  onChange={(e) => setFormData({...formData, geofenceRadius: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, geofenceRadius: e.target.value })
+                  }
                   placeholder="100"
                   className="mt-1"
                 />
@@ -951,8 +1138,10 @@ export default function CreateMissionsPage() {
 
             {/* Time Constraints */}
             <div className="space-y-4">
-              <Label className="text-base font-semibold">Time Constraints</Label>
-              
+              <Label className="text-base font-semibold">
+                Time Constraints
+              </Label>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Start Date & Time</Label>
@@ -960,28 +1149,36 @@ export default function CreateMissionsPage() {
                     <Input
                       type="date"
                       value={formData.startDate}
-                      onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, startDate: e.target.value })
+                      }
                     />
                     <Input
                       type="time"
                       value={formData.startTime}
-                      onChange={(e) => setFormData({...formData, startTime: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, startTime: e.target.value })
+                      }
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label>End Date & Time</Label>
                   <div className="grid grid-cols-2 gap-2 mt-1">
                     <Input
                       type="date"
                       value={formData.endDate}
-                      onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, endDate: e.target.value })
+                      }
                     />
                     <Input
                       type="time"
                       value={formData.endTime}
-                      onChange={(e) => setFormData({...formData, endTime: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, endTime: e.target.value })
+                      }
                     />
                   </div>
                 </div>
@@ -991,7 +1188,12 @@ export default function CreateMissionsPage() {
                 <Label>Repeat Frequency Instructions</Label>
                 <Textarea
                   value={formData.repeatFrequency}
-                  onChange={(e) => setFormData({...formData, repeatFrequency: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      repeatFrequency: e.target.value,
+                    })
+                  }
                   placeholder="e.g., This mission can be repeated daily/weekly"
                   rows={2}
                   className="mt-1"
@@ -1003,7 +1205,9 @@ export default function CreateMissionsPage() {
             <div>
               <Label>Mission Thumbnail/Banner Image</Label>
               <FileUploadZone
-                onFilesChange={(files) => setFormData({...formData, thumbnailImage: files[0] || null})}
+                onFilesChange={(files) =>
+                  setFormData({ ...formData, thumbnailImage: files[0] || null })
+                }
                 acceptedTypes={["image/*"]}
                 maxFiles={1}
                 maxSizeMB={5}
@@ -1018,11 +1222,17 @@ export default function CreateMissionsPage() {
                 <Input placeholder="Search and add tags..." />
                 <div className="flex flex-wrap gap-2 mt-2">
                   {selectedTags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
                       {tag}
-                      <X 
-                        className="h-3 w-3 cursor-pointer" 
-                        onClick={() => setSelectedTags(selectedTags.filter(t => t !== tag))}
+                      <X
+                        className="h-3 w-3 cursor-pointer"
+                        onClick={() =>
+                          setSelectedTags(selectedTags.filter((t) => t !== tag))
+                        }
                       />
                     </Badge>
                   ))}
@@ -1033,7 +1243,12 @@ export default function CreateMissionsPage() {
             {/* Status */}
             <div>
               <Label>Status</Label>
-              <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
+              <Select
+                value={formData.status}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, status: value })
+                }
+              >
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
@@ -1051,7 +1266,8 @@ export default function CreateMissionsPage() {
           {missionType && (
             <div className="space-y-6">
               <h3 className="text-lg font-semibold border-b pb-2">
-                {missionTypes.find(t => t.value === missionType)?.label} Specific Fields
+                {missionTypes.find((t) => t.value === missionType)?.label}{" "}
+                Specific Fields
               </h3>
               {renderConditionalFields()}
             </div>
@@ -1059,15 +1275,14 @@ export default function CreateMissionsPage() {
 
           {/* Action Buttons */}
           <div className="flex items-center space-x-4 pt-6 border-t">
-            <Button onClick={handleSubmit} className="bg-green-600 hover:bg-green-700">
+            <Button
+              onClick={handleSubmit}
+              className="bg-green-600 hover:bg-green-700"
+            >
               Create Mission
             </Button>
-            <Button variant="outline">
-              Save as Draft
-            </Button>
-            <Button variant="ghost">
-              Clear Form
-            </Button>
+            <Button variant="outline">Save as Draft</Button>
+            <Button variant="ghost">Clear Form</Button>
           </div>
         </CardContent>
       </Card>
