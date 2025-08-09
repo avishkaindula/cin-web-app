@@ -3,6 +3,25 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
+
+// JWT Payload type for decoding tokens
+interface JWTPayload {
+  active_organization_id?: string;
+  user_roles?: Array<{
+    role: string;
+    scope: string;
+    organization_id?: string;
+  }>;
+  user_organizations?: Array<{
+    id: string;
+    name: string;
+    privileges: Array<{
+      type: string;
+      status: string;
+    }>;
+  }>;
+}
 
 // Types for mission management
 export type MissionWithStats = {
@@ -38,20 +57,24 @@ export async function getMissionStats(): Promise<{ data: MissionStats | null; er
   try {
     const supabase = await createClient();
     
-    // Check authentication
+    // Check authentication and get session
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (authError || !user || !session?.access_token) {
       return { data: null, error: "Authentication required" };
     }
 
-    // Get user's active organization
-    const { data: adminData, error: adminError } = await supabase
-      .from('admins')
-      .select('active_organization_id')
-      .eq('id', user.id)
-      .single();
+    // Decode JWT to get active organization
+    let activeOrgId: string | null = null;
+    try {
+      const jwt = jwtDecode<JWTPayload>(session.access_token);
+      activeOrgId = jwt.active_organization_id || null;
+    } catch (jwtError) {
+      return { data: null, error: "Invalid session token" };
+    }
 
-    if (adminError || !adminData?.active_organization_id) {
+    if (!activeOrgId) {
       return { data: null, error: "No active organization found" };
     }
 
@@ -61,13 +84,13 @@ export async function getMissionStats(): Promise<{ data: MissionStats | null; er
       .select(`
         id,
         status,
-        mission_submissions!inner(
+        mission_submissions(
           id,
           agent_id,
           status
         )
       `)
-      .eq("organization_id", adminData.active_organization_id);
+      .eq("organization_id", activeOrgId);
 
     if (missionsError) {
       return { data: null, error: missionsError.message };
@@ -81,15 +104,18 @@ export async function getMissionStats(): Promise<{ data: MissionStats | null; er
       draft_missions: missions.filter((m: any) => m.status === 'draft').length,
       paused_missions: missions.filter((m: any) => m.status === 'paused').length,
       total_participants: 0,
-      total_submissions: missions.reduce((sum: number, m: any) => sum + m.mission_submissions.length, 0),
+      total_submissions: missions.reduce((sum: number, m: any) => 
+        sum + (m.mission_submissions?.length || 0), 0),
     };
 
     // Calculate unique participants
     const uniqueParticipants = new Set();
     missions.forEach((mission: any) => {
-      mission.mission_submissions.forEach((submission: any) => {
-        uniqueParticipants.add(submission.agent_id);
-      });
+      if (mission.mission_submissions) {
+        mission.mission_submissions.forEach((submission: any) => {
+          uniqueParticipants.add(submission.agent_id);
+        });
+      }
     });
     stats.total_participants = uniqueParticipants.size;
 
@@ -107,20 +133,24 @@ export async function getOrganizationMissions(
   try {
     const supabase = await createClient();
     
-    // Check authentication
+    // Check authentication and get session
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (authError || !user || !session?.access_token) {
       return { data: null, error: "Authentication required" };
     }
 
-    // Get user's active organization
-    const { data: adminData, error: adminError } = await supabase
-      .from('admins')
-      .select('active_organization_id')
-      .eq('id', user.id)
-      .single();
+    // Decode JWT to get active organization
+    let activeOrgId: string | null = null;
+    try {
+      const jwt = jwtDecode<JWTPayload>(session.access_token);
+      activeOrgId = jwt.active_organization_id || null;
+    } catch (jwtError) {
+      return { data: null, error: "Invalid session token" };
+    }
 
-    if (adminError || !adminData?.active_organization_id) {
+    if (!activeOrgId) {
       return { data: null, error: "No active organization found" };
     }
 
@@ -146,7 +176,7 @@ export async function getOrganizationMissions(
           status
         )
       `)
-      .eq("organization_id", adminData.active_organization_id)
+      .eq("organization_id", activeOrgId)
       .order("updated_at", { ascending: false });
 
     // Apply filters
@@ -166,13 +196,14 @@ export async function getOrganizationMissions(
 
     // Transform data to include stats
     const missionsWithStats: MissionWithStats[] = missions.map((mission: any) => {
-      const uniqueParticipants = new Set(mission.mission_submissions.map((s: any) => s.agent_id));
-      const completedSubmissions = mission.mission_submissions.filter((s: any) => s.status === 'approved');
+      const submissions = mission.mission_submissions || [];
+      const uniqueParticipants = new Set(submissions.map((s: any) => s.agent_id));
+      const completedSubmissions = submissions.filter((s: any) => s.status === 'approved');
       
       return {
         ...mission,
         participants_count: uniqueParticipants.size,
-        submissions_count: mission.mission_submissions.length,
+        submissions_count: submissions.length,
         completed_submissions_count: completedSubmissions.length,
       };
     });
@@ -191,20 +222,24 @@ export async function updateMissionStatus(
   try {
     const supabase = await createClient();
     
-    // Check authentication
+    // Check authentication and get session
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (authError || !user || !session?.access_token) {
       return { success: false, error: "Authentication required" };
     }
 
-    // Get user's active organization
-    const { data: adminData, error: adminError } = await supabase
-      .from('admins')
-      .select('active_organization_id')
-      .eq('id', user.id)
-      .single();
+    // Decode JWT to get active organization
+    let activeOrgId: string | null = null;
+    try {
+      const jwt = jwtDecode<JWTPayload>(session.access_token);
+      activeOrgId = jwt.active_organization_id || null;
+    } catch (jwtError) {
+      return { success: false, error: "Invalid session token" };
+    }
 
-    if (adminError || !adminData?.active_organization_id) {
+    if (!activeOrgId) {
       return { success: false, error: "No active organization found" };
     }
 
@@ -219,7 +254,7 @@ export async function updateMissionStatus(
       return { success: false, error: "Mission not found" };
     }
 
-    if (mission.organization_id !== adminData.active_organization_id) {
+    if (mission.organization_id !== activeOrgId) {
       return { success: false, error: "Unauthorized to modify this mission" };
     }
 
@@ -248,20 +283,24 @@ export async function deleteMission(missionId: string): Promise<{ success: boole
   try {
     const supabase = await createClient();
     
-    // Check authentication
+    // Check authentication and get session
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (authError || !user || !session?.access_token) {
       return { success: false, error: "Authentication required" };
     }
 
-    // Get user's active organization
-    const { data: adminData, error: adminError } = await supabase
-      .from('admins')
-      .select('active_organization_id')
-      .eq('id', user.id)
-      .single();
+    // Decode JWT to get active organization
+    let activeOrgId: string | null = null;
+    try {
+      const jwt = jwtDecode<JWTPayload>(session.access_token);
+      activeOrgId = jwt.active_organization_id || null;
+    } catch (jwtError) {
+      return { success: false, error: "Invalid session token" };
+    }
 
-    if (adminError || !adminData?.active_organization_id) {
+    if (!activeOrgId) {
       return { success: false, error: "No active organization found" };
     }
 
@@ -276,7 +315,7 @@ export async function deleteMission(missionId: string): Promise<{ success: boole
       return { success: false, error: "Mission not found" };
     }
 
-    if (mission.organization_id !== adminData.active_organization_id) {
+    if (mission.organization_id !== activeOrgId) {
       return { success: false, error: "Unauthorized to delete this mission" };
     }
 
