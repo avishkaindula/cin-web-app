@@ -32,7 +32,7 @@ export type MissionWithStats = {
   energy_awarded: number;
   status: string;
   is_featured: boolean;
-  thumbnail_url: string | null;
+  thumbnail_path: string | null;
   created_at: string;
   updated_at: string;
   organization_id: string;
@@ -165,7 +165,7 @@ export async function getOrganizationMissions(
         energy_awarded,
         status,
         is_featured,
-        thumbnail_url,
+        thumbnail_path,
         created_at,
         updated_at,
         organization_id,
