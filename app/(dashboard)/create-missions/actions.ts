@@ -188,15 +188,9 @@ export async function createMission(formData: FormData) {
           // Continue without thumbnail instead of failing the entire mission
           console.log("⚠️ Continuing mission creation without thumbnail");
         } else {
-          // Get public URL for the uploaded image
-          const {
-            data: { publicUrl },
-          } = supabase.storage
-            .from("mission-content")
-            .getPublicUrl(uploadData.path);
-
-          thumbnailUrl = publicUrl;
-          console.log("🖼️ Thumbnail URL:", thumbnailUrl);
+          // Store the file path instead of public URL for private storage
+          thumbnailUrl = uploadData.path;
+          console.log("🖼️ Thumbnail path stored:", thumbnailUrl);
         }
       } catch (uploadError) {
         console.error("❌ Thumbnail upload exception:", uploadError);
@@ -213,7 +207,7 @@ export async function createMission(formData: FormData) {
       energy_awarded: validatedData.energy,
       instructions: validatedData.instructions,
       guidance_steps: validatedData.guidanceSteps,
-      thumbnail_url: thumbnailUrl,
+      thumbnail_path: thumbnailUrl,
       created_by: user.id,
       organization_id: activeOrgId,
       status: "draft",

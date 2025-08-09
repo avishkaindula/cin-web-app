@@ -335,7 +335,7 @@ export type Database = {
           organization_id: string
           points_awarded: number
           status: string
-          thumbnail_url: string | null
+          thumbnail_path: string | null
           title: string
           updated_at: string
         }
@@ -351,7 +351,7 @@ export type Database = {
           organization_id: string
           points_awarded: number
           status?: string
-          thumbnail_url?: string | null
+          thumbnail_path?: string | null
           title: string
           updated_at?: string
         }
@@ -367,7 +367,7 @@ export type Database = {
           organization_id?: string
           points_awarded?: number
           status?: string
-          thumbnail_url?: string | null
+          thumbnail_path?: string | null
           title?: string
           updated_at?: string
         }
