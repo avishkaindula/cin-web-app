@@ -80,12 +80,14 @@ export default function CreateMissionsPage() {
   const { user, hasPrivilege, isLoading } = useAuth();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  
+
   // Form state
   const [steps, setSteps] = useState<MissionStep[]>([]);
   const [guidanceSteps, setGuidanceSteps] = useState<GuidanceStep[]>([]);
   const [showIconSelector, setShowIconSelector] = useState<string | null>(null);
-  const [showGuidanceIconSelector, setShowGuidanceIconSelector] = useState<string | null>(null);
+  const [showGuidanceIconSelector, setShowGuidanceIconSelector] = useState<
+    string | null
+  >(null);
   const [thumbnailFiles, setThumbnailFiles] = useState<File[]>([]);
   const [createdMissionId, setCreatedMissionId] = useState<string | null>(null);
 
@@ -191,21 +193,6 @@ export default function CreateMissionsPage() {
     updateGuidanceStep(stepId, "requiredEvidence", newEvidence);
   };
 
-  const addDataField = () => {
-    // This function is kept for future use but not currently implemented
-    console.log("Add data field functionality coming soon");
-  };
-
-  const updateDataField = () => {
-    // This function is kept for future use but not currently implemented
-    console.log("Update data field functionality coming soon");
-  };
-
-  const removeDataField = () => {
-    // This function is kept for future use but not currently implemented
-    console.log("Remove data field functionality coming soon");
-  };
-
   const handleSubmit = async () => {
     // Validate required fields
     if (
@@ -214,14 +201,19 @@ export default function CreateMissionsPage() {
       !formData.points ||
       !formData.energy
     ) {
+      console.log("❌ Validation failed - missing required fields");
       toast.error(
         "Please fill in all required fields including points and energy"
       );
       return;
     }
 
-    if (isPending) return;
+    if (isPending) {
+      console.log("⏳ Already pending, skipping submission");
+      return;
+    }
 
+    console.log("🚀 Starting form submission...");
     startTransition(async () => {
       try {
         const submitFormData = new FormData();
@@ -231,21 +223,29 @@ export default function CreateMissionsPage() {
         submitFormData.append("energy", formData.energy);
         submitFormData.append("instructions", JSON.stringify(steps));
         submitFormData.append("guidanceSteps", JSON.stringify(guidanceSteps));
-        
+
         if (thumbnailFiles[0]) {
           submitFormData.append("thumbnail", thumbnailFiles[0]);
+          console.log("🖼️ Added thumbnail to FormData");
         }
 
+        console.log("📤 Calling createMission action...");
         const result = await createMission(submitFormData);
-        
+        console.log("📥 Action result:", result);
+
         if (result.error) {
+          console.log("❌ Server error:", result.error);
           toast.error(result.error);
         } else if (result.success && result.mission) {
+          console.log("✅ Mission created successfully:", result.mission);
           toast.success("Mission created successfully!");
           setCreatedMissionId(result.mission.id);
+        } else {
+          console.log("⚠️ Unexpected result format:", result);
+          toast.error("Unexpected response from server");
         }
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error("❌ Client-side error submitting form:", error);
         toast.error("An unexpected error occurred");
       }
     });
@@ -257,7 +257,7 @@ export default function CreateMissionsPage() {
     startTransition(async () => {
       try {
         const result = await publishMission(createdMissionId);
-        
+
         if (result.error) {
           toast.error(result.error);
         } else if (result.success) {
@@ -678,7 +678,11 @@ export default function CreateMissionsPage() {
                 >
                   {isPending ? "Creating..." : "Create Mission"}
                 </Button>
-                <Button variant="ghost" onClick={clearForm} disabled={isPending}>
+                <Button
+                  variant="ghost"
+                  onClick={clearForm}
+                  disabled={isPending}
+                >
                   Clear Form
                 </Button>
               </>
@@ -686,7 +690,9 @@ export default function CreateMissionsPage() {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2 text-green-600">
                   <CheckCircle className="h-5 w-5" />
-                  <span className="font-medium">Mission Created Successfully!</span>
+                  <span className="font-medium">
+                    Mission Created Successfully!
+                  </span>
                 </div>
                 <Button
                   onClick={handlePublish}
@@ -695,7 +701,11 @@ export default function CreateMissionsPage() {
                 >
                   {isPending ? "Publishing..." : "Publish Mission"}
                 </Button>
-                <Button variant="outline" onClick={clearForm} disabled={isPending}>
+                <Button
+                  variant="outline"
+                  onClick={clearForm}
+                  disabled={isPending}
+                >
                   Create Another
                 </Button>
               </div>

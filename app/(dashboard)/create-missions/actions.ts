@@ -4,6 +4,25 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { jwtDecode } from "jwt-decode";
+
+// JWT Payload type for decoding tokens
+interface JWTPayload {
+  active_organization_id?: string;
+  user_roles?: Array<{
+    role: string;
+    scope: string;
+    organization_id?: string;
+  }>;
+  user_organizations?: Array<{
+    id: string;
+    name: string;
+    privileges: Array<{
+      type: string;
+      status: string;
+    }>;
+  }>;
+}
 
 // Validation schemas
 const StepSchema = z.object({
@@ -31,36 +50,65 @@ const MissionSchema = z.object({
 });
 
 export async function createMission(formData: FormData) {
+  console.log("🚀 createMission called");
+  
   try {
     const supabase = await createClient();
+    console.log("✅ Supabase client created");
     
-    // Get current user
+    // Get current user and session
     const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    console.log("👤 User lookup result:", { user: user?.id, error: userError });
+    console.log("🎫 Session lookup result:", { session: !!session, error: sessionError });
+    
+    if (userError || !user || !session?.access_token) {
+      console.log("❌ Authentication failed");
       return { error: "You must be logged in to create missions" };
     }
 
-    // Check if user has mission creation privileges
-    const hasPermission = await supabase.rpc('authorize', {
-      requested_permission: 'create_missions'
-    });
-
-    if (!hasPermission) {
-      return { error: "You don't have permission to create missions" };
+    // Decode JWT to get active organization and check permissions
+    let activeOrgId: string | null = null;
+    let userPrivileges: Array<{ type: string; status: string }> = [];
+    
+    try {
+      const jwt = jwtDecode<JWTPayload>(session.access_token);
+      activeOrgId = jwt.active_organization_id || null;
+      
+      console.log("🎫 Decoded JWT - Active Org ID:", activeOrgId);
+      console.log("🎫 User organizations:", jwt.user_organizations);
+      
+      // Get privileges from active organization
+      if (activeOrgId && jwt.user_organizations) {
+        const activeOrg = jwt.user_organizations.find(org => org.id === activeOrgId);
+        userPrivileges = activeOrg?.privileges || [];
+        console.log("🔐 User privileges in active org:", userPrivileges);
+      }
+    } catch (jwtError) {
+      console.error("❌ JWT decode error:", jwtError);
+      return { error: "Invalid session token" };
     }
 
-    // Get user's active organization
-    const { data: adminData } = await supabase
-      .from('admins')
-      .select('active_organization_id')
-      .eq('id', user.id)
-      .single();
-
-    if (!adminData?.active_organization_id) {
+    if (!activeOrgId) {
+      console.log("❌ No active organization found in token");
       return { error: "No active organization found" };
     }
 
+    // Check if user has mission creation privileges
+    const hasMissionPartnerPrivilege = userPrivileges.some(
+      priv => priv.type === 'mission_partners' && priv.status === 'approved'
+    );
+    
+    console.log("🔐 Has mission_partners privilege:", hasMissionPartnerPrivilege);
+
+    if (!hasMissionPartnerPrivilege) {
+      console.log("❌ Permission denied - no mission_partners privilege");
+      return { error: "You don't have permission to create missions" };
+    }
+
     // Parse and validate form data
+    console.log("📝 Parsing form data...");
     const rawData = {
       title: formData.get("title") as string,
       description: formData.get("description") as string,
@@ -69,16 +117,28 @@ export async function createMission(formData: FormData) {
       instructions: JSON.parse(formData.get("instructions") as string || "[]"),
       guidanceSteps: JSON.parse(formData.get("guidanceSteps") as string || "[]"),
     };
+    
+    console.log("📝 Raw form data:", rawData);
 
     const validatedData = MissionSchema.parse(rawData);
+    console.log("✅ Data validation passed:", validatedData);
 
     // Handle thumbnail upload
+    console.log("🖼️ Processing thumbnail upload...");
     let thumbnailUrl = null;
     const thumbnailFile = formData.get("thumbnail") as File | null;
+    
+    console.log("🖼️ Thumbnail file:", { 
+      exists: !!thumbnailFile, 
+      size: thumbnailFile?.size,
+      name: thumbnailFile?.name 
+    });
     
     if (thumbnailFile && thumbnailFile.size > 0) {
       const fileExt = thumbnailFile.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+      
+      console.log("📤 Uploading thumbnail as:", fileName);
       
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('mission-content')
@@ -87,8 +147,10 @@ export async function createMission(formData: FormData) {
           upsert: false
         });
 
+      console.log("📤 Upload result:", { uploadData, uploadError });
+
       if (uploadError) {
-        console.error("Upload error:", uploadError);
+        console.error("❌ Upload error:", uploadError);
         return { error: "Failed to upload thumbnail image" };
       }
 
@@ -98,37 +160,47 @@ export async function createMission(formData: FormData) {
         .getPublicUrl(uploadData.path);
       
       thumbnailUrl = publicUrl;
+      console.log("🖼️ Thumbnail URL:", thumbnailUrl);
     }
 
     // Create the mission
-    const { data: missionData, error: missionError } = await supabase
+    console.log("💾 Creating mission in database...");
+    const missionData = {
+      title: validatedData.title,
+      description: validatedData.description,
+      points_awarded: validatedData.points,
+      energy_awarded: validatedData.energy,
+      instructions: validatedData.instructions,
+      guidance_steps: validatedData.guidanceSteps,
+      thumbnail_url: thumbnailUrl,
+      created_by: user.id,
+      organization_id: activeOrgId,
+      status: 'draft'
+    };
+    
+    console.log("💾 Mission data to insert:", missionData);
+
+    const { data: resultMissionData, error: missionError } = await supabase
       .from('missions')
-      .insert({
-        title: validatedData.title,
-        description: validatedData.description,
-        points_awarded: validatedData.points,
-        energy_awarded: validatedData.energy,
-        instructions: validatedData.instructions,
-        guidance_steps: validatedData.guidanceSteps,
-        thumbnail_url: thumbnailUrl,
-        created_by: user.id,
-        organization_id: adminData.active_organization_id,
-        status: 'draft'
-      })
+      .insert(missionData)
       .select()
       .single();
 
+    console.log("💾 Database insert result:", { resultMissionData, missionError });
+
     if (missionError) {
-      console.error("Mission creation error:", missionError);
+      console.error("❌ Mission creation error:", missionError);
       return { error: "Failed to create mission" };
     }
 
+    console.log("✅ Mission created successfully with ID:", resultMissionData.id);
     revalidatePath("/dashboard/missions");
-    return { success: true, mission: missionData };
+    return { success: true, mission: resultMissionData };
 
   } catch (error) {
-    console.error("Error creating mission:", error);
+    console.error("❌ Unexpected error in createMission:", error);
     if (error instanceof z.ZodError) {
+      console.error("❌ Validation errors:", error.errors);
       return { error: "Validation failed: " + error.errors.map(e => e.message).join(", ") };
     }
     return { error: "An unexpected error occurred" };
