@@ -33,6 +33,8 @@ export type MissionWithStats = {
   status: string;
   is_featured: boolean;
   thumbnail_path: string | null;
+  instructions: any[] | null;
+  guidance_steps: any[] | null;
   created_at: string;
   updated_at: string;
   organization_id: string;
@@ -166,6 +168,8 @@ export async function getOrganizationMissions(
         status,
         is_featured,
         thumbnail_path,
+        instructions,
+        guidance_steps,
         created_at,
         updated_at,
         organization_id,

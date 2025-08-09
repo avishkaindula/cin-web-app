@@ -1,5 +1,5 @@
 import React from 'react';
-import { getMissionThumbnailUrlServer } from '@/lib/supabase/storage';
+import { getMissionThumbnailUrlServer } from '@/lib/supabase/storage-server';
 
 interface ServerMissionThumbnailProps {
   thumbnailPath: string | null;

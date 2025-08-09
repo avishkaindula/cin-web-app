@@ -5,6 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { 
   Target, 
   Calendar, 
@@ -16,11 +24,12 @@ import {
   Play,
   Pause,
   Eye,
-  BarChart3,
-  Zap
+  Zap,
+  X
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth-context";
+import { getMissionThumbnailUrl } from "@/lib/supabase/storage";
 import {
   getMissionStats,
   getOrganizationMissions,
@@ -68,6 +77,184 @@ const formatDate = (dateString: string) => {
     day: 'numeric'
   });
 };
+
+// Mission Details Modal Component
+function MissionDetailsModal({ mission }: { mission: MissionWithStats }) {
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+  const [imageLoading, setImageLoading] = useState(false);
+
+  useEffect(() => {
+    async function loadThumbnail() {
+      if (mission.thumbnail_path) {
+        setImageLoading(true);
+        try {
+          const signedUrl = await getMissionThumbnailUrl(mission.thumbnail_path);
+          setThumbnailUrl(signedUrl);
+        } catch (error) {
+          console.error('Error loading thumbnail:', error);
+        } finally {
+          setImageLoading(false);
+        }
+      }
+    }
+
+    loadThumbnail();
+  }, [mission.thumbnail_path]);
+
+  return (
+    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle className="flex items-center space-x-2">
+          <Target className="h-5 w-5" />
+          <span>{mission.title}</span>
+        </DialogTitle>
+        <DialogDescription>
+          Mission Details and Statistics
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className="space-y-6">
+        {/* Mission Thumbnail */}
+        {mission.thumbnail_path && (
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold">Mission Thumbnail</h3>
+            {imageLoading ? (
+              <div className="w-full h-48 bg-gray-200 animate-pulse rounded-lg flex items-center justify-center">
+                <span className="text-gray-500">Loading image...</span>
+              </div>
+            ) : thumbnailUrl ? (
+              <img 
+                src={thumbnailUrl} 
+                alt={mission.title}
+                className="w-full h-48 object-cover rounded-lg"
+              />
+            ) : (
+              <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+                <span className="text-gray-500">No image available</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Basic Information */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Basic Information</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="font-medium">Status:</span>
+                  <Badge className={getStatusColor(mission.status)}>
+                    {mission.status}
+                  </Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Points Awarded:</span>
+                  <span>{mission.points_awarded}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Energy Awarded:</span>
+                  <span>{mission.energy_awarded}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Featured:</span>
+                  <span>{mission.is_featured ? 'Yes' : 'No'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Created:</span>
+                  <span>{formatDate(mission.created_at)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Last Updated:</span>
+                  <span>{formatDate(mission.updated_at)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Participation Stats</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="font-medium">Total Participants:</span>
+                  <span>{mission.participants_count}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Total Submissions:</span>
+                  <span>{mission.submissions_count}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Completed Submissions:</span>
+                  <span>{mission.completed_submissions_count}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Completion Rate:</span>
+                  <span>
+                    {mission.participants_count > 0 
+                      ? Math.round((mission.completed_submissions_count / mission.participants_count) * 100)
+                      : 0}%
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Description */}
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Description</h3>
+          <p className="text-gray-600 dark:text-gray-400">{mission.description}</p>
+        </div>
+
+        {/* Instructions */}
+        {mission.instructions && Array.isArray(mission.instructions) && mission.instructions.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Instructions</h3>
+            <div className="space-y-2">
+              {(mission.instructions as any[]).map((instruction: any, index: number) => (
+                <div key={index} className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center text-xs font-medium text-blue-600 dark:text-blue-300">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <h4 className="font-medium">{instruction.title}</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{instruction.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Guidance Steps */}
+        {mission.guidance_steps && Array.isArray(mission.guidance_steps) && mission.guidance_steps.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Guidance Steps</h3>
+            <div className="space-y-2">
+              {(mission.guidance_steps as any[]).map((step: any, index: number) => (
+                <div key={index} className="flex items-start space-x-3 p-3 bg-green-50 dark:bg-green-900 rounded-lg">
+                  <div className="flex-shrink-0 w-6 h-6 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center text-xs font-medium text-green-600 dark:text-green-300">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium">{step.title}</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{step.description}</p>
+                    {step.evidenceType && (
+                      <div className="text-xs text-gray-500">
+                        Evidence Required: <span className="font-medium">{step.evidenceType}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </DialogContent>
+  );
+}
 
 export default function ManageMissionsPage() {
   const { user } = useAuth();
@@ -380,18 +567,15 @@ export default function ManageMissionsPage() {
                 )}
                 
                 <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm">
-                    <Eye className="h-4 w-4 mr-2" />
-                    View Details
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    Analytics
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Details
+                      </Button>
+                    </DialogTrigger>
+                    <MissionDetailsModal mission={mission} />
+                  </Dialog>
                   
                   {mission.status === 'published' && (
                     <Button 

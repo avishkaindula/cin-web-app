@@ -57,7 +57,7 @@ const signedUrl = await getMissionThumbnailUrl(mission.thumbnail_path);
 
 #### Server-side
 ```tsx
-import { getMissionThumbnailUrlServer } from '@/lib/supabase/storage';
+import { getMissionThumbnailUrlServer } from '@/lib/supabase/storage-server';
 
 const signedUrl = await getMissionThumbnailUrlServer(mission.thumbnail_path);
 ```
@@ -71,13 +71,16 @@ const evidenceUrl = await getMissionSubmissionUrl(evidence.file_path);
 
 ## Storage Utilities
 
-The following utility functions are available in `/lib/supabase/storage.ts`:
+### Client-side utilities (`/lib/supabase/storage.ts`):
 
 - `getSignedUrl(bucket, path, expiresIn)` - Generate signed URL (client)
-- `getSignedUrlServer(bucket, path, expiresIn)` - Generate signed URL (server)
 - `getMissionThumbnailUrl(thumbnailPath, expiresIn)` - Mission thumbnail URL (client)
-- `getMissionThumbnailUrlServer(thumbnailPath, expiresIn)` - Mission thumbnail URL (server)
 - `getMissionSubmissionUrl(evidencePath, expiresIn)` - Evidence file URL (client)
+
+### Server-side utilities (`/lib/supabase/storage-server.ts`):
+
+- `getSignedUrlServer(bucket, path, expiresIn)` - Generate signed URL (server)
+- `getMissionThumbnailUrlServer(thumbnailPath, expiresIn)` - Mission thumbnail URL (server)
 - `getMissionSubmissionUrlServer(evidencePath, expiresIn)` - Evidence file URL (server)
 
 ## Migration Notes

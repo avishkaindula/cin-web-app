@@ -1,19 +1,19 @@
-import { createClient } from "./client";
+import { createClient } from "./server";
 
 /**
- * Generate a signed URL for a private storage file (client-side only)
+ * Generate a signed URL for a private storage file (server-side)
  * @param bucket - Storage bucket name
  * @param path - File path in storage
  * @param expiresIn - URL expiration time in seconds (default: 1 hour)
  * @returns Promise<string | null> - Signed URL or null if error
  */
-export async function getSignedUrl(
+export async function getSignedUrlServer(
   bucket: string,
   path: string,
   expiresIn: number = 3600 // 1 hour default
 ): Promise<string | null> {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     const { data, error } = await supabase.storage
       .from(bucket)
@@ -32,31 +32,31 @@ export async function getSignedUrl(
 }
 
 /**
- * Generate signed URLs for mission thumbnails (client-side)
+ * Generate signed URLs for mission thumbnails (server-side)
  * @param thumbnailPath - Thumbnail file path from database
  * @param expiresIn - URL expiration time in seconds (default: 1 hour)
  * @returns Promise<string | null> - Signed URL or null if error/no path
  */
-export async function getMissionThumbnailUrl(
+export async function getMissionThumbnailUrlServer(
   thumbnailPath: string | null,
   expiresIn: number = 3600
 ): Promise<string | null> {
   if (!thumbnailPath) return null;
   
-  return getSignedUrl("mission-content", thumbnailPath, expiresIn);
+  return getSignedUrlServer("mission-content", thumbnailPath, expiresIn);
 }
 
 /**
- * Generate signed URLs for mission submission evidence (client-side)
+ * Generate signed URLs for mission submission evidence (server-side)
  * @param evidencePath - Evidence file path from database
  * @param expiresIn - URL expiration time in seconds (default: 1 hour)
  * @returns Promise<string | null> - Signed URL or null if error/no path
  */
-export async function getMissionSubmissionUrl(
+export async function getMissionSubmissionUrlServer(
   evidencePath: string | null,
   expiresIn: number = 3600
 ): Promise<string | null> {
   if (!evidencePath) return null;
   
-  return getSignedUrl("mission-submissions", evidencePath, expiresIn);
+  return getSignedUrlServer("mission-submissions", evidencePath, expiresIn);
 }
