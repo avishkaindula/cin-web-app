@@ -147,7 +147,7 @@ export default function CreateMissionsPage() {
     title: "",
     description: "",
     points: "",
-    experience: "",
+    energy: "",
     thumbnailImage: null as File | null,
   });
 
@@ -245,10 +245,10 @@ export default function CreateMissionsPage() {
       !formData.description ||
       !missionType ||
       !formData.points ||
-      !formData.experience
+      !formData.energy
     ) {
       toast.error(
-        "Please fill in all required fields including points and experience"
+        "Please fill in all required fields including points and energy"
       );
       return;
     }
@@ -609,19 +609,19 @@ export default function CreateMissionsPage() {
               </div>
 
               <div>
-                <Label htmlFor="experience">Experience Points *</Label>
+                <Label htmlFor="energy">Energy *</Label>
                 <Input
-                  id="experience"
+                  id="energy"
                   type="number"
-                  value={formData.experience}
+                  value={formData.energy}
                   onChange={(e) =>
-                    setFormData({ ...formData, experience: e.target.value })
+                    setFormData({ ...formData, energy: e.target.value })
                   }
                   placeholder="25"
                   className="mt-1"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  XP for skill development
+                  Energy points for completion
                 </p>
               </div>
             </div>
@@ -648,7 +648,6 @@ export default function CreateMissionsPage() {
             >
               Create Mission
             </Button>
-            <Button variant="outline">Save as Draft</Button>
             <Button variant="ghost">Clear Form</Button>
           </div>
         </CardContent>
