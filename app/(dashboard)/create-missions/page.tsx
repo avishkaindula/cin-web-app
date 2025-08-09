@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import {
   Card,
   CardContent,
@@ -14,27 +14,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { FileUploadZone } from "@/components/ui/file-upload-zone";
 import {
   Target,
-  Calendar,
-  MapPin,
-  Award,
-  Clock,
   Plus,
-  Edit,
-  Trash2,
-  Users,
   X,
-  Search,
   Image,
   FileText,
   Leaf,
@@ -43,30 +27,15 @@ import {
   TreePine,
   Megaphone,
   Zap,
+  MapPin,
+  Clock,
+  CheckCircle,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
-
-// Mission types and their icons
-const missionTypes = [
-  {
-    value: "citizen-science",
-    label: "Citizen Science Data Collection",
-    icon: Target,
-  },
-  { value: "cleanup", label: "Cleanup & Waste Management", icon: Recycle },
-  { value: "monitoring", label: "Monitoring & Reporting", icon: Eye },
-  {
-    value: "reforestation",
-    label: "Reforestation & Habitat Restoration",
-    icon: TreePine,
-  },
-  {
-    value: "awareness",
-    label: "Awareness & Education Campaigns",
-    icon: Megaphone,
-  },
-  { value: "energy-audit", label: "Energy & Resource Audits", icon: Zap },
-];
+import { useAuth } from "@/contexts/auth-context";
+import { createMission, publishMission } from "./actions";
+import { useRouter } from "next/navigation";
 
 // Evidence types
 const evidenceTypes = [
@@ -77,14 +46,7 @@ const evidenceTypes = [
   { value: "none", label: "None (Attendance Only)" },
 ];
 
-// Location types
-const locationTypes = [
-  { value: "coordinates", label: "Specific Coordinates" },
-  { value: "general", label: "General Area" },
-  { value: "current", label: "User's Current Location" },
-];
-
-// Available icons for steps (subset for demo)
+// Available icons for steps
 const stepIcons = [
   { name: "target", icon: Target },
   { name: "leaf", icon: Leaf },
@@ -98,7 +60,7 @@ const stepIcons = [
   { name: "clock", icon: Clock },
 ];
 
-// Form state interface
+// Form state interfaces
 interface MissionStep {
   id: string;
   icon: string;
@@ -114,33 +76,18 @@ interface GuidanceStep {
   requiredEvidence: string[];
 }
 
-interface DataField {
-  id: string;
-  name: string;
-  type:
-    | "text"
-    | "number"
-    | "decimal"
-    | "dropdown"
-    | "checkbox"
-    | "date"
-    | "time";
-  required: boolean;
-  options?: string[];
-}
-
 export default function CreateMissionsPage() {
-  const [missionType, setMissionType] = useState<string>("");
-  const [selectedEvidence, setSelectedEvidence] = useState<string[]>([]);
-  const [locationType, setLocationType] = useState<string>("");
+  const { user, hasPrivilege, isLoading } = useAuth();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  
+  // Form state
   const [steps, setSteps] = useState<MissionStep[]>([]);
   const [guidanceSteps, setGuidanceSteps] = useState<GuidanceStep[]>([]);
-  const [dataFields, setDataFields] = useState<DataField[]>([]);
   const [showIconSelector, setShowIconSelector] = useState<string | null>(null);
-  const [showGuidanceIconSelector, setShowGuidanceIconSelector] = useState<
-    string | null
-  >(null);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [showGuidanceIconSelector, setShowGuidanceIconSelector] = useState<string | null>(null);
+  const [thumbnailFiles, setThumbnailFiles] = useState<File[]>([]);
+  const [createdMissionId, setCreatedMissionId] = useState<string | null>(null);
 
   // Form data state
   const [formData, setFormData] = useState({
@@ -148,8 +95,35 @@ export default function CreateMissionsPage() {
     description: "",
     points: "",
     energy: "",
-    thumbnailImage: null as File | null,
   });
+
+  // Check permissions
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    router.push("/auth/sign-in");
+    return null;
+  }
+
+  if (!hasPrivilege("mission_partners")) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Card className="p-6">
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              Access Denied
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              You need mission partner privileges to create missions.
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   const addStep = () => {
     const newStep: MissionStep = {
@@ -218,32 +192,25 @@ export default function CreateMissionsPage() {
   };
 
   const addDataField = () => {
-    const newField: DataField = {
-      id: `field-${Date.now()}`,
-      name: "",
-      type: "text",
-      required: false,
-      options: [],
-    };
-    setDataFields([...dataFields, newField]);
+    // This function is kept for future use but not currently implemented
+    console.log("Add data field functionality coming soon");
   };
 
-  const updateDataField = (id: string, field: keyof DataField, value: any) => {
-    setDataFields(
-      dataFields.map((df) => (df.id === id ? { ...df, [field]: value } : df))
-    );
+  const updateDataField = () => {
+    // This function is kept for future use but not currently implemented
+    console.log("Update data field functionality coming soon");
   };
 
-  const removeDataField = (id: string) => {
-    setDataFields(dataFields.filter((df) => df.id !== id));
+  const removeDataField = () => {
+    // This function is kept for future use but not currently implemented
+    console.log("Remove data field functionality coming soon");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validate required fields
     if (
       !formData.title ||
       !formData.description ||
-      !missionType ||
       !formData.points ||
       !formData.energy
     ) {
@@ -253,7 +220,69 @@ export default function CreateMissionsPage() {
       return;
     }
 
-    toast.success("Mission created successfully!");
+    if (isPending) return;
+
+    startTransition(async () => {
+      try {
+        const submitFormData = new FormData();
+        submitFormData.append("title", formData.title);
+        submitFormData.append("description", formData.description);
+        submitFormData.append("points", formData.points);
+        submitFormData.append("energy", formData.energy);
+        submitFormData.append("instructions", JSON.stringify(steps));
+        submitFormData.append("guidanceSteps", JSON.stringify(guidanceSteps));
+        
+        if (thumbnailFiles[0]) {
+          submitFormData.append("thumbnail", thumbnailFiles[0]);
+        }
+
+        const result = await createMission(submitFormData);
+        
+        if (result.error) {
+          toast.error(result.error);
+        } else if (result.success && result.mission) {
+          toast.success("Mission created successfully!");
+          setCreatedMissionId(result.mission.id);
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        toast.error("An unexpected error occurred");
+      }
+    });
+  };
+
+  const handlePublish = async () => {
+    if (!createdMissionId || isPending) return;
+
+    startTransition(async () => {
+      try {
+        const result = await publishMission(createdMissionId);
+        
+        if (result.error) {
+          toast.error(result.error);
+        } else if (result.success) {
+          toast.success("Mission published successfully!");
+          router.push("/dashboard/missions");
+        }
+      } catch (error) {
+        console.error("Error publishing mission:", error);
+        toast.error("An unexpected error occurred");
+      }
+    });
+  };
+
+  const clearForm = () => {
+    setFormData({
+      title: "",
+      description: "",
+      points: "",
+      energy: "",
+    });
+    setSteps([]);
+    setGuidanceSteps([]);
+    setThumbnailFiles([]);
+    setCreatedMissionId(null);
+    toast.success("Form cleared");
   };
 
   return (
@@ -629,9 +658,7 @@ export default function CreateMissionsPage() {
             <div>
               <Label>Mission Thumbnail/Banner Image</Label>
               <FileUploadZone
-                onFilesChange={(files) =>
-                  setFormData({ ...formData, thumbnailImage: files[0] || null })
-                }
+                onFilesChange={(files) => setThumbnailFiles(files)}
                 acceptedTypes={["image/*"]}
                 maxFiles={1}
                 maxSizeMB={5}
@@ -642,13 +669,37 @@ export default function CreateMissionsPage() {
 
           {/* Action Buttons */}
           <div className="flex items-center space-x-4 pt-6 border-t">
-            <Button
-              onClick={handleSubmit}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              Create Mission
-            </Button>
-            <Button variant="ghost">Clear Form</Button>
+            {!createdMissionId ? (
+              <>
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isPending}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  {isPending ? "Creating..." : "Create Mission"}
+                </Button>
+                <Button variant="ghost" onClick={clearForm} disabled={isPending}>
+                  Clear Form
+                </Button>
+              </>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2 text-green-600">
+                  <CheckCircle className="h-5 w-5" />
+                  <span className="font-medium">Mission Created Successfully!</span>
+                </div>
+                <Button
+                  onClick={handlePublish}
+                  disabled={isPending}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {isPending ? "Publishing..." : "Publish Mission"}
+                </Button>
+                <Button variant="outline" onClick={clearForm} disabled={isPending}>
+                  Create Another
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
