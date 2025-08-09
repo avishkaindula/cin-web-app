@@ -156,7 +156,7 @@ export async function createMission(formData: FormData) {
     const validatedData = MissionSchema.parse(rawData);
     console.log("✅ Data validation passed:", validatedData);
 
-    // Handle thumbnail upload
+    // Handle thumbnail upload (simplified)
     console.log("🖼️ Processing thumbnail upload...");
     let thumbnailUrl = null;
     const thumbnailFile = formData.get("thumbnail") as File | null;
@@ -168,34 +168,40 @@ export async function createMission(formData: FormData) {
     });
 
     if (thumbnailFile && thumbnailFile.size > 0) {
-      const fileExt = thumbnailFile.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+      try {
+        const fileExt = thumbnailFile.name.split(".").pop();
+        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
 
-      console.log("📤 Uploading thumbnail as:", fileName);
+        console.log("📤 Uploading thumbnail as:", fileName);
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("mission-content")
-        .upload(`thumbnails/${fileName}`, thumbnailFile, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("mission-content")
+          .upload(`thumbnails/${fileName}`, thumbnailFile, {
+            cacheControl: "3600",
+            upsert: false,
+          });
 
-      console.log("📤 Upload result:", { uploadData, uploadError });
+        console.log("📤 Upload result:", { uploadData, uploadError });
 
-      if (uploadError) {
-        console.error("❌ Upload error:", uploadError);
-        return { error: "Failed to upload thumbnail image" };
+        if (uploadError) {
+          console.error("❌ Upload error:", uploadError);
+          // Continue without thumbnail instead of failing the entire mission
+          console.log("⚠️ Continuing mission creation without thumbnail");
+        } else {
+          // Get public URL for the uploaded image
+          const {
+            data: { publicUrl },
+          } = supabase.storage
+            .from("mission-content")
+            .getPublicUrl(uploadData.path);
+
+          thumbnailUrl = publicUrl;
+          console.log("🖼️ Thumbnail URL:", thumbnailUrl);
+        }
+      } catch (uploadError) {
+        console.error("❌ Thumbnail upload exception:", uploadError);
+        console.log("⚠️ Continuing mission creation without thumbnail");
       }
-
-      // Get public URL for the uploaded image
-      const {
-        data: { publicUrl },
-      } = supabase.storage
-        .from("mission-content")
-        .getPublicUrl(uploadData.path);
-
-      thumbnailUrl = publicUrl;
-      console.log("🖼️ Thumbnail URL:", thumbnailUrl);
     }
 
     // Create the mission
