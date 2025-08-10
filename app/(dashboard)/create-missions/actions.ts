@@ -235,7 +235,7 @@ export async function createMission(formData: FormData) {
       "✅ Mission created successfully with ID:",
       resultMissionData.id
     );
-    revalidatePath("/dashboard/missions");
+    revalidatePath("/manage-missions");
     return { success: true, mission: resultMissionData };
   } catch (error) {
     console.error("❌ Unexpected error in createMission:", error);
@@ -275,7 +275,7 @@ export async function publishMission(missionId: string) {
       return { error: "Failed to publish mission" };
     }
 
-    revalidatePath("/dashboard/missions");
+    revalidatePath("/manage-missions");
     return { success: true };
   } catch (error) {
     console.error("Error publishing mission:", error);

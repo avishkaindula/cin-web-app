@@ -262,7 +262,7 @@ export default function CreateMissionsPage() {
           toast.error(result.error);
         } else if (result.success) {
           toast.success("Mission published successfully!");
-          router.push("/dashboard/missions");
+          router.push("/manage-missions");
         }
       } catch (error) {
         console.error("Error publishing mission:", error);
