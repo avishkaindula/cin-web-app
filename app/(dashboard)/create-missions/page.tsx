@@ -41,6 +41,8 @@ import { useRouter } from "next/navigation";
 const evidenceTypes = [
   { value: "photo", label: "Photo" },
   { value: "video", label: "Video" },
+  { value: "document", label: "Document/File" },
+  { value: "audio", label: "Audio Recording" },
   { value: "text", label: "Text Input" },
   { value: "gps", label: "GPS Location" },
   { value: "none", label: "None (Attendance Only)" },
