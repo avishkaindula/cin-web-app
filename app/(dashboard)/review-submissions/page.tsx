@@ -6,10 +6,10 @@ import {
   CheckCircle, 
   XCircle, 
   Clock, 
-  Eye,
-  Download 
+  Eye
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { DownloadEvidenceButton } from "@/components/download-evidence-button";
 
 async function getSubmissions() {
   const supabase = await createClient();
@@ -158,10 +158,10 @@ export default async function ReviewSubmissionsPage() {
                       <Eye className="h-4 w-4 mr-2" />
                       View Details
                     </Button>
-                    <Button variant="outline" size="sm">
-                      <Download className="h-4 w-4 mr-2" />
-                      Download Evidence
-                    </Button>
+                    <DownloadEvidenceButton 
+                      submissionId={submission.id}
+                      missionTitle={mission?.title || 'Mission'}
+                    />
                     {submission.status === 'completed' && (
                       <>
                         <Button size="sm" className="bg-green-600 hover:bg-green-700">
