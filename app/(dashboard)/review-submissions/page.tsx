@@ -26,15 +26,16 @@ async function getSubmissions() {
       agent:agents(
         id,
         full_name,
-        organization:organizations(
-          id,
-          name
-        )
+        email
       ),
       mission:missions(
         id,
         title,
-        description
+        description,
+        organization:organizations(
+          id,
+          name
+        )
       )
     `)
     .in('status', ['completed', 'reviewed', 'rejected'])
@@ -101,7 +102,7 @@ export default async function ReviewSubmissionsPage() {
           {submissions.map((submission) => {
             const agent = submission.agent as any;
             const mission = submission.mission as any;
-            const organization = agent?.organization;
+            const organization = mission?.organization;
             
             return (
               <Card key={submission.id}>
