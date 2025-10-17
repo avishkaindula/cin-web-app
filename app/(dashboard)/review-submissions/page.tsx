@@ -9,40 +9,44 @@ import {
   Eye,
   Download 
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 
-// Mock data for submissions
-const mockSubmissions = [
-  {
-    id: "1",
-    type: "Mission Report",
-    organization: "GreenTech Solutions", 
-    submittedBy: "John Doe",
-    submittedAt: "2025-01-10",
-    status: "pending",
-    title: "Q4 Carbon Reduction Initiative",
-    description: "Comprehensive report on our carbon footprint reduction efforts"
-  },
-  {
-    id: "2", 
-    type: "Reward Proposal",
-    organization: "Eco Alliance",
-    submittedBy: "Jane Smith", 
-    submittedAt: "2025-01-08",
-    status: "pending",
-    title: "Green Innovation Rewards Program",
-    description: "Proposal for new rewards system for sustainable innovation"
-  },
-  {
-    id: "3",
-    type: "Mission Completion",
-    organization: "Climate Warriors",
-    submittedBy: "Bob Johnson",
-    submittedAt: "2025-01-05", 
-    status: "approved",
-    title: "Urban Tree Planting Campaign",
-    description: "Documentation of completed tree planting mission in downtown area"
+async function getSubmissions() {
+  const supabase = await createClient();
+  
+  const { data: submissions, error } = await supabase
+    .from('mission_submissions')
+    .select(`
+      id,
+      created_at,
+      completed_at,
+      status,
+      review_notes,
+      review_score,
+      agent:agents(
+        id,
+        full_name,
+        organization:organizations(
+          id,
+          name
+        )
+      ),
+      mission:missions(
+        id,
+        title,
+        description
+      )
+    `)
+    .in('status', ['completed', 'reviewed', 'rejected'])
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching submissions:', error);
+    return [];
   }
-];
+
+  return submissions || [];
+}
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -70,7 +74,9 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export default function ReviewSubmissionsPage() {
+export default async function ReviewSubmissionsPage() {
+  const submissions = await getSubmissions();
+
   return (
     <div className="space-y-6">
       <div>
@@ -82,74 +88,99 @@ export default function ReviewSubmissionsPage() {
         </p>
       </div>
 
-      <div className="grid gap-6">
-        {mockSubmissions.map((submission) => (
-          <Card key={submission.id}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <CardTitle className="flex items-center space-x-2">
-                    <FileText className="h-5 w-5" />
-                    <span>{submission.title}</span>
-                  </CardTitle>
-                  <CardDescription>
-                    {submission.description}
-                  </CardDescription>
-                </div>
-                <Badge className={getStatusColor(submission.status)}>
-                  <div className="flex items-center space-x-1">
-                    {getStatusIcon(submission.status)}
-                    <span>{submission.status}</span>
+      {submissions.length === 0 ? (
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-center text-gray-500 dark:text-gray-400">
+              No submissions to review at this time.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-6">
+          {submissions.map((submission) => {
+            const agent = submission.agent as any;
+            const mission = submission.mission as any;
+            const organization = agent?.organization;
+            
+            return (
+              <Card key={submission.id}>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <CardTitle className="flex items-center space-x-2">
+                        <FileText className="h-5 w-5" />
+                        <span>{mission?.title || 'Untitled Mission'}</span>
+                      </CardTitle>
+                      <CardDescription>
+                        {mission?.description || 'No description available'}
+                      </CardDescription>
+                    </div>
+                    <Badge className={getStatusColor(submission.status)}>
+                      <div className="flex items-center space-x-1">
+                        {getStatusIcon(submission.status)}
+                        <span className="capitalize">{submission.status}</span>
+                      </div>
+                    </Badge>
                   </div>
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div>
-                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Type</span>
-                  <p className="text-sm text-gray-900 dark:text-white">{submission.type}</p>
-                </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Organization</span>
-                  <p className="text-sm text-gray-900 dark:text-white">{submission.organization}</p>
-                </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Submitted By</span>
-                  <p className="text-sm text-gray-900 dark:text-white">{submission.submittedBy}</p>
-                </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Submitted</span>
-                  <p className="text-sm text-gray-900 dark:text-white">{submission.submittedAt}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm">
-                  <Eye className="h-4 w-4 mr-2" />
-                  View Details
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </Button>
-                {submission.status === 'pending' && (
-                  <>
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Approve
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    <div>
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Type</span>
+                      <p className="text-sm text-gray-900 dark:text-white">Mission Submission</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Organization</span>
+                      <p className="text-sm text-gray-900 dark:text-white">{organization?.name || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Submitted By</span>
+                      <p className="text-sm text-gray-900 dark:text-white">{agent?.full_name || 'Unknown'}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Submitted</span>
+                      <p className="text-sm text-gray-900 dark:text-white">
+                        {new Date(submission.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {submission.review_notes && (
+                    <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Review Notes</span>
+                      <p className="text-sm text-gray-900 dark:text-white mt-1">{submission.review_notes}</p>
+                    </div>
+                  )}
+
+                  <div className="flex items-center space-x-2">
+                    <Button variant="outline" size="sm">
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Details
                     </Button>
-                    <Button variant="destructive" size="sm">
-                      <XCircle className="h-4 w-4 mr-2" />
-                      Reject
+                    <Button variant="outline" size="sm">
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Evidence
                     </Button>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                    {submission.status === 'completed' && (
+                      <>
+                        <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          Approve
+                        </Button>
+                        <Button variant="destructive" size="sm">
+                          <XCircle className="h-4 w-4 mr-2" />
+                          Reject
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
