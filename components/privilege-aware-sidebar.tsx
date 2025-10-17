@@ -153,6 +153,12 @@ const getDashboardNavigation = (
           icon: Target,
           show: isCinAdmin,
         },
+        {
+          name: "Review Redemptions",
+          href: "/review-redemptions",
+          icon: Gift,
+          show: isCinAdmin,
+        },
       ],
     },
 
@@ -250,7 +256,7 @@ export function PrivilegeAwareSidebar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
-  const { isCinAdmin, isOrgAdmin, activeOrganization, isLoading } = useAuth();
+  const { isCinAdmin, activeOrganization, isLoading } = useAuth();
 
   // Show loading state while auth is being determined
   if (isLoading) {
