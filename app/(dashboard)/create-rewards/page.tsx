@@ -1,14 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { 
   Gift, 
   Calendar, 
   Award, 
   DollarSign,
-  Clock,
-  Edit,
-  Trash2,
   Users,
   Star
 } from "lucide-react";
@@ -155,35 +151,6 @@ export default async function CreateRewardsPage() {
                       <span className="text-sm text-gray-500 dark:text-gray-400">
                         Created {new Date(reward.created_at).toLocaleDateString()}
                       </span>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm">
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Users className="h-4 w-4 mr-2" />
-                      View Claims
-                    </Button>
-                    {reward.status === 'active' && (
-                      <Button variant="outline" size="sm">
-                        <Clock className="h-4 w-4 mr-2" />
-                        Pause
-                      </Button>
-                    )}
-                    {reward.status === 'draft' && (
-                      <>
-                        <Button variant="outline" size="sm" className="text-green-600 hover:text-green-700">
-                          <Star className="h-4 w-4 mr-2" />
-                          Publish
-                        </Button>
-                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </Button>
-                      </>
                     )}
                   </div>
                 </CardContent>

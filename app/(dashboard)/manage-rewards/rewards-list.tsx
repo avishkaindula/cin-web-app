@@ -9,11 +9,9 @@ import {
   Award,
   DollarSign,
   Clock,
-  Edit,
   Trash2,
   Users,
   Star,
-  Eye,
   BarChart3,
   Play,
   Pause,
@@ -204,23 +202,6 @@ export default function RewardsList({ rewards }: RewardsListProps) {
             </div>
 
             <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">
-                <Eye className="h-4 w-4 mr-2" />
-                View Details
-              </Button>
-              <Button variant="outline" size="sm">
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-              <Button variant="outline" size="sm">
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Analytics
-              </Button>
-              <Button variant="outline" size="sm">
-                <Users className="h-4 w-4 mr-2" />
-                View Claims
-              </Button>
-
               {reward.status === "active" && (
                 <Button
                   variant="outline"
