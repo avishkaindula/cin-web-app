@@ -169,28 +169,35 @@ export async function createMission(formData: FormData) {
 
     if (thumbnailFile && thumbnailFile.size > 0) {
       try {
-        const fileExt = thumbnailFile.name.split(".").pop();
-        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
-
-        console.log("📤 Uploading thumbnail as:", fileName);
-
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("mission-content")
-          .upload(`thumbnails/${fileName}`, thumbnailFile, {
-            cacheControl: "3600",
-            upsert: false,
-          });
-
-        console.log("📤 Upload result:", { uploadData, uploadError });
-
-        if (uploadError) {
-          console.error("❌ Upload error:", uploadError);
-          // Continue without thumbnail instead of failing the entire mission
-          console.log("⚠️ Continuing mission creation without thumbnail");
+        // Validate file type - reject SVG files
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+        if (!allowedTypes.includes(thumbnailFile.type)) {
+          console.error("❌ Invalid file type:", thumbnailFile.type);
+          console.log("⚠️ Continuing mission creation without thumbnail - SVG not supported");
         } else {
-          // Store the file path instead of public URL for private storage
-          thumbnailUrl = uploadData.path;
-          console.log("🖼️ Thumbnail path stored:", thumbnailUrl);
+          const fileExt = thumbnailFile.name.split(".").pop();
+          const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+
+          console.log("📤 Uploading thumbnail as:", fileName);
+
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from("mission-content")
+            .upload(`thumbnails/${fileName}`, thumbnailFile, {
+              cacheControl: "3600",
+              upsert: false,
+            });
+
+          console.log("📤 Upload result:", { uploadData, uploadError });
+
+          if (uploadError) {
+            console.error("❌ Upload error:", uploadError);
+            // Continue without thumbnail instead of failing the entire mission
+            console.log("⚠️ Continuing mission creation without thumbnail");
+          } else {
+            // Store the file path instead of public URL for private storage
+            thumbnailUrl = uploadData.path;
+            console.log("🖼️ Thumbnail path stored:", thumbnailUrl);
+          }
         }
       } catch (uploadError) {
         console.error("❌ Thumbnail upload exception:", uploadError);
