@@ -22,6 +22,8 @@ const getStatusIcon = (status: string) => {
   switch (status) {
     case 'approved':
       return <CheckCircle className="h-4 w-4 text-green-600" />;
+    case 'fulfilled':
+      return <CheckCircle className="h-4 w-4 text-blue-600" />;
     case 'pending':
       return <Clock className="h-4 w-4 text-yellow-600" />;
     case 'rejected':
@@ -35,6 +37,8 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case 'approved':
       return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+    case 'fulfilled':
+      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
     case 'pending':
       return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
     case 'rejected':
@@ -47,9 +51,9 @@ const getStatusColor = (status: string) => {
 export default function ReviewRedemptionsPage() {
   const { toast } = useToast();
   const [redemptions, setRedemptions] = useState<RedemptionWithDetails[]>([]);
-  const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 });
+  const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, rejected: 0, fulfilled: 0 });
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
+  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected" | "fulfilled">("pending");
   const [reviewingId, setReviewingId] = useState<string | null>(null);
   const [reviewNotes, setReviewNotes] = useState<{ [key: string]: string }>({});
 
@@ -139,10 +143,10 @@ export default function ReviewRedemptionsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Redemptions</CardTitle>
+            <CardTitle className="text-sm font-medium">Total</CardTitle>
             <Gift className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -167,6 +171,15 @@ export default function ReviewRedemptionsPage() {
             <div className="text-2xl font-bold">{stats.approved}</div>
           </CardContent>
         </Card>
+        <Card className="cursor-pointer hover:bg-accent" onClick={() => setFilter("fulfilled")}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Fulfilled</CardTitle>
+            <CheckCircle className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.fulfilled}</div>
+          </CardContent>
+        </Card>
         <Card className="cursor-pointer hover:bg-accent" onClick={() => setFilter("rejected")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Rejected</CardTitle>
@@ -180,7 +193,7 @@ export default function ReviewRedemptionsPage() {
 
       {/* Filter Tabs */}
       <div className="flex space-x-2">
-        {(["all", "pending", "approved", "rejected"] as const).map((status) => (
+        {(["all", "pending", "approved", "fulfilled", "rejected"] as const).map((status) => (
           <Button
             key={status}
             variant={filter === status ? "default" : "outline"}
@@ -264,8 +277,11 @@ export default function ReviewRedemptionsPage() {
                   <div className="flex items-center space-x-2">
                     <User className="h-4 w-4 text-gray-500" />
                     <div>
-                      <p className="text-gray-500 dark:text-gray-400">User ID</p>
-                      <p className="font-mono text-xs">{redemption.user_id.slice(0, 8)}...</p>
+                      <p className="text-gray-500 dark:text-gray-400">Requested By</p>
+                      <p className="font-medium">{redemption.agent?.full_name || "Unknown"}</p>
+                      {redemption.agent?.email && (
+                        <p className="text-xs text-gray-500">{redemption.agent.email}</p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">

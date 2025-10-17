@@ -8,11 +8,12 @@ export interface RedemptionWithDetails {
   user_id: string;
   reward_id: string;
   points_spent: number;
-  status: "pending" | "approved" | "rejected";
+  status: "pending" | "approved" | "rejected" | "fulfilled";
   redemption_notes: string | null;
   review_notes: string | null;
   reviewed_by: string | null;
   reviewed_at: string | null;
+  fulfilled_at: string | null;
   created_at: string;
   rewards: {
     title: string;
@@ -22,9 +23,13 @@ export interface RedemptionWithDetails {
     value: string;
     points_cost: number;
   } | null;
+  agent: {
+    full_name: string | null;
+    email: string | null;
+  } | null;
 }
 
-export async function getRedemptions(status?: "pending" | "approved" | "rejected") {
+export async function getRedemptions(status?: "pending" | "approved" | "rejected" | "fulfilled") {
   const supabase = await createClient();
 
   let query = supabase
@@ -48,14 +53,34 @@ export async function getRedemptions(status?: "pending" | "approved" | "rejected
     query = query.eq("status", status);
   }
 
-  const { data, error } = await query;
+  const { data: redemptions, error } = await query;
 
   if (error) {
     console.error("Error fetching redemptions:", error);
     return { data: null, error: error.message };
   }
 
-  return { data: data as RedemptionWithDetails[], error: null };
+  if (!redemptions) {
+    return { data: [], error: null };
+  }
+
+  // Fetch agent details for each redemption
+  const redemptionsWithAgents = await Promise.all(
+    redemptions.map(async (redemption) => {
+      const { data: agent } = await supabase
+        .from("agents")
+        .select("full_name, email")
+        .eq("id", redemption.user_id)
+        .single();
+
+      return {
+        ...redemption,
+        agent: agent || null,
+      } as RedemptionWithDetails;
+    })
+  );
+
+  return { data: redemptionsWithAgents, error: null };
 }
 
 export async function getRedemptionStats() {
@@ -65,6 +90,7 @@ export async function getRedemptionStats() {
     { count: totalCount },
     { count: pendingCount },
     { count: approvedCount },
+    { count: fulfilledCount },
     { count: rejectedCount },
   ] = await Promise.all([
     supabase.from("reward_redemptions").select("*", { count: "exact", head: true }),
@@ -79,6 +105,10 @@ export async function getRedemptionStats() {
     supabase
       .from("reward_redemptions")
       .select("*", { count: "exact", head: true })
+      .eq("status", "fulfilled"),
+    supabase
+      .from("reward_redemptions")
+      .select("*", { count: "exact", head: true })
       .eq("status", "rejected"),
   ]);
 
@@ -86,6 +116,7 @@ export async function getRedemptionStats() {
     total: totalCount || 0,
     pending: pendingCount || 0,
     approved: approvedCount || 0,
+    fulfilled: fulfilledCount || 0,
     rejected: rejectedCount || 0,
   };
 }
